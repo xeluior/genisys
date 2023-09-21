@@ -1,0 +1,12 @@
+[project]
+name = "genisys"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Robert Gingras", email = "gingrm02@pfw.edu" },
+    { name = "Henry Green", email = "greeht01@pfw.edu" },
+    { name = "Benny Bergle", email = "bergba01@pfw.edu" },
+    { name = "Rowan Akers", email = "akerrm01@pfw.edu" },
+    { name = "Dhyan Patel", email = "patedm01@pfw.edu" }
+]
+keywords = [ "linux", "pxe", "management", "devops", "configuration" ]
+
