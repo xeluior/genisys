@@ -1,6 +1,4 @@
 ---
-DEFAULT:
-  test: "val"
 Network:
   interface: "eth0"
   subnet: "10.0.0.0/24"
