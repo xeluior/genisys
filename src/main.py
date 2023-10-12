@@ -6,17 +6,13 @@ def validate_config(file):
     # TODO: Implement the validation logic here
 
 
-def install_config(file, change_root=None):
-    print(
-        f"Installing config file: {file} with root at {change_root if change_root else '/'}"
-    )
+def install_config(file, change_root="/"):
+    print(f"Installing config file: {file} with root at {change_root}")
     # TODO: Implement the installation logic here
 
 
-def generate_config(file, change_root=None):
-    print(
-        f"Generating config file: {file} at directory {change_root if change_root else '.'}"
-    )
+def generate_config(file, change_root="/"):
+    print(f"Generating config file: {file} at directory {change_root}")
     # TODO: Implement the generate logic here
 
 
