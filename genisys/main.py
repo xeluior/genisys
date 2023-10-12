@@ -39,7 +39,7 @@ def main():
     daemon_parser = subparsers.add_parser(
         "daemon", help="Monitor the config file for changes."
     )
-
+ 
     # Flags
     for subparser in [validate_parser, install_parser, generate_parser]:
         subparser.add_argument(
