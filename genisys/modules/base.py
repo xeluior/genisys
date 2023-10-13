@@ -5,7 +5,7 @@ class Module:
     def generate(self: Self) -> str:
         """Generates the content of the configuration file."""
 
-        throw NotImplementedError
+        raise NotImplementedError
     #end generate
     
     def install_location(self: Self) -> Path:
@@ -14,7 +14,7 @@ class Module:
         to be relative to the root directory.
         """
 
-        throw NotImplementedError
+        raise NotImplementedError
     #end install_location
 
     def install(self: Self, chroot: Path = Path('/')):
