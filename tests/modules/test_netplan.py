@@ -3,7 +3,7 @@ import sys
 import os
 
 current_dir = os.path.dirname(__file__)
-src_dir = os.path.abspath(os.path.join(current_dir, '..', '..', 'src'))
+src_dir = os.path.abspath(os.path.join(current_dir, '..', '..', 'genisys'))
 sys.path.insert(0, src_dir)
 
 # okay now the tests actually start
