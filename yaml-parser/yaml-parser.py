@@ -7,7 +7,7 @@ class YAMLParser:
     # end __init__
 
     ''' Returns all of the key value pairs under a specific heading as a Python dictionary '''
-    def getSection(self: Self, heading):
+    def getSection(self: Self, heading) -> dict:
         dictionary = {}
         with open(self.fileName) as file:
             data = yaml.safe_load(file)
@@ -29,7 +29,7 @@ class YAMLParser:
     # end getSection
 
     ''' Returns a list object containing all section headings in the provided YAML file '''
-    def getAllHeadings(self: Self):
+    def getAllHeadings(self: Self) -> list:
         headingList = []
         with open(self.fileName) as file:
             data = yaml.safe_load(file)
@@ -40,10 +40,12 @@ class YAMLParser:
         return headingList
     # end getAllHeadings
 
-    def printDict(self: Self, dictionary):
+    def printDict(self: Self, dictionary) -> None:
         for key in dictionary:
             print(f"{key}: {dictionary[key]}")
     # end printDict
+
+# end YAMLParser
 
 def main():
     parser = YAMLParser('test.yml') 
