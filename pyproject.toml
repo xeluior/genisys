@@ -1,12 +1,20 @@
-[project]
-name = "genisys"
-license = { file = "LICENSE" }
-authors = [
-    { name = "Robert Gingras", email = "gingrm02@pfw.edu" },
-    { name = "Henry Green", email = "greeht01@pfw.edu" },
-    { name = "Benny Bergle", email = "bergba01@pfw.edu" },
-    { name = "Rowan Akers", email = "akerrm01@pfw.edu" },
-    { name = "Dhyan Patel", email = "patedm01@pfw.edu" }
-]
-keywords = [ "linux", "pxe", "management", "devops", "configuration" ]
+[build-system]
+requires = ["setuptools >= 46.4.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
+[tool.poetry]
+name = "genisys"
+license = "BSD"
+version = "0.1.0"
+description = "Automatically install and configure machines over PXE"
+authors = [
+    "Robert Gingras <gingrm02@pfw.edu>",
+    "Henry Green <greeht01@pfw.edu>",
+    "Benny Bergle <bergba01@pfw.edu>",
+    "Rowan Akers <akerrm01@pfw.edu>",
+    "Dhyan Patel <patedm01@pfw.edu>"
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+PyYAML = "6.0.1"
