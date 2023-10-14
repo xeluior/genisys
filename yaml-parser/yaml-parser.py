@@ -14,16 +14,15 @@ class YAMLParser:
 
             if heading in data:
                 sectionData = data[heading]
-                print('Current Heading: ' + heading)
 
                 try:
                     for key, value in sectionData.items():
                         dictionary[key] = value
                 except AttributeError:
-                    print('Heading', heading, 'contains no values.')
+                    print()
 
             else:
-                print('Heading \'' + heading + '\' not found.')
+                raise Exception('Heading not found.')
         
         return dictionary
     # end getSection
@@ -48,7 +47,7 @@ class YAMLParser:
 # end YAMLParser
 
 def main():
-    parser = YAMLParser('test.yml') 
+    parser = YAMLParser('example.yml') 
     print(parser.getAllHeadings())
     for eachSection in parser.getAllHeadings():
         parser.printDict(parser.getSection(eachSection))
