@@ -19,7 +19,7 @@ class YAMLParser:
                     for key, value in sectionData.items():
                         dictionary[key] = value
                 except AttributeError:
-                    print()
+                    print("Heading is empty.")
 
             else:
                 raise Exception('Heading not found.')
