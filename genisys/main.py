@@ -66,3 +66,24 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+'''
+import needed modules,
+create new module with options/configs from other branches.
+'''
+def run():
+    import importlib
+
+    #netplan.py
+    netplan = importlib.import_module("genisys/modules/netplan.py")
+    net = getattr(netplan, "Netplan")
+
+    #base.py
+    module = importlib.import_module("genisys/modules/base.py")
+    mod = getattr(module, "Module")
+
+    #yaml-parser.py
+    yaml_parser = importlib.import_module("genisys/yaml-parser.py")
+    parse = getattr(yaml_parser, "YAMLParser")
+
+
