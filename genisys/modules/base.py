@@ -23,7 +23,7 @@ class Module:
         """
         
         install_file = Path(chroot, self.install_location())
-        with open(self.install_location(), 'w') as fd:
+        with open(install_file, 'w') as fd:
             fd.write(self.generate())
         #end with
     #end install
@@ -33,8 +33,8 @@ class Module:
 
         try:
             self.generate()
-            return true
+            return True
         except:
-            return false
+            return False
     #end validate
 #end class Module

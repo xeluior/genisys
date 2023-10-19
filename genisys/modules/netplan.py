@@ -5,11 +5,11 @@ from . import base
 from typing import Self
 from pathlib import Path
 
-class Netplan(base.Module):
-    NETPLAN_DIR = '/etc/netplan'
-    NETPLAN_FILE = '99-genisys.yaml'
-    IPV4_BITS = 32
+NETPLAN_DIR = '/etc/netplan'
+NETPLAN_FILE = '99-genisys.yaml'
+IPV4_BITS = 32
 
+class Netplan(base.Module):
     def __init__(self: Self, config: dict):
         self.config = config
     # end __init__
@@ -41,7 +41,7 @@ class Netplan(base.Module):
 
         # validate the ip is in the subnet
         subnet = ipaddress.ip_network(subnet_cidr)
-        if ipaddress.IPv4Address(self.config['ip']) not in subnet.hosts():
+        if ipaddress.IPv4Address(self.config['ip']) not in subnet:
             raise ValueError("IP is not in the given subnet")
 
         # construct the netplan
