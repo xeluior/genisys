@@ -21,13 +21,24 @@
 # install from prompting for a hostname
 
 # Account setup
-d-i passwd/root-login boolean false
-d-i passwd/user-fullname string Vagrant User
-d-i passwd/username string vagrant
-d-i passwd/user-password password vagrant
-d-i passwd/user-password-again password vagrant
+d-i passwd/root-login boolean {{ settings['root-login'] }}
+{% if settings['root-login'] %}
+d-i passwd/root-password-crypted password {{ settings['root-password'] }}
+{% endif %}
+d-i passwd/make-user {{ settings['make-user'] }}
+d-i passwd/username string {{ settings['username'] }}
+d-i passwd/user-password-crypted password {{ settings['password'] }}
 d-i user-setup/encrypt-home boolean false
 d-i user-setup/allow-password-weak boolean true
+
+# these are the default groups as of Debian 12.2 they are enumerated here for completeness
+# they could be omitted except for the need to differentiate between sudoer and not
+{% if settings['sudoer'] %}
+d-i passwd/user-default-groups string cdrom floppy audio dip video plugdev users netdev lpadmin scanner sudo
+{% else %}
+d-i passwd/user-default-groups string cdrom floppy audio dip video plugdev users netdev lpadmin scanner
+{% endif %}
+
 # Clock and time zone setup
 d-i clock-setup/utc boolean true
 d-i time/zone string UTC
@@ -62,9 +73,12 @@ d-i grub-installer/only_debian boolean true
 # Turn off last message about the install being complete
 d-i finish-install/reboot_in_progress note
 d-i pkgsel/include string openssh-server ntp curl nfs-common linux-headers-$(uname -r) build-essential perl dkms
-# This first command is run as early as possible, just after
-# preseeding is read.
-# Prevent packaged version of VirtualBox Guest Additions being installed:
-d-i preseed/early_command string sed -i \
-  '/in-target/idiscover(){/sbin/discover|grep -v VirtualBox;}' \
-  /usr/lib/pre-pkgsel.d/20install-hwpackages
+
+# thanks to 'https://unix.stackexchange.com/questions/719803/how-to-add-a-public-ssh-key-using-debian-preseed-file'
+# for this ssh-key addition lines
+d-i preseed/late_command string in-target mkdir -p /root/.ssh; \
+in-target /bin/sh -c "echo '{{ settings['ssh-key'] }}' >> /root/.ssh/authorized_keys"; \
+in-target chown -R root:root /root/.ssh/;
+in-target chmod 644 /root/.ssh/authorized_keys; \
+in-target chmod 700 /root/.ssh/
+
