@@ -24,3 +24,4 @@ class Preseed(Module):
         template = jinja_env.get_template("preseed.cfg.jinja2")
         return template.render(settings=self.config["users"])
     # end generate
+# end class Preseed
