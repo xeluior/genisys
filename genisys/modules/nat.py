@@ -17,7 +17,8 @@ This configuration will be for the pxe server (Ubuntu)
 https://github.com/mieweb/GeniSys
 """
 
-class nat(base.Module):
+
+class Nat(base.Module):
     IPV4_DIR = "/etc/iptables/rules.v4"  # IPv4 Assumed default
     IPV6_DIR = "/etc/iptables/rules.v6"  # Maybe think about adding a configuration option to enable/disable IPv6?
 
@@ -59,7 +60,7 @@ class nat(base.Module):
 
     # May need to do a check in the future for IPv6 options, if they are included
     def install_location(self: Self) -> Path:
-        return Path("/etc/iptables/rules.v4")
+        return Path(self.IPV4_DIR)
 
     # end install_location
 
