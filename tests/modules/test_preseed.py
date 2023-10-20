@@ -2,7 +2,11 @@ import unittest
 import tempfile
 import yaml
 import crypt
-import genisys.configParser
+try:
+    import genisys.configParser
+except ModuleNotFoundError:
+    import importlib
+    configParser = importlib.import_module("genisys.yaml-parser")
 from genisys.modules.preseed import Preseed
 
 def get_hash(password):
@@ -79,3 +83,7 @@ class PreseedTests(unittest.TestCase):
             self.assertIn(expected_line, output)
         # end test_sudoer
 # end class PreseedTests
+
+if __name__ == "__main__":
+    unittest.main()
+    
