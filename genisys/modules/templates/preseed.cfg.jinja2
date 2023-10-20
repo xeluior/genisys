@@ -20,12 +20,15 @@
 # but you must provide a hostname as a boot parameter to prevent the Debian
 # install from prompting for a hostname
 
-# Account setup
+# root account setup
 d-i passwd/root-login boolean {{ settings['root-login'] }}
 {% if settings['root-login'] %}
 d-i passwd/root-password-crypted password {{ settings['root-password'] }}
 {% endif %}
-d-i passwd/make-user {{ settings['make-user'] }}
+
+# setup regular user
+{% if settings['username'] is defined %}
+d-i passwd/make-user boolean true
 d-i passwd/username string {{ settings['username'] }}
 d-i passwd/user-password-crypted password {{ settings['password'] }}
 d-i user-setup/encrypt-home boolean false
@@ -37,6 +40,9 @@ d-i user-setup/allow-password-weak boolean true
 d-i passwd/user-default-groups string cdrom floppy audio dip video plugdev users netdev lpadmin scanner sudo
 {% else %}
 d-i passwd/user-default-groups string cdrom floppy audio dip video plugdev users netdev lpadmin scanner
+{% endif %}
+{% else %}
+d-i passwd/make-user boolean false
 {% endif %}
 
 # Clock and time zone setup
@@ -76,9 +82,11 @@ d-i pkgsel/include string openssh-server ntp curl nfs-common linux-headers-$(una
 
 # thanks to 'https://unix.stackexchange.com/questions/719803/how-to-add-a-public-ssh-key-using-debian-preseed-file'
 # for this ssh-key addition lines
+{% if settings['ssh-key'] is defined %}
 d-i preseed/late_command string in-target mkdir -p /root/.ssh; \
 in-target /bin/sh -c "echo '{{ settings['ssh-key'] }}' >> /root/.ssh/authorized_keys"; \
 in-target chown -R root:root /root/.ssh/;
 in-target chmod 644 /root/.ssh/authorized_keys; \
 in-target chmod 700 /root/.ssh/
+{% endif %}
 
