@@ -1,6 +1,6 @@
 from typing import Self
 from pathlib import Path
-from base import Module
+from genisys.modules.base import Module
 
 import jinja2
 
