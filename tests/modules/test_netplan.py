@@ -1,13 +1,4 @@
-# add the src dir to python path
-import sys
-import os
-
-current_dir = os.path.dirname(__file__)
-src_dir = os.path.abspath(os.path.join(current_dir, '..', '..', 'genisys'))
-sys.path.insert(0, src_dir)
-
-# okay now the tests actually start
-from modules.netplan import Netplan
+from genisys.modules.netplan import Netplan
 import unittest
 import yaml
 
