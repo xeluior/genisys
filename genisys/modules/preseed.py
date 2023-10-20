@@ -22,6 +22,12 @@ class Preseed(Module):
     def generate(self: Self) -> str:
         jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
         template = jinja_env.get_template("preseed.cfg.jinja2")
+        
+        # convert booleans to lowercase to match preseed format
+        for key, value in self.config["users"].items():
+            if type(value) == bool:
+                self.config["users"][key] = str(value).lower()
+
         return template.render(settings=self.config["users"])
     # end generate
 # end class Preseed
