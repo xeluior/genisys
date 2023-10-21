@@ -2,7 +2,7 @@ import ipaddress
 import yaml
 
 from . import base
-from typing import Self
+from typing_extensions import Self
 from pathlib import Path
 
 NETPLAN_DIR = '/etc/netplan'
