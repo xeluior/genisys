@@ -1,21 +1,19 @@
 import unittest
 import tempfile
 import yaml
-import crypt
-try:
-    import genisys.configParser as configParser
-except ModuleNotFoundError:
-    import importlib
-    configParser = importlib.import_module("genisys.yaml-parser")
+from passlib.hash import sha512_crypt
+from genisys import configParser
 from genisys.modules.preseed import Preseed
 
-def get_hash(password):
-    salt = crypt.mksalt(crypt.METHOD_SHA512)
-    return crypt.crypt(password, salt)
+def get_hash(password: str) -> str:
+    """Returns a hashed passwd version of the given string"""
+    return sha512_crypt.hash(password)
 # end get_hash
 
 class PreseedTests(unittest.TestCase):
+    """Run tests for the preseed module"""
     def test_root_password(self):
+        """Ensure the root password is added when root login is enabled"""
         crypted_password = get_hash("password")
         expected_line = f"d-i passwd/root-password-crypted password {crypted_password}"
         with tempfile.NamedTemporaryFile() as config_file:
@@ -38,6 +36,7 @@ class PreseedTests(unittest.TestCase):
     # end test_root_password
 
     def test_make_user(self):
+        """Ensure the user is added when specified"""
         password = get_hash("password")
         username = "user"
         expected_lines = [
@@ -63,7 +62,9 @@ class PreseedTests(unittest.TestCase):
     # end test_make_user
 
     def test_sudoer(self):
-        expected_line = "d-i passwd/user-default-groups string cdrom floppy audio dip video plugdev users netdev lpadmin scanner sudo"
+        """Ensure the user is added to the correct groups when set as a sudoer"""
+        expected_line = "d-i passwd/user-default-groups string cdrom \
+                floppy audio dip video plugdev users netdev lpadmin scanner sudo"
         username = "user"
         password = get_hash("password")
         with tempfile.NamedTemporaryFile() as fd:
@@ -86,4 +87,3 @@ class PreseedTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-    

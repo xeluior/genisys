@@ -1,11 +1,15 @@
-from genisys.modules.netplan import Netplan
 import unittest
-import genisys.configParser as configParser
-import yaml
 import tempfile
+import yaml
+from genisys.modules.netplan import Netplan
+from genisys import configParser
 
 class NetplanTests(unittest.TestCase):
+    """Run tests for the netplan module"""
     def test_netmask_eq_cidr(self):
+        """Ensure that an expection is thrown when both CIDR and Netmask are specified but they
+        disagree on the prefix length
+        """
         with tempfile.NamedTemporaryFile() as config_file:
             config_file.write(b"Network:\n  subnet: 10.0.0.0/24\n  netmask: 255.255.254.0")
             config_file.seek(0)
@@ -19,6 +23,7 @@ class NetplanTests(unittest.TestCase):
             )
 
     def test_ip_in_subnet(self):
+        """Ensure that an exception is thrown when the IP is not in the specified subnet"""
         with tempfile.NamedTemporaryFile() as config_file:
             config_file.write(b"Network:\n  subnet: 10.0.0.0/24\n  ip: 192.168.0.1")
             config_file.seek(0)
@@ -29,6 +34,7 @@ class NetplanTests(unittest.TestCase):
             self.assertEqual(err.exception.args[0], "IP is not in the given subnet")
 
     def test_expected_yaml(self):
+        """Ensure the happy path works properly"""
         expected = yaml.dump({"network": {"ethernets": {"eth0": {"addresses": ["10.0.0.1/24"]}}}})
         with tempfile.NamedTemporaryFile() as config_file:
             config_file.write(b"Network:\n"
@@ -43,4 +49,3 @@ class NetplanTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-    
