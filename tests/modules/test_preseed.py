@@ -3,7 +3,7 @@ import tempfile
 import yaml
 import crypt
 try:
-    import genisys.configParser
+    import genisys.configParser as configParser
 except ModuleNotFoundError:
     import importlib
     configParser = importlib.import_module("genisys.yaml-parser")

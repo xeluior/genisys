@@ -1,6 +1,6 @@
 from genisys.modules.netplan import Netplan
 import unittest
-import configParser
+import genisys.configParser as configParser
 import yaml
 import tempfile
 
