@@ -63,8 +63,8 @@ class PreseedTests(unittest.TestCase):
 
     def test_sudoer(self):
         """Ensure the user is added to the correct groups when set as a sudoer"""
-        expected_line = "d-i passwd/user-default-groups string cdrom \
-                floppy audio dip video plugdev users netdev lpadmin scanner sudo"
+        expected_line = ("d-i passwd/user-default-groups string cdrom "
+                "floppy audio dip video plugdev users netdev lpadmin scanner sudo")
         username = "user"
         password = get_hash("password")
         with tempfile.NamedTemporaryFile() as fd:
