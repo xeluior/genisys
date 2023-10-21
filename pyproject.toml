@@ -15,6 +15,12 @@ authors = [
     "Dhyan Patel <patedm01@pfw.edu>"
 ]
 
+[tool.poetry.build]
+generate-setup-file = true
+
+[tool.poetry.scripts]
+genisys = "genisys.main:main"
+
 [tool.poetry.dependencies]
 python = "^3.8"
 PyYAML = "6.0.1"
