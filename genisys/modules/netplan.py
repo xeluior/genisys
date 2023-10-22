@@ -10,8 +10,8 @@ class Netplan(base.Module):
     NETPLAN_FILE = '99-genisys.yaml'
     IPV4_BITS = 32
 
-    def __init__(self: Self, config: dict):
-        self.config = config
+    def __init__(self: Self, config):
+        self.config = config.getSection("Network")
     # end __init__
 
     def install_loation(self: Self) -> Path:
