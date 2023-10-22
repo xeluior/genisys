@@ -22,25 +22,26 @@ class Nat(base.Module):
     IPV4_DIR = "/etc/iptables/rules.v4"  # IPv4 Assumed default
     IPV6_DIR = "/etc/iptables/rules.v6"  # Maybe think about adding a configuration option to enable/disable IPv6?
 
-    def __init__(self: Self, config: dict):
-        self.config = config
+    def __init__(self: Self, config):
+        self.config = {}
+        self.config["network"] = config.getSection("Network")
 
     # end __init__
 
     def generate(self: Self) -> str:
         # Set vars from config, error on config missing 
-        if "nat-interface" in self.config:
-            nat_interface = self.config["nat-interface"]
+        if "nat-interface" in self.config["network"]:
+            nat_interface = self.config["network"]["nat-interface"]
         else: 
             raise ValueError("Nat Interface value not found in config file.")
         
-        if "subnet" in self.config:
-            subnet = self.config["subnet"]
+        if "subnet" in self.config["network"]:
+            subnet = self.config["network"]["subnet"]
         else: 
             raise ValueError("Subnet value not found in config file.")
         
-        if "interface" in self.config:
-            interface = self.config["interface"]
+        if "interface" in self.config["network"]:
+            interface = self.config["network"]["interface"]
         else: 
             raise ValueError("Interface value not found in config file.")
         
