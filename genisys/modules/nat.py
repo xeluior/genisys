@@ -28,13 +28,25 @@ class Nat(base.Module):
     # end __init__
 
     def generate(self: Self) -> str:
-        # Set vars from config
+        # Set vars from config, error on config missing 
         if "nat-interface" in self.config:
             nat_interface = self.config["nat-interface"]
+        else: 
+            raise ValueError("Nat Interface value not found in config file.")
+        
         if "subnet" in self.config:
             subnet = self.config["subnet"]
+        else: 
+            raise ValueError("Subnet value not found in config file.")
+        
         if "interface" in self.config:
             interface = self.config["interface"]
+        else: 
+            raise ValueError("Interface value not found in config file.")
+        
+        # Error on nat interface and non-nat interface having the same value 
+        if nat_interface == interface:
+            raise ValueError("The Nat Interface and Interface configs have the same value.")
 
         # Begin adding iptables rules TODO: Double check with Robert that these variables are being put in the correct rules.
         iptables_rules = f"""*nat
@@ -63,13 +75,5 @@ class Nat(base.Module):
         return Path(self.IPV4_DIR)
 
     # end install_location
-
-    # TODO Make sure the install_location is set up correctly
-    def install(self: Self, chroot: Path = ...):
-        with open(self.install_location(), "w") as f:
-            f.write(self.generate())
-
-    # end install
-
 
 # end nat class
