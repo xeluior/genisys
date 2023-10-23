@@ -6,7 +6,7 @@ from typing import Self
 from pathlib import Path
 
 class KernelParameter(base.module):
-    SYSCTL_FILE = "/etc/sysctl.conf"
+    SYSCTL_FILE = "/etc/sysctl.d/99-ip-forwarding-rule.conf" # 99 prefix guarantees that this rule will overwrite sysctl.conf parameter assignment 
 
     def __init__(self: Self, config: dict):
         self.config = config
@@ -23,23 +23,4 @@ class KernelParameter(base.module):
 
     # end generate
 
-    # Checks if the line is uncommented or not in /etc/sysctl.conf and if not, uncomments it
-    def add_parameter_to_existing_file(self: Self):
-        # check for kernel parameter net.ipv4.ip_forward=1 in /etc/sysctl.conf
-        target_line = "#net.ipv4.ip_forward=1"
-        kernel_parameter_present = False
-
-        try:
-            with open("/etc/sysctl.conf", "r") as file:
-                for line in file:
-                    if line.strip() == target_line:
-                        kernel_parameter_present = True
-        except FileNotFoundError:
-            print("/etc/sysctl.conf not found.")
-
-        if not kernel_parameter_present:
-            print(
-                'Kernel parameter "net.ipv4.ip_forward=1" is not present in /etc/sysctl.conf'
-            )
-
-    # end addParameterToExistingFile
+    
