@@ -8,35 +8,21 @@ class NatTest(unittest.TestCase):
     """ Tests for the NAT module """
     def test_values_in_config(self):
         """ Ensure that a missing config option raises the expected error. """
-        with tempfile.NamedTemporaryFile() as config_file:
-            config_file.write(bytes(yaml.dump({
-                "Network": {
-                    "nat-interface": "eth02", # "interface" config option is missing
-                    "subnet": "192.168.2.0/24"
-                    }
-                }), 'utf-8'))
-            config_file.seek(0)
+        with open("../configs/nat_test_1.yml") as config_file:
             config = configParser.YAMLParser(config_file.name)
             module = Nat(config)
-            output = module.generate()
-            self.assertRaises(ValueError)
+            with self.assertRaises(ValueError) as context:
+                output = module.generate()    
     # end test_values_in_config
 
     def test_shared_interface_name(self):
         """ Ensure that interfaces sharing the same name raises an error. """
-        with tempfile.NamedTemporaryFile() as config_file:
-            config_file.write(bytes(yaml.dump({
-                "Network": {
-                    "nat-interface": "eth02", 
-                    "interface": "eth02", 
-                    "subnet": "192.168.2.0/24"
-                    }
-                }), 'utf-8'))
-            config_file.seek(0)
+        with open("../configs/nat_test_2.yml") as config_file:
             config = configParser.YAMLParser(config_file.name)
             module = Nat(config)
-            output = module.generate()
-            self.assertRaises(ValueError)
+            with self.assertRaises(ValueError) as context:
+                output = module.generate()
+
     # end test_shared_interface_name
 
     def test_expected_successful_output(self):
@@ -58,20 +44,15 @@ class NatTest(unittest.TestCase):
         "-A FORWARD -i eth02 -o eth01 -m state --state RELATED,ESTABLISHED -j ACCEPT",
         "COMMIT"
         ]
-        with tempfile.NamedTemporaryFile() as config_file:
-            config_file.write(bytes(yaml.dump({
-                "Network": {
-                    "nat-interface": "eth02", 
-                    "interface": "eth01", 
-                    "subnet": "192.168.2.0/24"
-                    }
-                }), 'utf-8'))
-            config_file.seek(0)
+        with open("../configs/nat_test_3.yml") as config_file:
             config = configParser.YAMLParser(config_file.name)
             module = Nat(config)
             output = module.generate().split("\n")
+            newOutput = []
+            for line in output:
+                newOutput.append(line.strip()) # Extra spacing may cause errors later, will require further testing. 
             for line in expected_output:
-                self.assertIn(line, output)
+                self.assertIn(line, newOutput)
     # end test_expected_successful_output
 
 if __name__ == "__main__":

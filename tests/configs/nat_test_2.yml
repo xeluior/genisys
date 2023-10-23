@@ -1,0 +1,5 @@
+---
+Network: 
+  nat-interface: "eth02"
+  interface: "eth02"
+  subnet: "192.168.2.0/24"
