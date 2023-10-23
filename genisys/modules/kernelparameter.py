@@ -6,7 +6,8 @@ from typing import Self
 from pathlib import Path
 
 class KernelParameter(base.module):
-    SYSCTL_FILE = "/etc/sysctl.d/99-ip-forwarding-rule.conf" # 99 prefix guarantees that this rule will overwrite sysctl.conf parameter assignment 
+    ''' 99 prefix guarantees that this rule will overwrite sysctl.conf parameter assignment, this file will need to be created beforehand '''
+    SYSCTL_FILE = "/etc/sysctl.d/99-ip-forwarding-rule.conf" 
 
     def __init__(self: Self, config: dict):
         self.config = config
