@@ -1,7 +1,7 @@
 from typing import Self
 from pathlib import Path
 
-from . import base
+from genisys.modules import base
 from typing import Self
 from pathlib import Path
 
