@@ -85,7 +85,7 @@ def run():
     import modules.base as base
 
     #get settings for functions
-    install = base.install()
+    install = base.install(__path__)
     validate = base.validate()
 
     #configParser.py
