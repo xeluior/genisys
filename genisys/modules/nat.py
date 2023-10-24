@@ -67,6 +67,7 @@ class Nat(base.Module):
         -A FORWARD -i {nat_interface} -o {interface} -m state --state RELATED,ESTABLISHED -j ACCEPT
         COMMIT
         """
+        # NOTE: "sudo netfilter-persistent save" and "sudo netfilter-persistent reload" will need to be run to make these rules stick. 
         return iptables_rules
 
     # end generate
