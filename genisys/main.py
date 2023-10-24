@@ -66,3 +66,32 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+'''
+import needed modules,
+create new module with options/configs from other branches.
+'''
+def run():
+
+    #netplan.py
+    import modules.netplan as net
+
+    #get settings for functions
+    netLocation = net.install_location()
+    netgenerate = net.generate()
+
+    #base.py
+    import modules.base as base
+
+    install = base.install()
+    validate = base.validate()
+
+    #get settings for functions
+
+    #configParser.py
+    import modules.configParser as cp
+
+    #get settings for functions
+    cpSection = cp.getSection()
+    cpHeadings = cp.getAllHeadings()
+    cpPrintDict = cp.printDict()
