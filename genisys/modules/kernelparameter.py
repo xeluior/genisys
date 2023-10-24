@@ -1,4 +1,4 @@
-from typing import Self
+from typing_extensions import Self
 from pathlib import Path
 
 from genisys.modules import base

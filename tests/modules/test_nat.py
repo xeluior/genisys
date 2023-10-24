@@ -1,6 +1,4 @@
 import unittest
-import tempfile
-import yaml
 from genisys.modules.nat import Nat
 from genisys import configParser
 
@@ -8,7 +6,7 @@ class NatTest(unittest.TestCase):
     """ Tests for the NAT module """
     def test_values_in_config(self):
         """ Ensure that a missing config option raises the expected error. """
-        with open("../configs/nat_test_1.yml") as config_file:
+        with open("../genisys/tests/configs/nat_test_1.yml") as config_file:
             config = configParser.YAMLParser(config_file.name)
             module = Nat(config)
             with self.assertRaises(ValueError) as context:
@@ -17,7 +15,7 @@ class NatTest(unittest.TestCase):
 
     def test_shared_interface_name(self):
         """ Ensure that interfaces sharing the same name raises an error. """
-        with open("../configs/nat_test_2.yml") as config_file:
+        with open("../genisys/tests/configs/nat_test_2.yml") as config_file:
             config = configParser.YAMLParser(config_file.name)
             module = Nat(config)
             with self.assertRaises(ValueError) as context:
@@ -44,15 +42,12 @@ class NatTest(unittest.TestCase):
         "-A FORWARD -i eth02 -o eth01 -m state --state RELATED,ESTABLISHED -j ACCEPT",
         "COMMIT"
         ]
-        with open("../configs/nat_test_3.yml") as config_file:
+        with open("../genisys/tests/configs/nat_test_3.yml") as config_file:
             config = configParser.YAMLParser(config_file.name)
             module = Nat(config)
             output = module.generate().split("\n")
-            newOutput = []
-            for line in output:
-                newOutput.append(line.strip()) # Extra spacing may cause errors later, will require further testing. 
             for line in expected_output:
-                self.assertIn(line, newOutput)
+                self.assertIn(line, output)
     # end test_expected_successful_output
 
 if __name__ == "__main__":

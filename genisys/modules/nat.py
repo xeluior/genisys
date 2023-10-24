@@ -1,7 +1,8 @@
-from typing import Self
+from typing_extensions import Self
 from pathlib import Path
 from genisys.modules import base
-from jinja2 import jinja
+from jinja2 import Template
+from textwrap3 import dedent
 
 class Nat(base.Module):
     IPV4_DIR = "/etc/iptables/rules.v4"  # IPv4 Assumed default
@@ -35,23 +36,26 @@ class Nat(base.Module):
             raise ValueError("The Nat Interface and Interface configs have the same value.")
 
         # Begin adding iptables rules TODO: Double check with Robert that these variables are being put in the correct rules.
-        iptables_rules = f"""*nat
+        template_text = """
+        *nat
         :PREROUTING ACCEPT [0:0]
         :INPUT ACCEPT [0:0]
         :OUTPUT ACCEPT [0:0]
         :POSTROUTING ACCEPT [0:0]
-        -A POSTROUTING -o {nat_interface} -s {subnet} -j MASQUERADE
+        -A POSTROUTING -o {{ nat_interface_tmp }} -s {{ subnet_tmp }} -j MASQUERADE
         COMMIT
-        
+
         *filter
         :INPUT ACCEPT [0:0]
         :FORWARD ACCEPT [0:0]
         :OUTPUT ACCEPT [0:0]
         -P FORWARD ACCEPT
-        -A FORWARD -i {interface} -o {nat_interface} -j ACCEPT
-        -A FORWARD -i {nat_interface} -o {interface} -m state --state RELATED,ESTABLISHED -j ACCEPT
+        -A FORWARD -i {{ interface_tmp }} -o {{ nat_interface_tmp }} -j ACCEPT
+        -A FORWARD -i {{ nat_interface_tmp }} -o {{ interface_tmp }} -m state --state RELATED,ESTABLISHED -j ACCEPT
         COMMIT
         """
+        template = Template(dedent(template_text)) #remove indentation
+        iptables_rules = template.render(nat_interface_tmp=nat_interface, interface_tmp=interface, subnet_tmp=subnet)
         # NOTE: "sudo netfilter-persistent save" and "sudo netfilter-persistent reload" will need to be run to make these rules stick. 
         return iptables_rules
 
