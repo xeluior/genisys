@@ -47,6 +47,6 @@ class Module(metaclass=ABCMeta):
         completed. Should return a List such that each item can be passed to the subprocess.run()
         function.
         """
-        return []
+        return ["sudo netfilter-persistent save", "sudo netfilter-persistent reload"]
     # end setup
 #end class Module
