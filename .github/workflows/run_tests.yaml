@@ -9,12 +9,14 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+      - run: pipx install poetry
       - name: python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
       - name: dependencies
-        run: pip install -r requirements.txt
+        run: poetry install
       - name: test
-        run: python tests/run_tests.py
+        run: poetry run python tests/run_tests.py
 

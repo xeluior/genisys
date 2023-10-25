@@ -1,5 +1,5 @@
 import yaml # Look into using ruamel.yaml for using YAML 1.2 specification
-from typing import Self
+from typing_extensions import Self
 
 class YAMLParser:
     def __init__(self, fileName) -> None:

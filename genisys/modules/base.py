@@ -1,13 +1,14 @@
-from typing import Self
 from pathlib import Path
+from typing_extensions import Self
 
 class Module:
+    """Base class all module should inherit from"""
     def generate(self: Self) -> str:
         """Generates the content of the configuration file."""
 
         raise NotImplementedError
     #end generate
-    
+
     def install_location(self: Self) -> Path:
         """Returns the location that the config file should be installed to.
         This path should always be absolute. Relative paths will be assumed
@@ -21,9 +22,9 @@ class Module:
         """Default implementation of the installation procedure. Without chroot
         this will likely require the application is ran as root.
         """
-        
+
         install_file = Path(chroot, self.install_location())
-        with open(self.install_location(), 'w') as fd:
+        with open(install_file, 'w', encoding="utf-8") as fd:
             fd.write(self.generate())
         #end with
     #end install
@@ -33,8 +34,8 @@ class Module:
 
         try:
             self.generate()
-            return true
+            return True
         except:
-            return false
+            return False
     #end validate
 #end class Module
