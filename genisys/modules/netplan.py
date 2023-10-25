@@ -2,7 +2,7 @@ import ipaddress
 from pathlib import Path
 import yaml
 
-from typing_extensions import Self
+from typing_extensions import Self, Union, List
 from genisys.modules.base import Module
 
 NETPLAN_DIR = '/etc/netplan'
