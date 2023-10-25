@@ -33,7 +33,8 @@ class Netplan(Module):
             prefix_len = None
 
         # parse the subnet option if it uses CIDR notation
-        if (cidr_start := self.config['subnet'].find('/')) != -1:
+        cidr_start = self.config['subnet'].find('/')
+        if cidr_start != -1:
             cidr_pfx_len = int(self.config['subnet'][cidr_start+1:])
             if prefix_len is not None and prefix_len != cidr_pfx_len:
                 raise ValueError("Subnet mask does not match CIDR prefix length")
