@@ -65,7 +65,7 @@ class Netplan(Module):
         return yaml.dump(netplan)
     # end generate
 
-    def setup_commands(self: Self) -> list[str] | list[list[str]]:
+    def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
         return [ "netplan apply" ]
     # end setup_commands
 # end class Interface
