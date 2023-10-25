@@ -1,6 +1,6 @@
 from pathlib import Path
 from abc import ABCMeta, abstractmethod
-from typing_extensions import Self
+from typing_extensions import Self, Union
 
 class Module(metaclass=ABCMeta):
     """Base class all module should inherit from"""
@@ -42,7 +42,7 @@ class Module(metaclass=ABCMeta):
             return False
     #end validate
 
-    def setup_commands(self: Self) -> list[str] | list[list[str]]:
+    def setup_commands(self: Self) -> Union[list[str], list[list[str]]]:
         """Returns commands which are should be ran before the module's configuration output is
         completed. Should return a list such that each item can be passed to the subprocess.run()
         function.
