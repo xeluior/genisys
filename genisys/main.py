@@ -8,27 +8,36 @@ def validate(modules):
         else:
             print(f"{module.__class__.__name__} configuration is valid!")
 
-def install_config(file, change_root="/"):
-    print(f"Installing config file: {file} with root at {change_root}")
+def install_config(file, root="/"):
+    print(f"Installing config file: {file} with root at {root}")
     # TODO: Implement the installation logic here
 
-def generate_config(file, change_root="/"):
-    print(f"Generating config file: {file} at directory {change_root}")
+def generate_config(file, root="/"):
+    print(f"Generating config file: {file} at directory {root}")
     # TODO: Implement the generate logic here
 
 def daemon():
     print("Starting daemon...")
     # TODO: Implement the daemon logic here
 
-def run(subcommand, args, modules):
+def run(subcommand, args, module):
+    #netplan
+    import modules.netplan as net
+    netplan = net.Netplan(args)
+
+    #preseed
+    import modules.preseed as ps
+    preseed = ps.Preseed(args)
+
+    #nat
+    import modules.nat as nt
+    nat = nt.Nat(args)
+
     if subcommand == "validate":
-        validate(modules)
+        validate(module)
     elif subcommand == "install":
-        install_config(args.file, args.change_root)
-    elif subcommand == "generate":
-        generate_config(args.file, args.change_root)
-    elif subcommand == "daemon":
-        daemon()
+        install_config(args.file, args.root)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Config File Management Tool")
@@ -54,32 +63,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-'''
-import needed modules,
-create new module with options/configs from other branches.
-'''
-def run():
-
-    #netplan.py
-    import modules.netplan as net
-
-    #get settings for functions
-    netLocation = net.install_location()
-    netgenerate = net.generate()
-
-    #base.py
-    import modules.base as base
-
-    install = base.install()
-    validate = base.validate()
-
-    #get settings for functions
-
-    #configParser.py
-    import modules.configParser as cp
-
-    #get settings for functions
-    cpSection = cp.getSection()
-    cpHeadings = cp.getAllHeadings()
-    cpPrintDict = cp.printDict()
