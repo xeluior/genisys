@@ -10,6 +10,8 @@ def validate(modules):
 
 def install_config(file, root="/"):
     print(f"Installing config file: {file} with root at {root}")
+
+    raise NotImplementedError
     # TODO: Implement the installation logic here
 
 def generate_config(file, root="/"):
@@ -21,16 +23,17 @@ def daemon():
     # TODO: Implement the daemon logic here
 
 def run(subcommand, args, module):
+    import genisys.modules.netplan as net
+    import genisys.modules.preseed as ps
+    import genisys.modules.nat as nt
+
     #netplan
-    import modules.netplan as net
     netplan = net.Netplan(args)
 
     #preseed
-    import modules.preseed as ps
     preseed = ps.Preseed(args)
 
     #nat
-    import modules.nat as nt
     nat = nt.Nat(args)
 
     if subcommand == "validate":
