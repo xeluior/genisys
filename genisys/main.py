@@ -1,4 +1,7 @@
 import argparse
+import genisys.modules.netplan as net
+import genisys.modules.preseed as ps
+import genisys.modules.nat as nt
 #from modules.base import any modules
 
 def validate(modules):
@@ -8,27 +11,40 @@ def validate(modules):
         else:
             print(f"{module.__class__.__name__} configuration is valid!")
 
-def install_config(file, change_root="/"):
-    print(f"Installing config file: {file} with root at {change_root}")
+def install_config(file, root="/"):
+    print(f"Installing config file: {file} with root at {root}")
+
+    raise NotImplementedError
     # TODO: Implement the installation logic here
 
-def generate_config(file, change_root="/"):
-    print(f"Generating config file: {file} at directory {change_root}")
+def generate_config(file, root="/"):
+    print(f"Generating config file: {file} at directory {root}")
+
+    raise NotImplementedError
     # TODO: Implement the generate logic here
 
 def daemon():
     print("Starting daemon...")
+
+    raise NotImplementedError
     # TODO: Implement the daemon logic here
 
-def run(subcommand, args, modules):
+def run(subcommand, args, module):
+
+    #netplan
+    netplan = net.Netplan(args)
+
+    #preseed
+    preseed = ps.Preseed(args)
+
+    #nat
+    nat = nt.Nat(args)
+
     if subcommand == "validate":
-        validate(modules)
+        validate(module)
     elif subcommand == "install":
-        install_config(args.file, args.change_root)
-    elif subcommand == "generate":
-        generate_config(args.file, args.change_root)
-    elif subcommand == "daemon":
-        daemon()
+        install_config(args.file, args.root)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Config File Management Tool")
