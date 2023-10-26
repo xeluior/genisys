@@ -16,10 +16,14 @@ def install_config(file, root="/"):
 
 def generate_config(file, root="/"):
     print(f"Generating config file: {file} at directory {root}")
+
+    raise NotImplementedError
     # TODO: Implement the generate logic here
 
 def daemon():
     print("Starting daemon...")
+
+    raise NotImplementedError
     # TODO: Implement the daemon logic here
 
 def run(subcommand, args, module):
