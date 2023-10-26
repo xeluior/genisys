@@ -1,4 +1,7 @@
 import argparse
+import genisys.modules.netplan as net
+import genisys.modules.preseed as ps
+import genisys.modules.nat as nt
 #from modules.base import any modules
 
 def validate(modules):
@@ -27,9 +30,6 @@ def daemon():
     # TODO: Implement the daemon logic here
 
 def run(subcommand, args, module):
-    import genisys.modules.netplan as net
-    import genisys.modules.preseed as ps
-    import genisys.modules.nat as nt
 
     #netplan
     netplan = net.Netplan(args)
