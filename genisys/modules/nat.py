@@ -68,7 +68,8 @@ class Nat(base.Module):
     # end install_location
 
     def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
-        return ["sudo netfilter-persistent save", "sudo netfilter-persistent reload", "sudo systemctl enable iptables", "sudo systemctl start iptables"]
+
+        return ["iptables-restore < " + self.IPV4_DIR, "netfilter-persistent reload", "systemctl enable iptables", "systemctl start iptables", "sysctl -p"]
 
     # end setup_commands
     
