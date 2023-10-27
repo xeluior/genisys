@@ -1,9 +1,6 @@
-from typing_extensions import Self
+from typing_extensions import Self, Union, List
 from pathlib import Path
-
 from genisys.modules import base
-from typing import Self
-from pathlib import Path
 
 class KernelParameter(base.module):
     ''' 99 prefix guarantees that this rule will overwrite sysctl.conf parameter assignment, this file will need to be created beforehand '''
@@ -22,6 +19,9 @@ class KernelParameter(base.module):
     def generate(self: Self) -> str:
         return "net.ipv4.ip_forward=1"
 
+
+    def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
+        return ["sysctl -p"]
     # end generate
 
     
