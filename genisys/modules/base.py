@@ -27,6 +27,11 @@ class Module(metaclass=ABCMeta):
         """
 
         install_file = Path(chroot, self.install_location())
+
+        # create the parent directory
+        install_file.parent.mkdir(parents=True, exist_ok=True)
+
+        # write the file
         with open(install_file, 'w', encoding="utf-8") as fd:
             fd.write(self.generate())
         #end with
