@@ -26,7 +26,11 @@ class Module(metaclass=ABCMeta):
         this will likely require the application is ran as root.
         """
 
-        install_file = Path(chroot, self.install_location())
+        # treat all install_locations as relative
+        if self.install_location().is_absolute():
+            install_file = Path(chroot, *self.install_location().parts[1:])
+        else:
+            install_file = Path(chroot, self.install_location())
 
         # create the parent directory
         install_file.parent.mkdir(parents=True, exist_ok=True)
