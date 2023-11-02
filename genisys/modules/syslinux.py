@@ -1,7 +1,11 @@
-from typing_extensions import Self
 from pathlib import Path
+
+import jinja2
+from typing_extensions import Self
+
 from genisys.modules.base import Module
 from genisys.configParser import YAMLParser
+from genisys.modules import preseed
 
 CONFIG_DIR="pxelinux.cfg"
 FILENAME="default"
@@ -18,6 +22,14 @@ class Syslinux(Module):
     # end install_location
 
     def generate(self: Self) -> str:
-        return ""
+        jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
+        template = jinja_env.get_template("pxelinux.cfg.j2")
+
+        initrd = "images/initrd.gz"
+        kernel = "images/vmlinuz"
+        return template.render(network=self.config["network"],
+                               initrd=initrd,
+                               kernel=kernel,
+                               preseed_filename=preseed.FILENAME)
     # end generate
 # end class Syslinux
