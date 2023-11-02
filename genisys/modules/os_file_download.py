@@ -16,8 +16,20 @@ Link to Debian files (amd64): https://deb.debian.org/debian/dists/bookworm/main/
 '''
 from genisys.modules import base
 from pathlib import Path
-from typing_extensions import Self
+from typing_extensions import Self, Union, List
 
 class OSDownload(base.Module):
+    DEBIAN_TAR_FILE_LINK = "https://deb.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/netboot.tar.gz" 
+
     def __init__(self: Self, config) -> None:
-        super().__init__()
+       self.config = config
+
+    def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
+        # Downloading and unpacking Debian netboot files
+        download_command = f"curl \"{self.DEBIAN_TAR_FILE_LINK}\" -o netboot.tar.gz"
+        unpack_command = "tar -xzvf netboot.tar.gz"
+        remove_tar_file_command = "rm netboot.tar.gz" # Remove tar file once completed unpacking
+        
+        # TODO: Moving files to the correct locations
+
+        return [download_command, unpack_command, remove_tar_file_command]
