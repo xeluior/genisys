@@ -11,7 +11,7 @@ Link to Debian files (amd64): https://deb.debian.org/debian/dists/bookworm/main/
 from genisys.modules import base
 from pathlib import Path
 from typing_extensions import Self
-from requests import get
+import requests
 import tarfile
 
 class OSDownload(base.Module):
@@ -25,20 +25,29 @@ class OSDownload(base.Module):
     # end __init__
 
     def install(self: Self, chroot: Path = ...):
+        tftp_directory = self.config["network"]["tftp_directory"]
+
         if chroot:
-            directory = Path(chroot, self.config["network"]["tftp_directory"])
+            directory = Path(chroot, tftp_directory)
         else:
-            directory = Path(self.config["network"]["tftp_directory"])
-        
-        res = get(self.DEBIAN_TAR_FILE_LINK, allow_redirects=True) # Look into allow_redirects
-        download_dir = Path(directory, self.DEBIAN_TAR_FILENAME)
+            directory = Path(tftp_directory)
 
-        with open(download_dir, "wb") as file:
-            file.write(res.content)
+        try:
+            response = requests.get(self.DEBIAN_TAR_FILE_LINK, allow_redirects=True)
+            response.raise_for_status()  # Check for request errors
 
-        with tarfile.open(download_dir, "r:gz") as tar:
-            tar.extractall(directory)
-    
+            download_dir = directory / self.DEBIAN_TAR_FILENAME
+
+            with open(download_dir, "wb") as file:
+                file.write(response.content)
+
+            with tarfile.open(download_dir, "r:gz") as tar:
+                tar.extractall(directory)
+
+        except requests.RequestException as e:
+            print(f"Request failed: {e}")  # Handle request exceptions
+        except (OSError, tarfile.TarError) as e:
+            print(f"Error: {e}")  # Handle file and extraction errors
     #end install
 
 # end OSDownload
