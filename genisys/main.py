@@ -2,7 +2,7 @@ import argparse
 import genisys.modules.netplan as net
 import genisys.modules.preseed as ps
 import genisys.modules.nat as nt
-#from modules.base import any modules
+import genisys.modules.kernelparameter as kp
 
 def validate(modules):
     for module in modules:
@@ -14,8 +14,10 @@ def validate(modules):
 def install_config(file, root="/"):
     print(f"Installing config file: {file} with root at {root}")
 
-    raise NotImplementedError
-    # TODO: Implement the installation logic here
+    ps.install()
+    nt.install()
+    net.install()
+    kp.install()
 
 def generate_config(file, root="/"):
     print(f"Generating config file: {file} at directory {root}")
@@ -30,7 +32,6 @@ def daemon():
     # TODO: Implement the daemon logic here
 
 def run(subcommand, args, module):
-
     #netplan
     netplan = net.Netplan(args)
 
@@ -39,6 +40,9 @@ def run(subcommand, args, module):
 
     #nat
     nat = nt.Nat(args)
+
+    #kernelparameter
+    kernelParameter = kp.KernelParameter(args)
 
     if subcommand == "validate":
         validate(module)
