@@ -22,7 +22,7 @@ class Syslinux(Module):
     # end install_location
 
     def generate(self: Self) -> str:
-        jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
+        jinja_env = jinja2.Environment(loader=jinja2.PackageLoader("genisys"))
         template = jinja_env.get_template("pxelinux.cfg.j2")
 
         initrd = "debian-installer/initrd.gz"
