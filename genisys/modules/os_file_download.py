@@ -1,12 +1,6 @@
 '''
-This module will handle the downloading of all of the files necessary for the PXE booting of a client machine. 
-
-NOTES:
-Downloading and storing all of the various files needed for boot:
-syslinux.pxe / whatever
-post-boot ISO/debian.whatever files
-Need to download and install these files to the correct directories
-Look into netboot.xyz
+Notes for self: 
+This module will handle the downloading of all of the OS files necessary for the PXE booting of a client machine. 
 
 - vmlinuz (Kernel) & initrd/initramfs (Initial Ram Disk)
 - pxelinux.cfg 
@@ -16,20 +10,35 @@ Link to Debian files (amd64): https://deb.debian.org/debian/dists/bookworm/main/
 '''
 from genisys.modules import base
 from pathlib import Path
-from typing_extensions import Self, Union, List
+from typing_extensions import Self
+from requests import get
+import tarfile
 
 class OSDownload(base.Module):
     DEBIAN_TAR_FILE_LINK = "https://deb.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/netboot.tar.gz" 
+    DEBIAN_TAR_FILENAME = "netboot.tar.gz"
 
     def __init__(self: Self, config) -> None:
        self.config = config
+       self.config["network"] = config["Network"]
 
-    def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
-        # Downloading and unpacking Debian netboot files
-        download_command = f"curl \"{self.DEBIAN_TAR_FILE_LINK}\" -o netboot.tar.gz"
-        unpack_command = "tar -xzvf netboot.tar.gz"
-        remove_tar_file_command = "rm netboot.tar.gz" # Remove tar file once completed unpacking
+    # end __init__
+
+    def install(self: Self, chroot: Path = ...):
+        if chroot:
+            directory = Path(chroot, self.config["network"]["tftp_directory"])
+        else:
+            directory = Path(self.config["network"]["tftp_directory"])
         
-        # TODO: Moving files to the correct locations
+        res = get(self.DEBIAN_TAR_FILE_LINK, allow_redirects=True) # Look into allow_redirects
+        download_dir = Path(directory, self.DEBIAN_TAR_FILENAME)
 
-        return [download_command, unpack_command, remove_tar_file_command]
+        with open(download_dir, "wb") as file:
+            file.write(res.content)
+
+        with tarfile.open(download_dir, "r:gz") as tar:
+            tar.extractall(directory)
+    
+    #end install
+
+# end OSDownload
