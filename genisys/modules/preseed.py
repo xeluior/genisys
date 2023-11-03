@@ -3,7 +3,6 @@ from typing_extensions import Self
 import jinja2
 from genisys.modules.base import Module
 
-
 FILENAME = "preseed.cfg"
 
 class Preseed(Module):
