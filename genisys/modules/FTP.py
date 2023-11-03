@@ -1,7 +1,7 @@
 # FTP.py
 from pathlib import Path
-from typing_extensions import Self, Union, List
-from .base import Module
+from typing_extensions import Self
+from genisys.modules.base import Module
 
 
 class VsftpdModule(Module):
