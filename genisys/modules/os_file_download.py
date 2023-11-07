@@ -13,6 +13,7 @@ from pathlib import Path
 from typing_extensions import Self
 import requests
 import tarfile
+import os
 
 class OSDownload(base.Module):
     DEBIAN_TAR_FILE_LINK = "https://deb.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/netboot.tar.gz" 
@@ -27,22 +28,23 @@ class OSDownload(base.Module):
     def install(self: Self, chroot: Path = ...):
         tftp_directory = self.config["network"]["tftp_directory"]
 
-        if chroot:
-            directory = Path(chroot, tftp_directory)
-        else:
-            directory = Path(tftp_directory)
-
         try:
             response = requests.get(self.DEBIAN_TAR_FILE_LINK, allow_redirects=True)
             response.raise_for_status()  # Check for request errors
 
-            download_dir = directory / self.DEBIAN_TAR_FILENAME
+            tmp_directory = Path("/tmp")
+            download_dir = tmp_directory / self.DEBIAN_TAR_FILENAME
 
             with open(download_dir, "wb") as file:
                 file.write(response.content)
 
+            target_directory = Path(chroot, tftp_directory) if chroot else Path(tftp_directory)
+
             with tarfile.open(download_dir, "r:gz") as tar:
-                tar.extractall(directory)
+                tar.extractall(target_directory)
+
+            # Remove the downloaded .tar.gz file from /tmp
+            os.remove(download_dir)
 
         except requests.RequestException as e:
             print(f"Request failed: {e}")  # Handle request exceptions
