@@ -14,12 +14,12 @@ class OSDownload(base.Module):
     Link to Debian files (amd64): https://deb.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/
     """
 
-    DEBIAN_TAR_FILE_LINK = "https://deb.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/netboot.tar.gz"
-    DEBIAN_TAR_FILENAME = "netboot.tar.gz"
-
     def __init__(self: Self, config) -> None:
         self.config = config
         self.config["network"] = config["Network"]
+
+        self.DEBIAN_TAR_FILENAME = "netboot.tar.gz"
+        self.DEBIAN_TAR_LINK = f"https://deb.debian.org/debian/dists/{self.config['version-name']}/main/installer-{self.config['target-architecture']}/current/images/netboot/netboot.tar.gz"
 
     def install(self: Self, chroot: Path = ...):
         tftp_directory = self.config["network"]["tftp_directory"]

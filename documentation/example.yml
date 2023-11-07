@@ -19,6 +19,8 @@ Network:
 OS:
   os: "debian"
   version: 12
+  version-name: bookworm
+  target-architecture: amd64 
 UEFI:
   uefi: false
 Users:
