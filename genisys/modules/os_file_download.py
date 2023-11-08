@@ -20,12 +20,13 @@ class OSDownload(base.Module):
 
         self.DEBIAN_TAR_FILENAME = "netboot.tar.gz"
         self.DEBIAN_TAR_LINK = f"https://deb.debian.org/debian/dists/{self.config['version-name']}/main/installer-{self.config['target-architecture']}/current/images/netboot/netboot.tar.gz"
+    # end __init__
 
     def install(self: Self, chroot: Path = ...):
         tftp_directory = self.config["network"]["tftp_directory"]
 
         try:
-            response = requests.get(self.DEBIAN_TAR_FILE_LINK, allow_redirects=True, timeout=15)
+            response = requests.get(self.DEBIAN_TAR_LINK, allow_redirects=True, timeout=15)
             response.raise_for_status()  # Check for request errors
 
             tmp_directory = Path("/tmp")
@@ -46,5 +47,6 @@ class OSDownload(base.Module):
             print(f"Request failed: {e}")  # Handle request exceptions
         except (OSError, tarfile.TarError) as e:
             print(f"Error: {e}")  # Handle file and extraction errors
+    # end install 
 
-# Ensure a newline at the end of the file
+# end OSDownload
