@@ -1,4 +1,4 @@
-from typing_extensions import Self
+from typing_extensions import Self, Union, List
 from pathlib import Path
 from genisys.modules import base
 from jinja2 import Template
@@ -66,5 +66,11 @@ class Nat(base.Module):
         return Path(self.IPV4_DIR)
 
     # end install_location
+
+    def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
+
+        return ["iptables-restore -f " + self.IPV4_DIR, "netfilter-persistent reload", "systemctl enable iptables", "systemctl start iptables"]
+
+    # end setup_commands
 
 # end nat class

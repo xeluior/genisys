@@ -15,7 +15,6 @@ def validate(modules):
 
 def install_config(file, root="/"):
     print(f"Installing config file: {file} with root at {root}")
-
     ps.install(root)
     nt.install(root)
     net.install(root)

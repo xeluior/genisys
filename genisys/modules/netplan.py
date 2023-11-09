@@ -2,7 +2,7 @@ import ipaddress
 from pathlib import Path
 import yaml
 
-from typing_extensions import Self
+from typing_extensions import Self, Union, List
 from genisys.modules.base import Module
 
 NETPLAN_DIR = '/etc/netplan'
@@ -33,7 +33,8 @@ class Netplan(Module):
             prefix_len = None
 
         # parse the subnet option if it uses CIDR notation
-        if (cidr_start := self.config['subnet'].find('/')) != -1:
+        cidr_start = self.config['subnet'].find('/')
+        if cidr_start != -1:
             cidr_pfx_len = int(self.config['subnet'][cidr_start+1:])
             if prefix_len is not None and prefix_len != cidr_pfx_len:
                 raise ValueError("Subnet mask does not match CIDR prefix length")
@@ -64,4 +65,8 @@ class Netplan(Module):
         # return the yaml
         return yaml.dump(netplan)
     # end generate
+
+    def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
+        return [ "netplan apply" ]
+    # end setup_commands
 # end class Interface
