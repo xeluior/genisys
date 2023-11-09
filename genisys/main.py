@@ -1,3 +1,5 @@
+#!/usr/bin/env
+
 import argparse
 import genisys.modules.netplan as net
 import genisys.modules.preseed as ps
@@ -14,16 +16,10 @@ def validate(modules):
 def install_config(file, root="/"):
     print(f"Installing config file: {file} with root at {root}")
 
-    ps.install()
-    nt.install()
-    net.install()
-    kp.install()
-
-def generate_config(file, root="/"):
-    print(f"Generating config file: {file} at directory {root}")
-
-    raise NotImplementedError
-    # TODO: Implement the generate logic here
+    ps.install(root)
+    nt.install(root)
+    net.install(root)
+    kp.install(root)
 
 def daemon():
     print("Starting daemon...")
