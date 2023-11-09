@@ -1,13 +1,17 @@
-from typing import Self
 from pathlib import Path
+from abc import ABCMeta, abstractmethod
+from typing_extensions import Self, Union, List
 
-class Module:
+class Module(metaclass=ABCMeta):
+    """Base class all module should inherit from"""
+    @abstractmethod
     def generate(self: Self) -> str:
         """Generates the content of the configuration file."""
 
         raise NotImplementedError
     #end generate
-    
+
+    @abstractmethod
     def install_location(self: Self) -> Path:
         """Returns the location that the config file should be installed to.
         This path should always be absolute. Relative paths will be assumed
@@ -21,9 +25,9 @@ class Module:
         """Default implementation of the installation procedure. Without chroot
         this will likely require the application is ran as root.
         """
-        
+
         install_file = Path(chroot, self.install_location())
-        with open(self.install_location(), 'w') as fd:
+        with open(install_file, 'w', encoding="utf-8") as fd:
             fd.write(self.generate())
         #end with
     #end install
@@ -33,8 +37,16 @@ class Module:
 
         try:
             self.generate()
-            return true
+            return True
         except:
-            return false
+            return False
     #end validate
+
+    def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
+        """Returns commands which are should be ran before the module's configuration output is
+        completed. Should return a List such that each item can be passed to the subprocess.run()
+        function.
+        """
+        return []
+    # end setup
 #end class Module
