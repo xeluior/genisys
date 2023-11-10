@@ -18,19 +18,19 @@ def validate(modules):
 def install_config(file, root="/"):
     print(f"Installing config file: {file} with root at {root}")
     # netplan
-    netplan = net.Netplan()
+    netplan = net.Netplan(file)
     netplan.install(root)
 
     # preseed
-    preseed = ps.Preseed()
+    preseed = ps.Preseed(file)
     preseed.install(root)
 
     # nat
-    nat = nt.Nat()
+    nat = nt.Nat(file)
     nat.install(root)
 
     # kernelparameter
-    kernelParameter = kp.KernelParameter()     
+    kernelParameter = kp.KernelParameter(file)     
     kernelParameter.install(root)
 
 def daemon():
