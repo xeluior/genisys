@@ -2,7 +2,7 @@ from typing_extensions import Self, Union, List
 from pathlib import Path
 from genisys.modules import base
 
-class KernelParameter(base.module):
+class KernelParameter(base.Module):
     ''' 99 prefix guarantees that this rule will overwrite sysctl.conf parameter assignment, this file will need to be created beforehand '''
     SYSCTL_FILE = "/etc/sysctl.d/99-ip-forwarding-rule.conf" 
 
