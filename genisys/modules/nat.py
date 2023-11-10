@@ -20,17 +20,17 @@ class Nat(base.Module):
         # Set vars from config, error on config missing
         if "nat-interface" in self.config["network"]:
             nat_interface = self.config["network"]["nat-interface"]
-        else: 
+        else:
             raise ValueError("Nat Interface value not found in config file.")
 
         if "subnet" in self.config["network"]:
             subnet = self.config["network"]["subnet"]
-        else: 
+        else:
             raise ValueError("Subnet value not found in config file.")
 
         if "interface" in self.config["network"]:
             interface = self.config["network"]["interface"]
-        else: 
+        else:
             raise ValueError("Interface value not found in config file.")
 
         # Error on nat interface and non-nat interface having the same value

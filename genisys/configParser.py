@@ -2,21 +2,21 @@ import yaml # Look into using ruamel.yaml for using YAML 1.2 specification
 from typing_extensions import Self
 
 class YAMLParser:
-    def __init__(self, fileName) -> None:
-        self.fileName = fileName
+    def __init__(self, filename) -> None:
+        self.filename = filename
     # end __init__
 
-    ''' Returns all of the key value pairs under a specific heading as a Python dictionary '''
-    def getSection(self: Self, heading) -> dict:
+    def getSection(self: Self, heading: str) -> dict:
+        '''Returns all of the key value pairs under a specific heading as a Python dictionary'''
         dictionary = {}
-        with open(self.fileName) as file:
+        with open(self.filename, encoding='utf-8') as file:
             data = yaml.safe_load(file)
 
             if heading in data:
-                sectionData = data[heading]
+                section_data = data[heading]
 
                 try:
-                    for key, value in sectionData.items():
+                    for key, value in section_data.items():
                         dictionary[key] = value
                 except AttributeError:
                     print("Heading is empty.")
@@ -27,16 +27,16 @@ class YAMLParser:
         return dictionary
     # end getSection
 
-    ''' Returns a list object containing all section headings in the provided YAML file '''
     def getAllHeadings(self: Self) -> list:
-        headingList = []
-        with open(self.fileName) as file:
+        ''' Returns a list object containing all section headings in the provided YAML file '''
+        headings = []
+        with open(self.filename, encoding='utf-8') as file:
             data = yaml.safe_load(file)
 
             for heading in data:
-                headingList.append(heading)
+                headings.append(heading)
 
-        return headingList
+        return headings
     # end getAllHeadings
 
     def printDict(self: Self, dictionary) -> None:
