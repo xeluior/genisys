@@ -27,6 +27,9 @@ class Module(metaclass=ABCMeta):
         """
 
         install_file = Path(chroot, self.install_location())
+        if install_file.exists():
+            install_file.rename(install_file.with_suffix(install_file.suffix + '.bak'))
+
         with open(install_file, 'w', encoding="utf-8") as fd:
             fd.write(self.generate())
         #end with
