@@ -1,10 +1,12 @@
 #!/usr/bin/env
 
 import argparse
+import subprocess
 import genisys.modules.netplan as net
 import genisys.modules.preseed as ps
 import genisys.modules.nat as nt
 import genisys.modules.kernelparameter as kp
+import genisys.configParser as cp
 
 def validate(modules):
     for module in modules:
@@ -15,10 +17,21 @@ def validate(modules):
 
 def install_config(file, root="/"):
     print(f"Installing config file: {file} with root at {root}")
-    ps.install(root)
-    nt.install(root)
-    net.install(root)
-    kp.install(root)
+    # netplan
+    netplan = net.Netplan()
+    netplan.install(root)
+
+    # preseed
+    preseed = ps.Preseed()
+    preseed.install(root)
+
+    # nat
+    nat = nt.Nat()
+    nat.install(root)
+
+    # kernelparameter
+    kernelParameter = kp.KernelParameter()     
+    kernelParameter.install(root)
 
 def daemon():
     print("Starting daemon...")
@@ -27,17 +40,27 @@ def daemon():
     # TODO: Implement the daemon logic here
 
 def run(subcommand, args, module):
-    #netplan
-    netplan = net.Netplan(args)
+    # Config Parser
+    yamlParser = cp.YAMLParser()
 
-    #preseed
-    preseed = ps.Preseed(args)
+    # netplan
+    netplan = net.Netplan(args, yamlParser)
 
-    #nat
-    nat = nt.Nat(args)
+    # preseed
+    preseed = ps.Preseed(args, yamlParser)
 
-    #kernelparameter
-    kernelParameter = kp.KernelParameter(args)
+    # nat
+    nat = nt.Nat(args, yamlParser)
+
+    # kernelparameter
+    kernelParameter = kp.KernelParameter(args, yamlParser)
+
+    # setup commands
+    modulesList = [netplan, preseed, nat, kernelParameter]
+    for mod in modulesList:
+        # function setup_commands returns list
+        for command in mod.setup_commands:
+            subprocess.run(command)
 
     if subcommand == "validate":
         validate(module)
