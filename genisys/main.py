@@ -33,6 +33,24 @@ def install_config(file, root="/"):
     kernelParameter = kp.KernelParameter(file)     
     kernelParameter.install(root)
 
+def generate_config(file, root="/"):
+    print(f"Installing config file: {file} with root at {root}")
+    # netplan
+    netplan = net.Netplan(file)
+    netplan.generate()
+
+    # preseed
+    preseed = ps.Preseed(file)
+    preseed.generate()
+
+    # nat
+    nat = nt.Nat(file)
+    nat.generate()
+
+    # kernelparameter
+    kernelParameter = kp.KernelParameter(file)     
+    kernelParameter.generate()
+
 def daemon():
     print("Starting daemon...")
 
@@ -41,31 +59,33 @@ def daemon():
 
 def run(subcommand, args, module):
     # Config Parser
-    yamlParser = cp.YAMLParser()
+    yamlParser = cp.YAMLParser(args.file)
 
     # netplan
-    netplan = net.Netplan(args, yamlParser)
+    netplan = net.Netplan(yamlParser)
 
     # preseed
-    preseed = ps.Preseed(args, yamlParser)
+    preseed = ps.Preseed(yamlParser)
 
     # nat
-    nat = nt.Nat(args, yamlParser)
+    nat = nt.Nat(yamlParser)
 
     # kernelparameter
-    kernelParameter = kp.KernelParameter(args, yamlParser)
+    kernelParameter = kp.KernelParameter(yamlParser)
 
-    # setup commands
     modulesList = [netplan, preseed, nat, kernelParameter]
-    for mod in modulesList:
-        # function setup_commands returns list
-        for command in mod.setup_commands:
-            subprocess.run(command)
 
     if subcommand == "validate":
         validate(module)
     elif subcommand == "install":
         install_config(args.file, args.root)
+        # setup commands
+        for mod in modulesList:
+            # function setup_commands returns list
+            for command in mod.setup_commands:
+                subprocess.run(command, check=False)
+    elif subcommand == "generate":
+        generate_config(args.file, args.root)
 
 
 def main():

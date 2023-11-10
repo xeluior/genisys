@@ -6,7 +6,7 @@ class KernelParameter(base.Module):
     ''' 99 prefix guarantees that this rule will overwrite sysctl.conf parameter assignment, this file will need to be created beforehand '''
     SYSCTL_FILE = "/etc/sysctl.d/99-ip-forwarding-rule.conf" 
 
-    def __init__(self: Self, config: dict):
+    def __init__(self: Self, config):
         self.config = config
 
     # end __init__
