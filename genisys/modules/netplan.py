@@ -1,9 +1,9 @@
 import ipaddress
 from pathlib import Path
 import yaml
-
 from typing_extensions import Self, Union, List
 from genisys.modules.base import Module
+from genisys.configParser import YAMLParser
 
 NETPLAN_DIR = '/etc/netplan'
 NETPLAN_FILE = '99-genisys.yaml'
@@ -12,7 +12,7 @@ IPV4_BITS = 32
 class Netplan(Module):
     """Generates a Ubuntu netplan for the internal interface"""
 
-    def __init__(self: Self, config):
+    def __init__(self: Self, config: YAMLParser):
         """Stores only the nessecary portions of the config"""
         self.config = config.getSection("Network")
     # end __init__

@@ -2,13 +2,13 @@ from pathlib import Path
 from typing_extensions import Self
 import jinja2
 from genisys.modules.base import Module
-
+from genisys.configParser import YAMLParser
 
 FILENAME = "preseed.cfg"
 
 class Preseed(Module):
     """Generates a Preseed file to be served over the network to a booting Debian system"""
-    def __init__(self: Self, config):
+    def __init__(self: Self, config: YAMLParser):
         self.config = {}
         self.config["network"] = config.getSection("Network")
         self.config["users"] = config.getSection("Users")
