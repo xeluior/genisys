@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env python
 
 import argparse
 import subprocess
@@ -30,11 +30,11 @@ def install_config(file, root="/"):
     nat.install(root)
 
     # kernelparameter
-    kernelParameter = kp.KernelParameter(file)     
+    kernelParameter = kp.KernelParameter(file)
     kernelParameter.install(root)
 
-def generate_config(file, root="/"):
-    print(f"Installing config file: {file} with root at {root}")
+def generate_config(file, root="."):
+    print(f"Generating config file: {file} with root at {root}")
     # netplan
     netplan = net.Netplan(file)
     netplan.generate()
@@ -48,7 +48,7 @@ def generate_config(file, root="/"):
     nat.generate()
 
     # kernelparameter
-    kernelParameter = kp.KernelParameter(file)     
+    kernelParameter = kp.KernelParameter(file)
     kernelParameter.generate()
 
 def daemon():
@@ -57,7 +57,7 @@ def daemon():
     raise NotImplementedError
     # TODO: Implement the daemon logic here
 
-def run(subcommand, args, module):
+def run(subcommand, args, modules):
     # Config Parser
     yamlParser = cp.YAMLParser(args.file)
 
@@ -76,7 +76,7 @@ def run(subcommand, args, module):
     modulesList = [netplan, preseed, nat, kernelParameter]
 
     if subcommand == "validate":
-        validate(module)
+        validate(modules)
     elif subcommand == "install":
         install_config(args.file, args.root)
         # setup commands
@@ -86,7 +86,6 @@ def run(subcommand, args, module):
                 subprocess.run(command, check=False)
     elif subcommand == "generate":
         generate_config(args.file, args.root)
-
 
 def main():
     parser = argparse.ArgumentParser(description="Config File Management Tool")
@@ -98,10 +97,14 @@ def main():
     install_parser = subparsers.add_parser("install", help="Install the configuration files.")
     generate_parser = subparsers.add_parser("generate", help="Generate the configuration files.")
     daemon_parser = subparsers.add_parser("daemon", help="Monitor the config file for changes.")
- 
-    # Flags
+
+    # Flags for all subparsers
     for subparser in [validate_parser, install_parser, generate_parser]:
-        subparser.add_argument("-f","--file", type=str, default="default_config.cfg", help="Specify input configuration file.")
+        subparser.add_argument("-f", "--file", type=str, default="default_config.cfg", help="Specify input configuration file.")
+
+    # Adding root argument to install and generate parsers
+    install_parser.add_argument("--root", type=str, default="/", help="Specify the root directory for installation.")
+    generate_parser.add_argument("--root", type=str, default=".", help="Specify the root directory for generation.")
 
     args = parser.parse_args()
 
