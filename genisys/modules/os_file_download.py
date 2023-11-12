@@ -19,7 +19,7 @@ class OSDownload(base.Module):
         self.config["network"] = config["Network"]
 
         self.DEBIAN_TAR_FILENAME = "netboot.tar.gz"
-        self.DEBIAN_TAR_LINK = f"https://deb.debian.org/debian/dists/{self.config['version-name']}/main/installer-{self.config['target-architecture']}/current/images/netboot/netboot.tar.gz"
+        self.DEBIAN_TAR_LINK = f"https://deb.debian.org/debian/dists/{self.config['OS']['version-name']}/main/installer-{self.config['OS']['target-architecture']}/current/images/netboot/netboot.tar.gz"
     # end __init__
 
     def install(self: Self, chroot: Path = ...):
