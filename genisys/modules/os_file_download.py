@@ -1,4 +1,5 @@
 from pathlib import Path
+import tempfile
 from typing_extensions import Self
 import requests
 import tarfile
@@ -29,7 +30,7 @@ class OSDownload(base.Module):
             response = requests.get(self.DEBIAN_TAR_LINK, allow_redirects=True, timeout=15)
             response.raise_for_status()  # Check for request errors
 
-            tmp_directory = Path("/tmp")
+            tmp_directory = tempfile.gettempdir()
             download_dir = tmp_directory / self.DEBIAN_TAR_FILENAME
 
             with open(download_dir, "wb") as file:
