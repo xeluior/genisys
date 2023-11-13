@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env
 
 import argparse
 import subprocess
@@ -8,12 +8,14 @@ import genisys.modules.nat as nt
 import genisys.modules.kernelparameter as kp
 import genisys.configParser as cp
 
+
 def validate(modules):
     for module in modules:
         if not module.validate():
             print(f"Error in {module.__class__.__name__} configuration!")
         else:
             print(f"{module.__class__.__name__} configuration is valid!")
+
 
 def install_config(file, root="/"):
     print(f"Installing config file: {file} with root at {root}")
@@ -33,6 +35,7 @@ def install_config(file, root="/"):
     kernelParameter = kp.KernelParameter(file)
     kernelParameter.install(root)
 
+
 def generate_config(file, root="."):
     print(f"Generating config file: {file} with root at {root}")
     # netplan
@@ -51,13 +54,15 @@ def generate_config(file, root="."):
     kernelParameter = kp.KernelParameter(file)
     kernelParameter.generate()
 
+
 def daemon():
     print("Starting daemon...")
 
     raise NotImplementedError
     # TODO: Implement the daemon logic here
 
-def run(subcommand, args, modules):
+
+def run(subcommand, args, module):
     # Config Parser
     yamlParser = cp.YAMLParser(args.file)
 
@@ -76,7 +81,7 @@ def run(subcommand, args, modules):
     modulesList = [netplan, preseed, nat, kernelParameter]
 
     if subcommand == "validate":
-        validate(modules)
+        validate(module)
     elif subcommand == "install":
         install_config(args.file, args.root)
         # setup commands
@@ -87,31 +92,57 @@ def run(subcommand, args, modules):
     elif subcommand == "generate":
         generate_config(args.file, args.root)
 
+
 def main():
     parser = argparse.ArgumentParser(description="Config File Management Tool")
 
     # Subcommands
     subparsers = parser.add_subparsers(dest="command")
 
-    validate_parser = subparsers.add_parser("validate", help="Validate the configuration file.")
-    install_parser = subparsers.add_parser("install", help="Install the configuration files.")
-    generate_parser = subparsers.add_parser("generate", help="Generate the configuration files.")
-    daemon_parser = subparsers.add_parser("daemon", help="Monitor the config file for changes.")
+    validate_parser = subparsers.add_parser(
+        "validate", help="Validate the configuration file."
+    )
+    install_parser = subparsers.add_parser(
+        "install", help="Install the configuration files."
+    )
+    generate_parser = subparsers.add_parser(
+        "generate", help="Generate the configuration files."
+    )
+    daemon_parser = subparsers.add_parser(
+        "daemon", help="Monitor the config file for changes."
+    )
 
     # Flags for all subparsers
     for subparser in [validate_parser, install_parser, generate_parser]:
-        subparser.add_argument("-f", "--file", type=str, default="default_config.cfg", help="Specify input configuration file.")
+        subparser.add_argument(
+            "-f",
+            "--file",
+            type=str,
+            default="default_config.cfg",
+            help="Specify input configuration file.",
+        )
 
     # Adding root argument to install and generate parsers
-    install_parser.add_argument("--root", type=str, default="/", help="Specify the root directory for installation.")
-    generate_parser.add_argument("--root", type=str, default=".", help="Specify the root directory for generation.")
+    install_parser.add_argument(
+        "--root",
+        type=str,
+        default="/",
+        help="Specify the root directory for installation.",
+    )
+    generate_parser.add_argument(
+        "--root",
+        type=str,
+        default=".",
+        help="Specify the root directory for generation.",
+    )
 
     args = parser.parse_args()
 
     # TODO: Instantiate modules here
-    modules = [] # Example: modules = [NetworkModule(), FirewallModule()]
-    
+    modules = []  # Example: modules = [NetworkModule(), FirewallModule()]
+
     run(args.command, args, modules)
+
 
 if __name__ == "__main__":
     main()
