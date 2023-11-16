@@ -35,6 +35,7 @@ class Dnsmasq(base.Module):
                 configWriter+="dhcp-authoritative\n"
             else:
                 configWriter+="#dhcp-authoritative\n"
+        return configWriter
     def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
         return ["systemctl restart dnsmasq"]
     def validate(self: Self) -> bool:
