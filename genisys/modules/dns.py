@@ -16,6 +16,8 @@ class Dnsmasq(base.Module):
         return Path(DNS_DIR, DNS_FILE)
     def generate(self: Self) -> str:
         configWriter = ''
+        #The below line deals with the port 53 resolved issue when running dnsmasq after installation
+        configWriter+="bind-interfaces"
         if 'interface' in self.config["network"]:
             configWriter+=("interface=" + self.config['network']['interface'] + "\n")
         if 'no-dhcp' in self.config["network"]:
@@ -37,7 +39,7 @@ class Dnsmasq(base.Module):
                 configWriter+="#dhcp-authoritative\n"
         return configWriter
     def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
-        return ["systemctl restart dnsmasq"]
+        return [["systemctl", "restart", "dnsmasq"]]
     def validate(self: Self) -> bool:
         """Validates the configuration by attempting to generate the configuration file."""
         try:
