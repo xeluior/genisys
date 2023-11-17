@@ -1,0 +1,5 @@
+default linux
+label linux
+    kernel {{ kernel }}
+    append initrd={{ initrd }} ip=dhcp auto url=ftp://{{ network['ip'] }}:{{ network['ftp_port'] }}/{{ preseed_filename }}
+
