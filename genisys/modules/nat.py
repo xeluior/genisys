@@ -56,7 +56,7 @@ class Nat(base.Module):
         """
         template = Template(dedent(template_text)) #remove indentation
         iptables_rules = template.render(nat_interface_tmp=nat_interface, interface_tmp=interface, subnet_tmp=subnet)
-        # NOTE: "sudo netfilter-persistent save" and "sudo netfilter-persistent reload" will need to be run to make these rules stick. 
+        # NOTE: "sudo iptables-restore -f " + self.IPV4_DIR" and "sudo netfilter-persistent reload" will need to be run to make these rules stick. 
         return iptables_rules
 
     # end generate
