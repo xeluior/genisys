@@ -6,7 +6,6 @@ from genisys.modules.base import Module
 
 class VsftpdModule(Module):
     """Represents a module for configuring and handling the vsftpd service."""
-    
     def __init__(self, config):
         # Obtain the 'ftp' section from the 'Network' configuration
         self.config = config.getSection("Network")["ftp"]
