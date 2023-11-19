@@ -78,14 +78,16 @@ def run(subcommand, args, module):
     if subcommand == "validate":
         validate(module)
     elif subcommand == "install":
-        install_config(args.file, args.root)
+        install_config(yamlParser, args.root)
         # setup commands
         for mod in modulesList:
+            setup = []
+            setup.append(mod.setup_commands)
             # function setup_commands returns list
-            for command in mod.setup_commands:
+            for command in setup:
                 subprocess.run(command, check=False)
     elif subcommand == "generate":
-        generate_config(args.file, args.root)
+        generate_config(yamlParser, args.root)
 
 
 def main():
