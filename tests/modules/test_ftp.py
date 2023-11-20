@@ -1,7 +1,9 @@
+# test_ftp.py
 import unittest
 from genisys.modules.ftp import VsftpdModule
 from genisys import configParser
 from pathlib import Path
+
 
 class VsftpdModuleTest(unittest.TestCase):
     """Tests for the VsftpdModule"""
@@ -14,15 +16,38 @@ class VsftpdModuleTest(unittest.TestCase):
             output = module.generate()
             self.assertIn("anonymous_enable=YES", output)
             self.assertIn("listen=YES", output)
-            # Add checks for other configuration lines as necessary
+            self.assertIn("use_localtime=YES", output)
+            self.assertIn("pasv_enable=YES", output)
+            self.assertIn("listen_port=", output)
+            self.assertIn("local_root=", output)
+            self.assertIn("listen_address=", output)
 
     def test_missing_config_option(self):
         """Ensure that a missing config option raises the expected error"""
         with open("tests/configs/ftp_test_2.yml") as config_file:
             config = configParser.YAMLParser(config_file.name)
-            module = VsftpdModule(config)
             with self.assertRaises(KeyError):
-                output = module.generate()
+                module = VsftpdModule(config)
+
+    def test_missing_directive(self):
+        """Test if error is raised when listen_port, local_root, or listen_address is missing"""
+        # Testing missing ftp_port
+        with open("tests/configs/ftp_test_3.yml") as config_file:
+            config = configParser.YAMLParser(config_file.name)
+            with self.assertRaises(ValueError):
+                module = VsftpdModule(config)
+
+        # Testing missing directory
+        with open("tests/configs/ftp_test_4.yml") as config_file:
+            config = configParser.YAMLParser(config_file.name)
+            with self.assertRaises(ValueError):
+                module = VsftpdModule(config)
+
+        # Testing missing ip
+        with open("tests/configs/ftp_test_5.yml") as config_file:
+            config = configParser.YAMLParser(config_file.name)
+            with self.assertRaises(ValueError):
+                module = VsftpdModule(config)
 
     def test_install_location(self):
         """Test if the install location is correct"""
@@ -36,7 +61,10 @@ class VsftpdModuleTest(unittest.TestCase):
         with open("tests/configs/ftp_test_1.yml") as config_file:
             config = configParser.YAMLParser(config_file.name)
             module = VsftpdModule(config)
-            self.assertIn("systemctl restart vsftpd.service", module.setup_commands())
+            self.assertEqual(
+                module.setup_commands(), ["systemctl restart vsftpd.service"]
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
