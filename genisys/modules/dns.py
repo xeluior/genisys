@@ -17,7 +17,7 @@ class Dnsmasq(base.Module):
     def generate(self: Self) -> str:
         configWriter = ''
         #The below line deals with the port 53 resolved issue when running dnsmasq after installation
-        configWriter+="bind-interfaces"
+        configWriter+="bind-interfaces\n"
         if 'interface' in self.config["network"]:
             configWriter+=("interface=" + self.config['network']['interface'] + "\n")
         if 'no-dhcp' in self.config["network"]:
