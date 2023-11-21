@@ -1,17 +1,14 @@
 from pathlib import Path
-from abc import ABCMeta, abstractmethod
 from typing_extensions import Self, Union, List
 
-class Module(metaclass=ABCMeta):
+class Module:
     """Base class all module should inherit from"""
-    @abstractmethod
     def generate(self: Self) -> str:
         """Generates the content of the configuration file."""
 
         raise NotImplementedError
     #end generate
 
-    @abstractmethod
     def install_location(self: Self) -> Path:
         """Returns the location that the config file should be installed to.
         This path should always be absolute. Relative paths will be assumed
