@@ -24,7 +24,7 @@ class OSDownload(base.Module):
         self.DEBIAN_TAR_LINK = f"https://deb.debian.org/debian/dists/{self.config['OS']['version-name']}/main/installer-{self.config['OS']['target-architecture']}/current/images/netboot/netboot.tar.gz"
     # end __init__
 
-    def install(self: Self, chroot: Path = ...):
+    def install(self: Self, chroot: Path = Path('/')):
         tftp_directory = self.config["network"]["tftp_directory"]
 
         try:
@@ -32,7 +32,7 @@ class OSDownload(base.Module):
             response.raise_for_status()  # Check for request errors
 
             tmp_directory = tempfile.gettempdir()
-            download_dir = tmp_directory / self.DEBIAN_TAR_FILENAME
+            download_dir = tmp_directory + os.pathsep + self.DEBIAN_TAR_FILENAME
 
             with open(download_dir, "wb") as file:
                 file.write(response.content)
