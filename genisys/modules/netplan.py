@@ -67,6 +67,6 @@ class Netplan(Module):
     # end generate
 
     def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
-        return [ "netplan apply" ]
+        return [[ "netplan", "apply" ]]
     # end setup_commands
 # end class Interface

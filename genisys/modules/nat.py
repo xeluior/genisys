@@ -74,10 +74,10 @@ class Nat(base.Module):
 
     def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
         return [
-                "iptables-restore -f " + self.IPV4_DIR,
-                "netfilter-persistent reload",
-                "systemctl enable iptables",
-                "systemctl start iptables"
+                ["iptables-restore", "-f", self.IPV4_DIR],
+                ["netfilter-persistent", "reload"],
+                ["systemctl", "enable", "iptables"],
+                ["systemctl", "start", "iptables"]
                 ]
     # end setup_commands
 # end nat class
