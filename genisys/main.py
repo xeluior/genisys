@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env python3
 
 import argparse
 import subprocess
@@ -86,8 +86,7 @@ def run(subcommand, args, module):
         install_config(yamlParser, args.root)
         # setup commands
         for mod in modulesList:
-            setup = []
-            setup.append(mod.setup_commands())
+            setup = mod.setup_commands()
             # function setup_commands returns list
             for command in setup:
                 subprocess.run(command, check=False)
