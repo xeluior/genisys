@@ -87,7 +87,7 @@ def run(subcommand, args, module):
         # setup commands
         for mod in modulesList:
             setup = []
-            setup.append(mod.setup_commands)
+            setup.append(mod.setup_commands())
             # function setup_commands returns list
             for command in setup:
                 subprocess.run(command, check=False)
