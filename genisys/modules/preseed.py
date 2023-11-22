@@ -23,7 +23,8 @@ class Preseed(Module):
 
     def generate(self: Self) -> str:
         """Renders the Jinja template with the prespecified configurations"""
-        jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
+        loader = jinja2.PackageLoader('genisys')
+        jinja_env = jinja2.Environment(loader=loader)
         template = jinja_env.get_template("preseed.cfg.jinja2")
 
         # convert booleans to lowercase to match preseed format
