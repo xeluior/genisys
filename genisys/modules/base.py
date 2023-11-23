@@ -25,8 +25,17 @@ class Module(metaclass=ABCMeta):
         """Default implementation of the installation procedure. Without chroot
         this will likely require the application is ran as root.
         """
+        
+        # treat all install_locations as relative
+        if self.install_location().is_absolute():
+            install_file = Path(chroot, *self.install_location().parts[1:])
+        else:
+            install_file = Path(chroot, self.install_location())
 
-        install_file = Path(chroot, self.install_location())
+        # create the parent directory
+        install_file.parent.mkdir(parents=True, exist_ok=True)
+
+        # write the file
         with open(install_file, 'w', encoding="utf-8") as fd:
             fd.write(self.generate())
         #end with
