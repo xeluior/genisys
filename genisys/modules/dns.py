@@ -13,7 +13,7 @@ class Dnsmasq(base.Module):
         self.config["overrides"] = config.getSection("DNSMasq Overrides")
     def install_location(self: Self) -> Path:
         """This is where the DNSMasq config file is stored/accessed"""
-        return Path(DNS_DIR, DNS_FILE)
+        return Path(self.DNS_DIR, self.DNS_FILE)
     def generate(self: Self) -> str:
         configWriter = ''
         #The below line deals with the port 53 resolved issue when running dnsmasq after installation
