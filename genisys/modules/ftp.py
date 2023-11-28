@@ -55,4 +55,4 @@ class VsftpdModule(Module):
 
     def setup_commands(self) -> List[str]:
         """Returns a list of shell commands to set up the vsftpd service."""
-        return ["systemctl restart vsftpd.service"]
+        return [["systemctl", "restart", "vsftpd.service"]]
