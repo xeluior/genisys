@@ -25,13 +25,13 @@ class Dnsmasq(base.Module):
                 if 'dhcp-ranges' in self.config['network'] and 'dhcp-lease' in self.config['network']:
                     configWriter+=("dhcp-range=" + self.config['network']['dhcp-ranges'] + "," + self.config['network']['dhcp-lease'] + "\n")
         configWriter+="enable-tftp\n"
-        if 'tftp_directory' in self.config['netowrk']:
+        if 'tftp_directory' in self.config['network']:
             configWriter+=("tftp-root=" + self.config['network']['tftp_directory'] + "\n")
         if 'dns-servers' in self.config['network']:
             configWriter+=("server=" + self.config['network']['dns-servers'] + "\n")
         #adding potential future logic for disabling only dns below
         # if 'no-dns' in self.config:
-        #     We add the following string: DNSMASQ_EXCEPT=lo to the file /etc/default/dnsmasq 
+        #     We add the following string: DNSMASQ_EXCEPT=lo to the file /etc/default/dnsmasq
         if 'authoritative' in self.config['overrides']:
             if self.config['overrides']['authoritative'].lower() == 'true':
                 configWriter+="dhcp-authoritative\n"
