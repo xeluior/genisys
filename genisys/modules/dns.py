@@ -1,13 +1,13 @@
 from genisys.modules import base
-from typing import Self, Union, List
+from typing_extensions import Self, Union, List
 from pathlib import Path
-from jinja2 import Template
-import subprocess
+
 class Dnsmasq(base.Module):
     DNS_DIR = '/etc'
     DNS_FILE = 'dnsmasq.conf'
     def __init__(self: Self, config):
         """Pulling DNSMasq config information from the Network header in the config yaml file"""
+        self.config = {}
         self.config["network"] = config.getSection("Network")
         #Adding override config to read the last field in our config file
         self.config["overrides"] = config.getSection("DNSMasq Overrides")
