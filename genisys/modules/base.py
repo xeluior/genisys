@@ -30,7 +30,6 @@ class Module:
             install_file = Path(chroot, self.install_location())
 
         # backup any existing files
-        install_file = Path(chroot, self.install_location())
         if install_file.exists():
             install_file.rename(install_file.with_suffix(install_file.suffix + '.bak'))
 

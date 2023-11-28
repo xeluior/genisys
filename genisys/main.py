@@ -40,19 +40,19 @@ def generate_config(file, root="."):
     print(f"Generating config file: {file} with root at {root}")
     # netplan
     netplan = net.Netplan(file)
-    netplan.generate()
+    netplan.install(root)
 
     # preseed
     preseed = ps.Preseed(file)
-    preseed.generate()
+    preseed.install(root)
 
     # nat
     nat = nt.Nat(file)
-    nat.generate()
+    nat.install(root)
 
     # kernelparameter
     kernelParameter = kp.KernelParameter(file)
-    kernelParameter.generate()
+    kernelParameter.install(root)
 
 
 def daemon():
@@ -119,7 +119,7 @@ def main():
             "-f",
             "--file",
             type=str,
-            default="default_config.cfg",
+            default="/etc/genisys.yaml",
             help="Specify input configuration file.",
         )
 
