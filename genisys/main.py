@@ -23,7 +23,7 @@ def validate(modules):
 
 def install_config(file, root="/"):
     print(f"Installing config file: {file} with root at {root}")
-    for module in [Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, OSDownload, Syslinux]:
+    for module in [OSDownload, Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, Syslinux]:
         mod = module(file)
         mod.install(root)
         for command in mod.setup_commands():
@@ -31,7 +31,7 @@ def install_config(file, root="/"):
 
 def generate_config(file, root="."):
     print(f"Generating config file: {file} with root at {root}")
-    for module in [Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, OSDownload, Syslinux]:
+    for module in [OSDownload, Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, Syslinux]:
         mod = module(file)
         mod.install(root)
 
