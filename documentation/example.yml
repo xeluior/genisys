@@ -9,13 +9,14 @@ Network:
   no-dhcp: false
   nat-requests: true
   nat-interface: "eth1"
-  ftp_directory: "/ftpboot"
   tftp_directory: "/tftpboot"
-  ftp_port: "20"
   tftp_port: "69"
   gateways: "10.0.0.50"
   dns-servers: "1.1.1.1"
   no-dns: false
+  FTP:
+    directory: "/ftp"
+    ftp-port: 20
 OS:
   os: "debian"
   version-name: bookworm
