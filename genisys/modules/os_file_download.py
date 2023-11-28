@@ -39,6 +39,13 @@ class OSDownload(base.Module):
 
             target_directory = Path(chroot, tftp_directory) if chroot else Path(tftp_directory)
 
+            tftp_directory = Path(tftp_directory)
+
+            if tftp_directory.is_absolute(): 
+                target_directory = Path(chroot, *tftp_directory.parts[1:])
+            else:
+                target_directory = Path(chroot, tftp_directory)
+
             with tarfile.open(download_dir, "r:gz") as tar:
                 tar.extractall(target_directory)
 
