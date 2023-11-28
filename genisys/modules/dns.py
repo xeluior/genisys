@@ -21,7 +21,7 @@ class Dnsmasq(base.Module):
         if 'interface' in self.config["network"]:
             configWriter+=("interface=" + self.config['network']['interface'] + "\n")
         if 'no-dhcp' in self.config["network"]:
-            if self.config['network']['no-dhcp'] == 'false':
+            if not self.config['network']['no-dhcp']:
                 if 'dhcp-ranges' in self.config['network'] and 'dhcp-lease' in self.config['network']:
                     configWriter+=("dhcp-range=" + self.config['network']['dhcp-ranges'] + "," + self.config['network']['dhcp-lease'] + "\n")
         configWriter+="enable-tftp\n"
