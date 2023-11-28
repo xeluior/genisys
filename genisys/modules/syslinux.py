@@ -25,8 +25,8 @@ class Syslinux(Module):
         jinja_env = jinja2.Environment(loader=jinja2.PackageLoader("genisys"))
         template = jinja_env.get_template("pxelinux.cfg.j2")
 
-        initrd = "debian-installer/initrd.gz"
-        kernel = "debian-installer/linux"
+        initrd = "debian-installer/amd64/initrd.gz"
+        kernel = "debian-installer/amd64/linux"
         return template.render(network=self.config["network"],
                                initrd=initrd,
                                kernel=kernel,
