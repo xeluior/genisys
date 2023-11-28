@@ -32,7 +32,7 @@ class OSDownload(base.Module):
             response.raise_for_status()  # Check for request errors
 
             tmp_directory = tempfile.gettempdir()
-            download_dir = tmp_directory + os.pathsep + self.DEBIAN_TAR_FILENAME
+            download_dir = tmp_directory + os.sep + self.DEBIAN_TAR_FILENAME
 
             with open(download_dir, "wb") as file:
                 file.write(response.content)
