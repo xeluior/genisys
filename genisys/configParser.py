@@ -22,7 +22,7 @@ class YAMLParser:
                     print("Heading is empty.")
 
             else:
-                raise Exception('Heading not found.')
+                return {}
         
         return dictionary
     # end getSection
