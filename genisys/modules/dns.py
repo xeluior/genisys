@@ -23,6 +23,7 @@ class Dnsmasq(base.Module):
         if 'no-dhcp' in self.config["network"]:
             if not self.config['network']['no-dhcp']:
                 if 'dhcp-ranges' in self.config['network'] and 'dhcp-lease' in self.config['network']:
+                    configWriter+=(f'dhcp-boot={self.config["network"]["tftp_directory"]}/pxelinux.0' + "\n")
                     configWriter+=("dhcp-range=" + self.config['network']['dhcp-ranges'] + "," + self.config['network']['dhcp-lease'] + "\n")
         configWriter+="enable-tftp\n"
         if 'tftp_directory' in self.config['network']:
