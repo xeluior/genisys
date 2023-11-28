@@ -32,6 +32,11 @@ class Module(metaclass=ABCMeta):
         else:
             install_file = Path(chroot, self.install_location())
 
+        # backup any existing files
+        install_file = Path(chroot, self.install_location())
+        if install_file.exists():
+            install_file.rename(install_file.with_suffix(install_file.suffix + '.bak'))
+
         # create the parent directory
         install_file.parent.mkdir(parents=True, exist_ok=True)
 
