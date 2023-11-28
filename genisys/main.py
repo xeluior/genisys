@@ -2,10 +2,14 @@
 
 import argparse
 import subprocess
-import genisys.modules.netplan as net
-import genisys.modules.preseed as ps
-import genisys.modules.nat as nt
-import genisys.modules.kernelparameter as kp
+from genisys.modules.netplan import Netplan
+from genisys.modules.preseed import Preseed
+from genisys.modules.nat import Nat
+from genisys.modules.kernelparameter import KernelParameter
+from genisys.modules.dns import Dnsmasq
+from genisys.modules.ftp import VsftpdModule
+from genisys.modules.os_file_download import OSDownload
+from genisys.modules.syslinux import Syslinux
 import genisys.configParser as cp
 
 
@@ -19,41 +23,17 @@ def validate(modules):
 
 def install_config(file, root="/"):
     print(f"Installing config file: {file} with root at {root}")
-    # netplan
-    netplan = net.Netplan(file)
-    netplan.install(root)
-
-    # preseed
-    preseed = ps.Preseed(file)
-    preseed.install(root)
-
-    # nat
-    nat = nt.Nat(file)
-    nat.install(root)
-
-    # kernelparameter
-    kernelParameter = kp.KernelParameter(file)
-    kernelParameter.install(root)
-
+    for module in [Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, OSDownload, Syslinux]:
+        mod = module(file)
+        mod.install(root)
+        for command in mod.setup_commands():
+            subprocess.run(command, check=False)
 
 def generate_config(file, root="."):
     print(f"Generating config file: {file} with root at {root}")
-    # netplan
-    netplan = net.Netplan(file)
-    netplan.install(root)
-
-    # preseed
-    preseed = ps.Preseed(file)
-    preseed.install(root)
-
-    # nat
-    nat = nt.Nat(file)
-    nat.install(root)
-
-    # kernelparameter
-    kernelParameter = kp.KernelParameter(file)
-    kernelParameter.install(root)
-
+    for module in [Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, OSDownload, Syslinux]:
+        mod = module(file)
+        mod.install(root)
 
 def daemon():
     print("Starting daemon...")
@@ -66,30 +46,10 @@ def run(subcommand, args, module):
     # Config Parser
     yamlParser = cp.YAMLParser(args.file)
 
-    # netplan
-    netplan = net.Netplan(yamlParser)
-
-    # preseed
-    preseed = ps.Preseed(yamlParser)
-
-    # nat
-    nat = nt.Nat(yamlParser)
-
-    # kernelparameter
-    kernelParameter = kp.KernelParameter(yamlParser)
-
-    modulesList = [netplan, preseed, nat, kernelParameter]
-
     if subcommand == "validate":
         validate(module)
     elif subcommand == "install":
         install_config(yamlParser, args.root)
-        # setup commands
-        for mod in modulesList:
-            setup = mod.setup_commands()
-            # function setup_commands returns list
-            for command in setup:
-                subprocess.run(command, check=False)
     elif subcommand == "generate":
         generate_config(yamlParser, args.root)
 
