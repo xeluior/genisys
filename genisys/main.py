@@ -1,8 +1,13 @@
+#!/usr/bin/env python3
+
 import argparse
+import subprocess
 import genisys.modules.netplan as net
 import genisys.modules.preseed as ps
 import genisys.modules.nat as nt
-#from modules.base import any modules
+import genisys.modules.kernelparameter as kp
+import genisys.configParser as cp
+
 
 def validate(modules):
     for module in modules:
@@ -11,17 +16,44 @@ def validate(modules):
         else:
             print(f"{module.__class__.__name__} configuration is valid!")
 
+
 def install_config(file, root="/"):
     print(f"Installing config file: {file} with root at {root}")
+    # netplan
+    netplan = net.Netplan(file)
+    netplan.install(root)
 
-    raise NotImplementedError
-    # TODO: Implement the installation logic here
+    # preseed
+    preseed = ps.Preseed(file)
+    preseed.install(root)
 
-def generate_config(file, root="/"):
-    print(f"Generating config file: {file} at directory {root}")
+    # nat
+    nat = nt.Nat(file)
+    nat.install(root)
 
-    raise NotImplementedError
-    # TODO: Implement the generate logic here
+    # kernelparameter
+    kernelParameter = kp.KernelParameter(file)
+    kernelParameter.install(root)
+
+
+def generate_config(file, root="."):
+    print(f"Generating config file: {file} with root at {root}")
+    # netplan
+    netplan = net.Netplan(file)
+    netplan.generate()
+
+    # preseed
+    preseed = ps.Preseed(file)
+    preseed.generate()
+
+    # nat
+    nat = nt.Nat(file)
+    nat.generate()
+
+    # kernelparameter
+    kernelParameter = kp.KernelParameter(file)
+    kernelParameter.generate()
+
 
 def daemon():
     print("Starting daemon...")
@@ -29,21 +61,37 @@ def daemon():
     raise NotImplementedError
     # TODO: Implement the daemon logic here
 
+
 def run(subcommand, args, module):
+    # Config Parser
+    yamlParser = cp.YAMLParser(args.file)
 
-    #netplan
-    netplan = net.Netplan(args)
+    # netplan
+    netplan = net.Netplan(yamlParser)
 
-    #preseed
-    preseed = ps.Preseed(args)
+    # preseed
+    preseed = ps.Preseed(yamlParser)
 
-    #nat
-    nat = nt.Nat(args)
+    # nat
+    nat = nt.Nat(yamlParser)
+
+    # kernelparameter
+    kernelParameter = kp.KernelParameter(yamlParser)
+
+    modulesList = [netplan, preseed, nat, kernelParameter]
 
     if subcommand == "validate":
         validate(module)
     elif subcommand == "install":
-        install_config(args.file, args.root)
+        install_config(yamlParser, args.root)
+        # setup commands
+        for mod in modulesList:
+            setup = mod.setup_commands()
+            # function setup_commands returns list
+            for command in setup:
+                subprocess.run(command, check=False)
+    elif subcommand == "generate":
+        generate_config(yamlParser, args.root)
 
 
 def main():
@@ -52,21 +100,50 @@ def main():
     # Subcommands
     subparsers = parser.add_subparsers(dest="command")
 
-    validate_parser = subparsers.add_parser("validate", help="Validate the configuration file.")
-    install_parser = subparsers.add_parser("install", help="Install the configuration files.")
-    generate_parser = subparsers.add_parser("generate", help="Generate the configuration files.")
-    daemon_parser = subparsers.add_parser("daemon", help="Monitor the config file for changes.")
- 
-    # Flags
+    validate_parser = subparsers.add_parser(
+        "validate", help="Validate the configuration file."
+    )
+    install_parser = subparsers.add_parser(
+        "install", help="Install the configuration files."
+    )
+    generate_parser = subparsers.add_parser(
+        "generate", help="Generate the configuration files."
+    )
+    daemon_parser = subparsers.add_parser(
+        "daemon", help="Monitor the config file for changes."
+    )
+
+    # Flags for all subparsers
     for subparser in [validate_parser, install_parser, generate_parser]:
-        subparser.add_argument("-f","--file", type=str, default="default_config.cfg", help="Specify input configuration file.")
+        subparser.add_argument(
+            "-f",
+            "--file",
+            type=str,
+            default="default_config.cfg",
+            help="Specify input configuration file.",
+        )
+
+    # Adding root argument to install and generate parsers
+    install_parser.add_argument(
+        "--root",
+        type=str,
+        default="/",
+        help="Specify the root directory for installation.",
+    )
+    generate_parser.add_argument(
+        "--root",
+        type=str,
+        default=".",
+        help="Specify the root directory for generation.",
+    )
 
     args = parser.parse_args()
 
     # TODO: Instantiate modules here
-    modules = [] # Example: modules = [NetworkModule(), FirewallModule()]
-    
+    modules = []  # Example: modules = [NetworkModule(), FirewallModule()]
+
     run(args.command, args, modules)
+
 
 if __name__ == "__main__":
     main()

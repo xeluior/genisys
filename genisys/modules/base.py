@@ -21,7 +21,7 @@ class Module(metaclass=ABCMeta):
         raise NotImplementedError
     #end install_location
 
-    def install(self: Self, chroot: Path = Path('/')):
+    def install(self: Self, chroot: Union[Path, str] = Path('/')):
         """Default implementation of the installation procedure. Without chroot
         this will likely require the application is ran as root.
         """
