@@ -17,7 +17,7 @@ class Preseed(Module):
 
     def install_location(self: Self) -> Path:
         """Places the Preseed file in the TFTP root"""
-        ftp_dir = Path(self.config["network"]["ftp_directory"])
+        ftp_dir = Path(self.config["network"]["ftp"]["directory"])
         return Path(ftp_dir, FILENAME)
     # end install_location
 
