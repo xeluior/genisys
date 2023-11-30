@@ -43,7 +43,7 @@ class VsftpdModule(Module):
             "use_localtime=YES",
             "pasv_enable=YES",
             f"listen_port={ftp_port}",
-            f"local_root={directory}",
+            f"anon_root={directory}",
             f"listen_address={bind_addr}",
         ]
         # Joins all configuration lines into a single string separated by newline characters
