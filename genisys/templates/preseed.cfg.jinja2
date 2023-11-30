@@ -31,6 +31,7 @@ d-i passwd/root-password-crypted password {{ settings['root-password'] }}
 {% if settings['username'] is defined %}
 d-i passwd/make-user boolean true
 d-i passwd/username string {{ settings['username'] }}
+d-i passwd/user-fullname string {{ settings['username'] }}
 d-i passwd/user-password-crypted password {{ settings['password'] }}
 d-i user-setup/encrypt-home boolean false
 d-i user-setup/allow-password-weak boolean true
@@ -63,6 +64,8 @@ d-i partman/default_filesystem string ext3
 d-i partman/confirm_wirte_new_label boolean true
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
+d-i grub-installer/only_debian boolean true
+d-i grub-installer/bootdev string default 
 # Scan another CD or DVD?
 apt-cdrom-setup apt-setup/cdrom/set-first boolean false
 # Package mirror
