@@ -12,49 +12,57 @@ from genisys.modules.os_file_download import OSDownload
 from genisys.modules.syslinux import Syslinux
 import genisys.configParser as cp
 
+MODULES = [OSDownload, Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, Syslinux]
 
-def validate(modules):
-    for module in modules:
-        if not module.validate():
+def validate(file):
+    """Display validation errors to the user."""
+    for module in MODULES:
+        mod = module(file)
+        if not mod.validate():
             print(f"Error in {module.__class__.__name__} configuration!")
         else:
             print(f"{module.__class__.__name__} configuration is valid!")
 
 
 def install_config(file, root="/"):
+    """Install all genisys files to their specified directories
+    and run any setup commands they have
+    """
     print(f"Installing config file: {file} with root at {root}")
-    for module in [OSDownload, Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, Syslinux]:
+    for module in MODULES:
         mod = module(file)
         mod.install(root)
         for command in mod.setup_commands():
             subprocess.run(command, check=False)
 
 def generate_config(file, root="."):
+    """Generate all genisys files and save them to the specified directory"""
     print(f"Generating config file: {file} with root at {root}")
-    for module in [OSDownload, Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, Syslinux]:
+    for module in MODULES:
         mod = module(file)
         mod.install(root)
 
 def daemon():
+    """Monitor the config file for changes"""
     print("Starting daemon...")
 
     raise NotImplementedError
-    # TODO: Implement the daemon logic here
 
-
-def run(subcommand, args, module):
+def run(subcommand, args):
+    """Parse command line options and run the relevant helper method"""
     # Config Parser
-    yamlParser = cp.YAMLParser(args.file)
+    yaml_parser = cp.YAMLParser(args.file)
 
     if subcommand == "validate":
-        validate(module)
+        validate(yaml_parser)
     elif subcommand == "install":
-        install_config(yamlParser, args.root)
+        install_config(yaml_parser, args.root)
     elif subcommand == "generate":
-        generate_config(yamlParser, args.root)
+        generate_config(yaml_parser, args.root)
 
 
 def main():
+    """Parse the command line options"""
     parser = argparse.ArgumentParser(description="Config File Management Tool")
 
     # Subcommands
@@ -99,10 +107,7 @@ def main():
 
     args = parser.parse_args()
 
-    # TODO: Instantiate modules here
-    modules = []  # Example: modules = [NetworkModule(), FirewallModule()]
-
-    run(args.command, args, modules)
+    run(args.command, args)
 
 
 if __name__ == "__main__":

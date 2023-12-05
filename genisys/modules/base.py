@@ -22,7 +22,7 @@ class Module:
         """Default implementation of the installation procedure. Without chroot
         this will likely require the application is ran as root.
         """
-        
+
         # treat all install_locations as relative
         if self.install_location().is_absolute():
             install_file = Path(chroot, *self.install_location().parts[1:])
@@ -48,7 +48,7 @@ class Module:
         try:
             self.generate()
             return True
-        except:
+        except (KeyError, ValueError):
             return False
     #end validate
 
