@@ -40,7 +40,7 @@ class Dnsmasq(base.Module):
         # if 'no-dns' in self.config:
         #     We add the following string: DNSMASQ_EXCEPT=lo to the file /etc/default/dnsmasq
         if 'authoritative' in self.config['overrides']:
-            if self.config['overrides']['authoritative'].lower() == 'true':
+            if self.config['overrides']['authoritative']:
                 config_writer+="dhcp-authoritative\n"
             else:
                 config_writer+="#dhcp-authoritative\n"
