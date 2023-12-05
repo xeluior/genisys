@@ -6,6 +6,7 @@ from genisys.modules import base
 from genisys.config_parser import YAMLParser
 
 class Nat(base.Module):
+    """Manages the IPtables settings to allow the host system to perform NAT"""
     IPV4_DIR = "/etc/iptables/rules.v4"  # IPv4 Assumed default
 
     # Maybe think about adding a configuration option to enable/disable IPv6?
@@ -38,7 +39,6 @@ class Nat(base.Module):
             raise ValueError("The Nat Interface and Interface configs have the same value.")
 
         # Begin adding iptables rules
-        # TODO: Double check with Robert that these variables are being put in the correct rules.
         template_text = """
         *nat
         :PREROUTING ACCEPT [0:0]
@@ -81,4 +81,3 @@ class Nat(base.Module):
                 ]
     # end setup_commands
 # end nat class
-
