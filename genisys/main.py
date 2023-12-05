@@ -10,7 +10,7 @@ from genisys.modules.dns import Dnsmasq
 from genisys.modules.ftp import VsftpdModule
 from genisys.modules.os_file_download import OSDownload
 from genisys.modules.syslinux import Syslinux
-import genisys.configParser as cp
+import genisys.config_parser as cp
 
 MODULES = [OSDownload, Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, Syslinux]
 

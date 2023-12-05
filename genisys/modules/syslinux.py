@@ -4,7 +4,7 @@ import jinja2
 from typing_extensions import Self
 
 from genisys.modules.base import Module
-from genisys.configParser import YAMLParser
+from genisys.config_parser import YAMLParser
 from genisys.modules import preseed
 
 CONFIG_DIR="pxelinux.cfg"
@@ -14,7 +14,7 @@ class Syslinux(Module):
     """Generates the pxelinux.cfg files for the PXE version of SYSLINUX to boot from"""
     def __init__(self: Self, config: YAMLParser):
         self.config = {}
-        self.config["network"] = config.getSection("Network")
+        self.config["network"] = config.get_section("Network")
     # end __init__
 
     def install_location(self: Self) -> Path:

@@ -9,7 +9,7 @@ class VsftpdModule(Module):
 
     def __init__(self, config):
         # Obtain the 'Network' section from the configuration
-        network_config = config.getSection("Network")
+        network_config = config.get_section("Network")
 
         # Check and obtain the 'ftp' section from the 'Network' configuration
         if "ftp" not in network_config:

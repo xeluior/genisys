@@ -3,7 +3,7 @@ from typing_extensions import Self, Union, List
 from jinja2 import Template
 from textwrap3 import dedent
 from genisys.modules import base
-from genisys.configParser import YAMLParser
+from genisys.config_parser import YAMLParser
 
 class Nat(base.Module):
     IPV4_DIR = "/etc/iptables/rules.v4"  # IPv4 Assumed default
@@ -13,7 +13,7 @@ class Nat(base.Module):
 
     def __init__(self: Self, config: YAMLParser):
         self.config = {}
-        self.config["network"] = config.getSection("Network")
+        self.config["network"] = config.get_section("Network")
     # end __init__
 
     def generate(self: Self) -> str:
