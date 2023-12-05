@@ -2,7 +2,7 @@ import unittest
 import tempfile
 import yaml
 from passlib.hash import sha512_crypt
-from genisys import configParser
+from genisys import config_parser
 from genisys.modules.preseed import Preseed
 
 def get_hash(password: str) -> str:
@@ -28,7 +28,7 @@ class PreseedTests(unittest.TestCase):
                     }
                 }), 'utf-8'))
             config_file.seek(0)
-            config = configParser.YAMLParser(config_file.name)
+            config = config_parser.YAMLParser(config_file.name)
             module = Preseed(config)
             output = module.generate().split("\n")
             self.assertIn("d-i passwd/root-login boolean true", output)
@@ -54,7 +54,7 @@ class PreseedTests(unittest.TestCase):
                     }
                 }), 'utf-8'))
             fd.seek(0)
-            config = configParser.YAMLParser(fd.name)
+            config = config_parser.YAMLParser(fd.name)
             module = Preseed(config)
             output = module.generate().split("\n")
             for line in expected_lines:
@@ -78,7 +78,7 @@ class PreseedTests(unittest.TestCase):
                     }
                 }), "utf-8"))
             fd.seek(0)
-            config = configParser.YAMLParser(fd.name)
+            config = config_parser.YAMLParser(fd.name)
             module = Preseed(config)
             output = module.generate().split("\n")
             self.assertIn(expected_line, output)

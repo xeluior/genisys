@@ -3,7 +3,7 @@ import tempfile
 import yaml
 from typing_extensions import Self
 from genisys.modules.syslinux import Syslinux
-from genisys.configParser import YAMLParser
+from genisys.config_parser import YAMLParser
 
 class SyslinuxTest(unittest.TestCase):
     """Test the syslinux module"""
