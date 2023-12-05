@@ -24,7 +24,7 @@ class YAMLParser:
 
             else:
                 return {}
-        
+
         return dictionary
     # end get_section
 
@@ -40,7 +40,8 @@ class YAMLParser:
         return headings
     # end get_all_headings
 
-    def printDict(self: Self, dictionary) -> None:
+    def print_dict(self: Self, dictionary) -> None:
+        """Helper function to pretty print a dictionary"""
         for key in dictionary:
             print(f"{key}: {dictionary[key]}")
     # end printDict
@@ -48,10 +49,11 @@ class YAMLParser:
 # end YAMLParser
 
 def main():
-    parser = YAMLParser('example.yml') 
+    """Load a test config and parse it"""
+    parser = YAMLParser('example.yml')
     print(parser.get_all_headings())
-    for eachSection in parser.get_all_headings():
-        parser.printDict(parser.get_section(eachSection))
+    for each_section in parser.get_all_headings():
+        parser.print_dict(parser.get_section(each_section))
 
 if __name__ == '__main__':
     main()
