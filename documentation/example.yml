@@ -14,7 +14,7 @@ Network:
   gateways: "10.0.0.50"
   dns-servers: "1.1.1.1"
   no-dns: false
-  FTP:
+  ftp:
     directory: "/ftp"
     ftp-port: 20
 OS:
