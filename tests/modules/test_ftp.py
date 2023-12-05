@@ -17,7 +17,7 @@ class VsftpdModuleTest(unittest.TestCase):
             self.assertIn("use_localtime=YES", output)
             self.assertIn("pasv_enable=YES", output)
             self.assertIn("listen_port=", output)
-            self.assertIn("local_root=", output)
+            self.assertIn("anon_root=", output)
             self.assertIn("listen_address=", output)
 
     def test_missing_config_option(self):
@@ -58,7 +58,7 @@ class VsftpdModuleTest(unittest.TestCase):
         with open("tests/configs/ftp_test_1.yml", encoding='utf-8') as config_file:
             config = configParser.YAMLParser(config_file.name)
             self.assertEqual(
-                VsftpdModule(config).setup_commands(), ["systemctl restart vsftpd.service"]
+                VsftpdModule(config).setup_commands(), [["systemctl", "restart", "vsftpd.service"]]
             )
 
 
