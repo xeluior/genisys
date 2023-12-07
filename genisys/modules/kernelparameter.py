@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing_extensions import Self, Union, List
 from genisys.modules import base
-from genisys.configParser import YAMLParser
+from genisys.config_parser import YAMLParser
 
 class KernelParameter(base.Module):
     '''99 prefix guarantees that this rule will overwrite sysctl.conf parameter assignment,

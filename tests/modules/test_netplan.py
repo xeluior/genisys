@@ -2,7 +2,7 @@ import unittest
 import tempfile
 import yaml
 from genisys.modules.netplan import Netplan
-from genisys import configParser
+from genisys import config_parser
 
 class NetplanTests(unittest.TestCase):
     """Run tests for the netplan module"""
@@ -13,7 +13,7 @@ class NetplanTests(unittest.TestCase):
         with tempfile.NamedTemporaryFile() as config_file:
             config_file.write(b"Network:\n  subnet: 10.0.0.0/24\n  netmask: 255.255.254.0")
             config_file.seek(0)
-            config = configParser.YAMLParser(config_file.name)
+            config = config_parser.YAMLParser(config_file.name)
             module = Netplan(config)
             with self.assertRaises(ValueError) as err:
                 module.generate()
@@ -27,7 +27,7 @@ class NetplanTests(unittest.TestCase):
         with tempfile.NamedTemporaryFile() as config_file:
             config_file.write(b"Network:\n  subnet: 10.0.0.0/24\n  ip: 192.168.0.1")
             config_file.seek(0)
-            config = configParser.YAMLParser(config_file.name)
+            config = config_parser.YAMLParser(config_file.name)
             module = Netplan(config)
             with self.assertRaises(ValueError) as err:
                 module.generate()
@@ -43,7 +43,7 @@ class NetplanTests(unittest.TestCase):
                               b"  subnet: 10.0.0.0\n"
                               b"  netmask: 255.255.255.0")
             config_file.seek(0)
-            config = configParser.YAMLParser(config_file.name)
+            config = config_parser.YAMLParser(config_file.name)
             module = Netplan(config)
             self.assertEqual(expected, module.generate())
 

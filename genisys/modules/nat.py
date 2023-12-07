@@ -3,9 +3,10 @@ from typing_extensions import Self, Union, List
 from jinja2 import Template
 from textwrap3 import dedent
 from genisys.modules import base
-from genisys.configParser import YAMLParser
+from genisys.config_parser import YAMLParser
 
 class Nat(base.Module):
+    """Manages the IPtables settings to allow the host system to perform NAT"""
     IPV4_DIR = "/etc/iptables/rules.v4"  # IPv4 Assumed default
 
     # Maybe think about adding a configuration option to enable/disable IPv6?
@@ -13,7 +14,7 @@ class Nat(base.Module):
 
     def __init__(self: Self, config: YAMLParser):
         self.config = {}
-        self.config["network"] = config.getSection("Network")
+        self.config["network"] = config.get_section("Network")
     # end __init__
 
     def generate(self: Self) -> str:
@@ -38,7 +39,6 @@ class Nat(base.Module):
             raise ValueError("The Nat Interface and Interface configs have the same value.")
 
         # Begin adding iptables rules
-        # TODO: Double check with Robert that these variables are being put in the correct rules.
         template_text = """
         *nat
         :PREROUTING ACCEPT [0:0]
@@ -74,11 +74,10 @@ class Nat(base.Module):
 
     def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
         return [
-                ["iptables-restore", "-f", self.IPV4_DIR],
+                ["iptables-restore", self.IPV4_DIR],
                 ["netfilter-persistent", "reload"],
                 ["systemctl", "enable", "iptables"],
                 ["systemctl", "start", "iptables"]
                 ]
     # end setup_commands
 # end nat class
-

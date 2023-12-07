@@ -1,13 +1,13 @@
 import unittest
 from genisys.modules.nat import Nat
-from genisys import configParser
+from genisys import config_parser
 
 class NatTest(unittest.TestCase):
     """ Tests for the NAT module """
     def test_values_in_config(self):
         """ Ensure that a missing config option raises the expected error. """
         with open("tests/configs/nat_test_1.yml") as config_file:
-            config = configParser.YAMLParser(config_file.name)
+            config = config_parser.YAMLParser(config_file.name)
             module = Nat(config)
             with self.assertRaises(ValueError) as context:
                 output = module.generate()    
@@ -16,7 +16,7 @@ class NatTest(unittest.TestCase):
     def test_shared_interface_name(self):
         """ Ensure that interfaces sharing the same name raises an error. """
         with open("tests/configs/nat_test_2.yml") as config_file:
-            config = configParser.YAMLParser(config_file.name)
+            config = config_parser.YAMLParser(config_file.name)
             module = Nat(config)
             with self.assertRaises(ValueError) as context:
                 output = module.generate()
@@ -43,7 +43,7 @@ class NatTest(unittest.TestCase):
         "COMMIT"
         ]
         with open("tests/configs/nat_test_3.yml") as config_file:
-            config = configParser.YAMLParser(config_file.name)
+            config = config_parser.YAMLParser(config_file.name)
             module = Nat(config)
             output = module.generate().split("\n")
             for line in expected_output:

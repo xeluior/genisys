@@ -9,7 +9,7 @@ class VsftpdModule(Module):
 
     def __init__(self, config):
         # Obtain the 'Network' section from the configuration
-        network_config = config.getSection("Network")
+        network_config = config.get_section("Network")
 
         # Check and obtain the 'ftp' section from the 'Network' configuration
         if "ftp" not in network_config:
@@ -43,7 +43,7 @@ class VsftpdModule(Module):
             "use_localtime=YES",
             "pasv_enable=YES",
             f"listen_port={ftp_port}",
-            f"local_root={directory}",
+            f"anon_root={directory}",
             f"listen_address={bind_addr}",
         ]
         # Joins all configuration lines into a single string separated by newline characters
@@ -55,4 +55,4 @@ class VsftpdModule(Module):
 
     def setup_commands(self) -> List[str]:
         """Returns a list of shell commands to set up the vsftpd service."""
-        return ["systemctl restart vsftpd.service"]
+        return [["systemctl", "restart", "vsftpd.service"]]

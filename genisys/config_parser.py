@@ -2,11 +2,12 @@ import yaml # Look into using ruamel.yaml for using YAML 1.2 specification
 from typing_extensions import Self
 
 class YAMLParser:
+    """Parses a YAML config file and provides helper methods to access it's contents"""
     def __init__(self, filename) -> None:
         self.filename = filename
     # end __init__
 
-    def getSection(self: Self, heading: str) -> dict:
+    def get_section(self: Self, heading: str) -> dict:
         '''Returns all of the key value pairs under a specific heading as a Python dictionary'''
         dictionary = {}
         with open(self.filename, encoding='utf-8') as file:
@@ -22,12 +23,12 @@ class YAMLParser:
                     print("Heading is empty.")
 
             else:
-                raise Exception('Heading not found.')
-        
-        return dictionary
-    # end getSection
+                return {}
 
-    def getAllHeadings(self: Self) -> list:
+        return dictionary
+    # end get_section
+
+    def get_all_headings(self: Self) -> list:
         ''' Returns a list object containing all section headings in the provided YAML file '''
         headings = []
         with open(self.filename, encoding='utf-8') as file:
@@ -37,9 +38,10 @@ class YAMLParser:
                 headings.append(heading)
 
         return headings
-    # end getAllHeadings
+    # end get_all_headings
 
-    def printDict(self: Self, dictionary) -> None:
+    def print_dict(self: Self, dictionary) -> None:
+        """Helper function to pretty print a dictionary"""
         for key in dictionary:
             print(f"{key}: {dictionary[key]}")
     # end printDict
@@ -47,10 +49,11 @@ class YAMLParser:
 # end YAMLParser
 
 def main():
-    parser = YAMLParser('example.yml') 
-    print(parser.getAllHeadings())
-    for eachSection in parser.getAllHeadings():
-        parser.printDict(parser.getSection(eachSection))
+    """Load a test config and parse it"""
+    parser = YAMLParser('example.yml')
+    print(parser.get_all_headings())
+    for each_section in parser.get_all_headings():
+        parser.print_dict(parser.get_section(each_section))
 
 if __name__ == '__main__':
     main()

@@ -2,99 +2,67 @@
 
 import argparse
 import subprocess
-import genisys.modules.netplan as net
-import genisys.modules.preseed as ps
-import genisys.modules.nat as nt
-import genisys.modules.kernelparameter as kp
-import genisys.configParser as cp
+from genisys.modules.netplan import Netplan
+from genisys.modules.preseed import Preseed
+from genisys.modules.nat import Nat
+from genisys.modules.kernelparameter import KernelParameter
+from genisys.modules.dns import Dnsmasq
+from genisys.modules.ftp import VsftpdModule
+from genisys.modules.os_file_download import OSDownload
+from genisys.modules.syslinux import Syslinux
+import genisys.config_parser as cp
 
+MODULES = [OSDownload, Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, Syslinux]
 
-def validate(modules):
-    for module in modules:
-        if not module.validate():
+def validate(file):
+    """Display validation errors to the user."""
+    for module in MODULES:
+        mod = module(file)
+        if not mod.validate():
             print(f"Error in {module.__class__.__name__} configuration!")
         else:
             print(f"{module.__class__.__name__} configuration is valid!")
 
 
 def install_config(file, root="/"):
+    """Install all genisys files to their specified directories
+    and run any setup commands they have
+    """
     print(f"Installing config file: {file} with root at {root}")
-    # netplan
-    netplan = net.Netplan(file)
-    netplan.install(root)
-
-    # preseed
-    preseed = ps.Preseed(file)
-    preseed.install(root)
-
-    # nat
-    nat = nt.Nat(file)
-    nat.install(root)
-
-    # kernelparameter
-    kernelParameter = kp.KernelParameter(file)
-    kernelParameter.install(root)
-
+    for module in MODULES:
+        mod = module(file)
+        mod.install(root)
+        for command in mod.setup_commands():
+            subprocess.run(command, check=False)
 
 def generate_config(file, root="."):
+    """Generate all genisys files and save them to the specified directory"""
     print(f"Generating config file: {file} with root at {root}")
-    # netplan
-    netplan = net.Netplan(file)
-    netplan.generate()
-
-    # preseed
-    preseed = ps.Preseed(file)
-    preseed.generate()
-
-    # nat
-    nat = nt.Nat(file)
-    nat.generate()
-
-    # kernelparameter
-    kernelParameter = kp.KernelParameter(file)
-    kernelParameter.generate()
-
+    for module in MODULES:
+        mod = module(file)
+        mod.install(root)
 
 def daemon():
+    """Monitor the config file for changes"""
     print("Starting daemon...")
 
     raise NotImplementedError
-    # TODO: Implement the daemon logic here
 
-
-def run(subcommand, args, module):
+def run(subcommand, args):
+    """Parse command line options and run the relevant helper method"""
     # Config Parser
-    yamlParser = cp.YAMLParser(args.file)
-
-    # netplan
-    netplan = net.Netplan(yamlParser)
-
-    # preseed
-    preseed = ps.Preseed(yamlParser)
-
-    # nat
-    nat = nt.Nat(yamlParser)
-
-    # kernelparameter
-    kernelParameter = kp.KernelParameter(yamlParser)
-
-    modulesList = [netplan, preseed, nat, kernelParameter]
+    yaml_parser = cp.YAMLParser(args.file)
 
     if subcommand == "validate":
-        validate(module)
+        validate(yaml_parser)
     elif subcommand == "install":
-        install_config(yamlParser, args.root)
-        # setup commands
-        for mod in modulesList:
-            setup = mod.setup_commands()
-            # function setup_commands returns list
-            for command in setup:
-                subprocess.run(command, check=False)
+        install_config(yaml_parser, args.root)
     elif subcommand == "generate":
-        generate_config(yamlParser, args.root)
+        generate_config(yaml_parser, args.root)
 
 
 def main():
+    """Parse the command line options"""
     parser = argparse.ArgumentParser(description="Config File Management Tool")
 
     # Subcommands
@@ -119,7 +87,7 @@ def main():
             "-f",
             "--file",
             type=str,
-            default="default_config.cfg",
+            default="/etc/genisys.yaml",
             help="Specify input configuration file.",
         )
 
@@ -139,10 +107,7 @@ def main():
 
     args = parser.parse_args()
 
-    # TODO: Instantiate modules here
-    modules = []  # Example: modules = [NetworkModule(), FirewallModule()]
-
-    run(args.command, args, modules)
+    run(args.command, args)
 
 
 if __name__ == "__main__":

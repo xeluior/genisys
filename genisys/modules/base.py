@@ -1,17 +1,14 @@
 from pathlib import Path
-from abc import ABCMeta, abstractmethod
 from typing_extensions import Self, Union, List
 
-class Module(metaclass=ABCMeta):
+class Module:
     """Base class all module should inherit from"""
-    @abstractmethod
     def generate(self: Self) -> str:
         """Generates the content of the configuration file."""
 
         raise NotImplementedError
     #end generate
 
-    @abstractmethod
     def install_location(self: Self) -> Path:
         """Returns the location that the config file should be installed to.
         This path should always be absolute. Relative paths will be assumed
@@ -25,7 +22,7 @@ class Module(metaclass=ABCMeta):
         """Default implementation of the installation procedure. Without chroot
         this will likely require the application is ran as root.
         """
-        
+
         # treat all install_locations as relative
         if self.install_location().is_absolute():
             install_file = Path(chroot, *self.install_location().parts[1:])
@@ -33,7 +30,6 @@ class Module(metaclass=ABCMeta):
             install_file = Path(chroot, self.install_location())
 
         # backup any existing files
-        install_file = Path(chroot, self.install_location())
         if install_file.exists():
             install_file.rename(install_file.with_suffix(install_file.suffix + '.bak'))
 
@@ -52,7 +48,7 @@ class Module(metaclass=ABCMeta):
         try:
             self.generate()
             return True
-        except:
+        except (KeyError, ValueError):
             return False
     #end validate
 
