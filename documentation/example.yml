@@ -33,3 +33,6 @@ Users:
 Applications:
 DNSMasq Overrides:
   authoritative: false
+Scripts: 
+  use-all: true
+  script-list: ["script1.sh", "script2.sh"]
