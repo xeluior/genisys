@@ -34,5 +34,6 @@ Applications:
 DNSMasq Overrides:
   authoritative: false
 Scripts: 
+  script-dir: "/scripts"
   use-all: true
   script-list: ["script1.sh", "script2.sh"]
