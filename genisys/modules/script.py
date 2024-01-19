@@ -1,5 +1,6 @@
+import os
+import shutil
 from pathlib import Path
-from os import rename, mkdir
 from typing_extensions import Self
 
 from genisys.modules.base import Module
@@ -20,14 +21,17 @@ class Script(Module):
 
     def generate(self: Self):
         pass
+    #end generate
 
     def install_location(self: Self) -> Path:
         pass
+    #end install_location
 
     def install(self: Self, chroot: Path = Path('/')):
-        """ Method that moves either all scripts in the scripts directory
-          defined in the configuration file, or only moves the specified scrips 
-          if the move-all option is set to false, into the correct FTP directory. 
+        """ 
+        Method that moves either all scripts in the scripts directory
+        defined in the configuration file, or only moves the specified scripts 
+        if the move-all option is set to false into the correct FTP directory. 
         """
         #Location of scripts in genisys directory
         script_source_dir = self.config["scripts"]["script-dir"]
@@ -35,25 +39,33 @@ class Script(Module):
 
         #Location of FTP directory on genisys host
         ftp_dir = self.config["network"]["ftp"]["directory"]
-        destination = Path(chroot, ftp_dir) if chroot else Path(ftp_dir)
 
         #Creating file structure for scripts folder
         #Creating first_boot_path dir
         first_boot_path = Path(chroot, ftp_dir, "/first-boot") if chroot else Path(ftp_dir, "/first-boot")
         try:
-            mkdir(first_boot_path)
-        except FileExistsError:
-            pass #Do nothing if already exists
- 
-        #Creating /first-boot/scripts dir
-        scripts_path = Path(first_boot_path, "/scripts")
-        try:
-            mkdir(scripts_path)
+            os.mkdir(first_boot_path)
         except FileExistsError:
             pass #Do nothing if already exists
 
-        #TODO: actually move the files now that directories have been confirmed to exist
-        rename(source, destination)
+        #Creating /first-boot/scripts dir
+        scripts_path = Path(first_boot_path, "/scripts")
+        try:
+            os.mkdir(scripts_path)
+        except FileExistsError:
+            pass #Do nothing if already exists
+
+        if self.config["scripts"]["move-all"]:
+            # If the user wants to move all scripts into the scripts dir
+            for file in os.listdir(source):
+                shutil.copy((source / file), scripts_path)
+        else:
+            # If the user wants only specified scripts moved
+            scripts_to_move = self.config["scripts"]["script-list"]
+            for file in os.listdir(source):
+                if file in scripts_to_move:
+                    shutil.copy((source / file), scripts_path)
+    # end install
 
 # def main():
 #     script = Script(YAMLParser('C:/Users/greeht01/Desktop/genisys/documentation/example.yml'))
