@@ -8,10 +8,10 @@ from genisys.config_parser import YAMLParser
 
 class Script(Module):
     """
-    The Script class is responsible for moving any user defined scripts
-    from the scripts directory specified by the configuration file into
-    the FTP directory where they can be accessed by the client machines.
+    The Script class is responsible for moving user-defined scripts
+    from the specified directory to the FTP directory for client machines.
     """
+
 
     def __init__(self: Self, config: YAMLParser):
         self.config = {}
