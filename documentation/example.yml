@@ -36,4 +36,4 @@ DNSMasq Overrides:
 Scripts: 
   script-dir: "/scripts"
   move-all: true
-  script-list: ["script1.sh", "script2.sh"]
+  script-list: ["script1.sh"]
