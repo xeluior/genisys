@@ -12,7 +12,6 @@ class Script(Module):
     from the specified directory to the FTP directory for client machines.
     """
 
-
     def __init__(self: Self, config: YAMLParser):
         self.config = {}
         self.config["scripts"] = config.get_section("Scripts")
@@ -66,10 +65,3 @@ class Script(Module):
                 if file in scripts_to_move:
                     shutil.copy((source / file), scripts_path)
     # end install
-
-# def main():
-#     script = Script(YAMLParser('C:/Users/greeht01/Desktop/genisys/documentation/example.yml'))
-#     script.move_files()
-
-# if __name__ == '__main__':
-#     main()
