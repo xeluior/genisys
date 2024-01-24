@@ -34,25 +34,23 @@ class Script(Module):
         """
         #Location of scripts in genisys directory
         script_source_dir = self.config["scripts"]["script-dir"]
-        source = Path(chroot, script_source_dir) if chroot else Path(script_source_dir)
+        source = Path(chroot, script_source_dir)
 
         #Location of FTP directory on genisys host
         ftp_dir = self.config["network"]["ftp"]["directory"]
 
         #Creating file structure for scripts folder
         #Creating first_boot_path dir
-        first_boot_path = Path(chroot, ftp_dir, "/first-boot") if chroot else Path(ftp_dir, "/first-boot")
-        try:
-            os.mkdir(first_boot_path)
-        except FileExistsError:
-            pass #Do nothing if already exists
+        first_boot_path = Path(chroot, ftp_dir, "/first-boot")
+
+        # exist_ok prevents errors if directory already exists
+        # parents=true ensures that all parent directories exist as well 
+        first_boot_path.parent.mkdir(exist_ok=True, parents=True)
 
         #Creating /first-boot/scripts dir
         scripts_path = Path(first_boot_path, "/scripts")
-        try:
-            os.mkdir(scripts_path)
-        except FileExistsError:
-            pass #Do nothing if already exists
+
+        scripts_path.parent.mkdir(exist_ok=True, parents=True)
 
         if self.config["scripts"]["move-all"]:
             # If the user wants to move all scripts into the scripts dir
