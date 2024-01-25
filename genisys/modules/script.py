@@ -44,7 +44,7 @@ class Script(Module):
         first_boot_path = Path(chroot, ftp_dir, "/first-boot")
 
         # exist_ok prevents errors if directory already exists
-        # parents=true ensures that all parent directories exist as well 
+        # parents=true ensures that all parent directories exist as well
         first_boot_path.parent.mkdir(exist_ok=True, parents=True)
 
         #Creating /first-boot/scripts dir
