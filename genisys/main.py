@@ -10,9 +10,20 @@ from genisys.modules.dns import Dnsmasq
 from genisys.modules.ftp import VsftpdModule
 from genisys.modules.os_file_download import OSDownload
 from genisys.modules.syslinux import Syslinux
+from genisys.modules.script import Script
 import genisys.config_parser as cp
 
-MODULES = [OSDownload, Netplan, Preseed, Nat, KernelParameter, Dnsmasq, VsftpdModule, Syslinux]
+MODULES = [
+    OSDownload,
+    Netplan,
+    Preseed,
+    Nat,
+    KernelParameter,
+    Dnsmasq,
+    VsftpdModule,
+    Syslinux,
+    Script
+]
 
 def validate(file):
     """Display validation errors to the user."""
