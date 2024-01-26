@@ -45,4 +45,5 @@ Other programs have attempted bare-metal automation before:
 
 - [Cobbler](https://cobbler.github.io/) provides significantly more features at the expense of complexity and additional setup.
 - [Netboot.xzy](https://netboot.xyz/) allows booting of more operating systems with less automation capabilities
+- [Puppet](https://www.puppet.com/)
 
