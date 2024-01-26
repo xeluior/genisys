@@ -3,6 +3,9 @@ from typing_extensions import Self
 import jinja2
 from genisys.modules.base import Module
 from genisys.config_parser import YAMLParser
+import shutil
+import os
+import subprocess
 
 FILENAME = "preseed.cfg"
 
@@ -34,4 +37,25 @@ class Preseed(Module):
 
         return template.render(settings=self.config["users"])
     # end generate
+
+    def get_firstboot(self: Self):
+        """Copy custom firstboot.service file into client directory"""
+
+        src = 'genisys/templates/genisys-firstboot.service'
+        dest = '/etc/systemd/system/'
+        
+        files=os.listdir(src)
+
+        # iterating over all the files in
+        # the source directory
+        for file in files:
+            
+            # copying the files to the
+            # destination directory
+            shutil.copy2(os.path.join(src,file), dest)
+
+    #end get_firstboot
+
+    subprocess.run("systemctl enable", check=False)
+
 # end class Preseed
