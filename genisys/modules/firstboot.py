@@ -21,6 +21,8 @@ class FirstBoot(Module):
     def generate(self: Self):
         content = []
 
+        content.append("#!/bin/bash")
+
         # Shell command to get IP address
         content.append("ipaddr=$(hostname -I)")
 
