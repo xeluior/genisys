@@ -1,0 +1,13 @@
+[Unit]
+Description=Run user script on Genisys client first boot
+ConditionFileIsExecutable=/first-boot/entrypoint
+Wants=network-online.target
+Requires=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/first-boot/entrypoint
+
+[Install]
+WantedBy=multi-user.target
+
