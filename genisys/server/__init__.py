@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from warnings import warn
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from typing_extensions import Self, Dict, TypedDict, cast, Union
+from typing_extensions import Self, Dict, TypedDict, cast, Union, NotRequired
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import hashes
@@ -27,7 +27,7 @@ class ServerOptions(TypedDict):
 class CertChainArgs(TypedDict):
     keyfile: str
     certfile: str
-    password: Union[str, None]
+    password: NotRequired[Union[str, None]]
 
 class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
     """Process client "hello"s by running ansible playbooks on a received POST"""
@@ -39,7 +39,7 @@ def run(config: YAMLParser):
     """Drops priviledges, creates the server (with SSL, if applicable), then waits for requests"""
     # parse config
     network = config.get_section("Network")
-    server_options = cast(ServerOptions, network.get("server"))
+    server_options = cast(ServerOptions, network.get("server", {}) or {})
 
     # drop priviledges
     if not drop_priviledges(server_options):
@@ -54,7 +54,7 @@ def run(config: YAMLParser):
     if 'ssl' in server_options:
         ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
-        ssl_cert = get_keychain(server_options['ssl'])
+        ssl_cert = get_keychain(server_options['ssl'] or {})
         ssl_context.load_cert_chain(**ssl_cert)
         httpd.socket = ssl_context.wrap_socket(httpd.socket)
 
@@ -106,7 +106,7 @@ def get_keychain(config: Dict[str, str]) -> CertChainArgs:
         CERTIFICATE_STORE_PATH.mkdir(parents=True, exist_ok=True)
         generate_keypair(cert_path, key_path)
 
-    return { 'certfile': str(cert_path), 'keyfile': str(key_path), 'password': None }
+    return { 'certfile': str(cert_path), 'keyfile': str(key_path) }
 
 def generate_keypair(cert_path: Path, key_path: Path):
     """Generates a new x509 keypair into the specified cert and key files"""
