@@ -18,7 +18,8 @@ Network:
     directory: "/ftp"
     ftp-port: 20
   server:
-    # the prefered port, server will throw an exception if port is occupied on the specified internal interface above
+    # the prefered port, server will throw an exception if port is occupied on
+    # the specified ip above. If no IP was specifed, attempts to bind to all interfaces
     port: 15206
     # the user and group the server should drop privileges to if ran as root
     # if absent will run the server as the running user
@@ -29,6 +30,7 @@ Network:
     # run the server using SSL
     # either both or neither of cert and key need specified if enabled
     # if neither are present, genisys generates a self-signed key on first run
+    # the self-signed cert will be created at $GENISYS_CERT_STORE or /etc/genisys/ssl/
     # if the ssl section is missing, the server will be ran without ssl
     ssl:
       cert: /path/to/fullchain.pem
