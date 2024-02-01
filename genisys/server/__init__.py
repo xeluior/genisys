@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from io import TextIOWrapper
 import ssl
 import pwd
 import grp
@@ -21,7 +22,15 @@ class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
     """Process client "hello"s by running ansible playbooks on a received POST"""
     def do_POST(self: Self):
         """On POST, store the client in the Ansible inventory and run playbooks"""
-        print('posted')
+        content_length = int(self.headers['Content-Length'])
+        body = json.loads(self.rfile.read(content_length))
+        print(body)
+        self.wfile.write(bytes(textwrap.dedent("""\
+        HTTP/1.1 200 OK
+        Content-Type: text/plain
+        Content-Length: 7
+
+        Success"""), encoding='utf-8'))
 
 def run(config: YAMLParser):
     """Drops priviledges, creates the server (with SSL, if applicable), then waits for requests"""
