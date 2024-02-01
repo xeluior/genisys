@@ -13,6 +13,7 @@ from genisys.modules.syslinux import Syslinux
 from genisys.modules.firstboot import Service
 from genisys.modules.script import Script
 import genisys.config_parser as cp
+import genisys.server
 
 MODULES = [
     OSDownload,
@@ -23,7 +24,7 @@ MODULES = [
     Dnsmasq,
     VsftpdModule,
     Syslinux,
-    Service
+    Service,
     Script
 ]
 
@@ -55,12 +56,6 @@ def generate_config(file, root="."):
         mod = module(file)
         mod.install(root)
 
-def daemon():
-    """Monitor the config file for changes"""
-    print("Starting daemon...")
-
-    raise NotImplementedError
-
 def run(subcommand, args):
     """Parse command line options and run the relevant helper method"""
     # Config Parser
@@ -72,6 +67,8 @@ def run(subcommand, args):
         install_config(yaml_parser, args.root)
     elif subcommand == "generate":
         generate_config(yaml_parser, args.root)
+    elif subcommand == "server":
+        genisys.server.run(yaml_parser)
 
 
 def main():
@@ -90,12 +87,12 @@ def main():
     generate_parser = subparsers.add_parser(
         "generate", help="Generate the configuration files."
     )
-    daemon_parser = subparsers.add_parser(
-        "daemon", help="Monitor the config file for changes."
+    server_parser = subparsers.add_parser(
+        "server", help="Run the server to listen for new clients."
     )
 
     # Flags for all subparsers
-    for subparser in [validate_parser, install_parser, generate_parser]:
+    for subparser in [validate_parser, install_parser, generate_parser, server_parser]:
         subparser.add_argument(
             "-f",
             "--file",
