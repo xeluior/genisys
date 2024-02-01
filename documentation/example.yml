@@ -52,9 +52,21 @@ Users:
   ssh-key: "<contents of id_rsa.pub>"
   sudoer: true
 Applications:
+  - curl
 DNSMasq Overrides:
   authoritative: false
 Scripts: 
   script-dir: "/scripts"
   move-all: true
   script-list: ["script1.sh"]
+# configure settings for the ansible integration
+ansible:
+  # this specifies which inventory file is updated by the server process
+  # is created if it does not exist. If it does exist, must be writable by the server user
+  inventory: /var/genisys/inventory
+  # the ssh private key used to run the playbooks. The corresponding public key should be specified
+  # in the Users section above. Must be readable by the server user
+  ssh-key: /etc/genisys/ssh/id_rsa
+  # list of paths to playbooks to run when the server receives a HELLO
+  playbooks:
+    - /etc/genisys/playbooks/firstrun.yaml
