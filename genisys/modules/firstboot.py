@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing_extensions import Self
 
@@ -8,8 +9,8 @@ class FirstBoot(Module):
     """
     The FirstBoot class generates a shell script for the 
     client machines which sends a POST request to the 
-    Genisys server containing the IP address of the client 
-    machine for use in the Ansible inventory file. 
+    Genisys server containing the IP address and hostname 
+    of the client machine for use in the Ansible inventory file. 
     """
 
     def __init__(self: Self, config: YAMLParser):
@@ -21,20 +22,29 @@ class FirstBoot(Module):
     def generate(self: Self):
         content = []
 
+        json_body = {
+            'message' : 'hello', 
+            'ip' : '$(hostname -I)',
+            'hostname' : '$(hostname)'
+        }
+        
+        # Not sure of json.dumps() is necessary, will need testing
+        json_object = json.dumps(json_body)
+
         content.append("#!/bin/bash")
 
         # Shell command to get IP address
         content.append("ipaddr=$(hostname -I)")
 
         # Command to send POST request to Genisys server (Subject to change)
-        curl_command = "curl -X POST -d \"$(ipaddr)\" " + self.config["network"]["ip"]
+        curl_command = "curl -X POST -H \"Content-Type: application/json\" -d" + "\"" + json_object + "\"" + self.config["network"]["ip"]
         content.append(curl_command)
 
         return content
     #end generate
 
     def install_location(self: Self) -> Path:
-        pass
+        return "/first-boot/"
     #end install_location
 
     def install(self: Self, chroot: Path = Path('/')):
