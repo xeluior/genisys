@@ -1,10 +1,11 @@
 import json
 from pathlib import Path
 from typing_extensions import Self
+
 from genisys.modules.base import Module
 from genisys.config_parser import YAMLParser
 
-class FirstBoot(Module):
+class Hello(Module):
     """
     The FirstBoot class generates a shell script for the 
     client machines which sends a POST request to the 
@@ -29,12 +30,10 @@ class FirstBoot(Module):
 
         content.append("#!/bin/bash")
 
-        # Shell command to get IP address
-        content.append("ipaddr=$(hostname -I)")
-
         # Command to send POST request to Genisys server (Subject to change)
         curl_command = "curl -X POST -H \"Content-Type: application/json\" -d" + "\"" + json_object + "\"" + self.config["network"]["ip"]
         content.append(curl_command)
+
         return content
     #end generate
 
