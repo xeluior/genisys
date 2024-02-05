@@ -27,14 +27,11 @@ class FirstBoot(Module):
             'ip' : '$(hostname -I)',
             'hostname' : '$(hostname)'
         }
-        
+
         # Not sure of json.dumps() is necessary, will need testing
         json_object = json.dumps(json_body)
 
         content.append("#!/bin/bash")
-
-        # Shell command to get IP address
-        content.append("ipaddr=$(hostname -I)")
 
         # Command to send POST request to Genisys server (Subject to change)
         curl_command = "curl -X POST -H \"Content-Type: application/json\" -d" + "\"" + json_object + "\"" + self.config["network"]["ip"]
