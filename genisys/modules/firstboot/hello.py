@@ -5,7 +5,7 @@ from typing_extensions import Self
 from genisys.modules.base import Module
 from genisys.config_parser import YAMLParser
 
-class FirstBoot(Module):
+class Hello(Module):
     """
     The FirstBoot class generates a shell script for the 
     client machines which sends a POST request to the 
