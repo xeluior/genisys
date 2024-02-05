@@ -34,7 +34,9 @@ class Hello(Module):
         curl_command = "curl -X POST -H \"Content-Type: application/json\" -d" + "\"" + json_object + "\"" + self.config["network"]["ip"]
         content.append(curl_command)
 
-        return content
+
+        formatted_string = "\n".join(content)
+        return formatted_string
     #end generate
 
     def install_location(self: Self) -> Path:
