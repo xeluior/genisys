@@ -25,7 +25,8 @@ class Hello(Module):
             'ip' : '$(hostname -I)',
             'hostname' : '$(hostname)'
         }
-        # Not sure of json.dumps() is necessary, will need testing
+
+        #Convert to actual JSON string
         json_object = json.dumps(json_body)
 
         content.append("#!/bin/bash")
@@ -39,9 +40,5 @@ class Hello(Module):
     #end generate
 
     def install_location(self: Self) -> Path:
-        return "/first-boot/"
+        return Path(self.config["network"]["ftp"]["directory"]) / "first-boot" / "entrypoint"
     #end install_location
-
-    def install(self: Self, chroot: Path = Path('/')):
-        pass
-    #end install
