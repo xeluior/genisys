@@ -36,7 +36,7 @@ class Hello(Module):
         server_ip = self.config["network"]["ip"]
         server_port = self.config["network"]["server"]["port"]
 
-        target_ip = prefix + server_ip + ":" + server_port
+        target_ip = prefix + server_ip + ":" + str(server_port)
 
         # Command to send POST request to Genisys server (Subject to change)
         curl_command = f"curl -X POST -H 'Content-Type: application/json' -d {json_object} {target_ip}"
