@@ -8,7 +8,7 @@ class HelloModuleTest(unittest.TestCase):
         """Test that the ssl option is correctly detected"""
         expected_output_list = [
             "#!/bin/bash",
-            "https://10.0.0.1:15206"
+            "curl -X POST -H 'Content-Type: application/json' -d {\"message\": \"hello\", \"ip\": \"$(hostname -I)\", \"hostname\": \"$(hostname)\"} https://10.0.0.1:15206"
         ]
 
         with open("tests/configs/hello_test_1.yml", encoding='utf-8') as config_file:
