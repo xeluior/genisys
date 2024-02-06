@@ -27,6 +27,12 @@ Network:
     # if group is absent, will attempt to use a group with the same name as user
     user: genisys
     group: genisys
+    # the working directory for the server process. Used to canonicalize any paths from the ansible section.
+    # The specified user needs, at minimum, execute (--x) access to the directory. If any of the ansible files
+    # are stored there the user will need read (r--) permissions on those files or read-write (rw-) access for
+    # the inventory file. They will also need write (-w-) access to the working-directory if the inventory file
+    # does not exist. Defaults to the user's home directory
+    working-directory: /srv/genisys
     # run the server using SSL
     # either both or neither of cert and key need specified if enabled
     # if neither are present, genisys generates a self-signed key on first run
@@ -62,7 +68,9 @@ Scripts:
 # configure settings for the ansible integration
 ansible:
   # this specifies which inventory file is updated by the server process
-  # is created if it does not exist. If it does exist, must be writable by the server user
+  # is created if it does not exist. If it does exist, must be writable by the server user.
+  # If the inventory file already exists, it should be defined in YAML format. A 'genisys'
+  # section will be added to the file if it does not already exist.
   inventory: /var/genisys/inventory
   # the ssh private key used to run the playbooks. The corresponding public key should be specified
   # in the Users section above. Must be readable by the server user

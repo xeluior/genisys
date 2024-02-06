@@ -17,11 +17,6 @@ import genisys.server.tls
 DEFAULT_PORT = 15206
 DEFAULT_INVENTORY = "/etc/ansible/hosts"
 
-class ServerOptions(TypedDict):
-    port: int
-    user: str
-    group: str
-    ssl: Dict[str, str]
 
 class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
     """Process client "hello"s by running ansible playbooks on a received POST"""
@@ -40,6 +35,13 @@ class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
 class GenisysHTTPServer(HTTPServer):
     """HTTP Server wrapper to allow server global variables to be used for processing requests"""
     inventory_file: TextIOWrapper
+ServerOptions = TypedDict("ServerOptions", {
+    "port": int,
+    "user": str,
+    "group": str,
+    "working-directory": str,
+    "ssl": Dict[str, str]
+})
 
 def run(config: YAMLParser):
     """Drops priviledges, creates the server (with SSL, if applicable), then waits for requests"""
@@ -48,9 +50,15 @@ def run(config: YAMLParser):
     server_options = cast(ServerOptions, network.get("server", {}) or {})
 
     # drop priviledges
-    if not drop_priviledges(server_options):
+    try:
+        server_user = drop_priviledges(server_options)
+    except PermissionError:
         warn("Unable to drop privledges to the specified user. Continuing as current user.")
+        server_user = pwd.getpwuid(os.getuid())
 
+    # change working directory
+    workdir = server_options.get("working-directory", server_user.pw_dir)
+    os.chdir(workdir)
     # create a server
     server_address = network.get('ip', '')
     server_port = server_options.get("port", DEFAULT_PORT)
@@ -77,19 +85,16 @@ def run(config: YAMLParser):
     signal(SIGTERM, sigterm_handler)
     httpd.serve_forever()
 
-def drop_priviledges(config: ServerOptions) -> bool:
+def drop_priviledges(config: ServerOptions) -> pwd.struct_passwd:
     """Attempts to drop the priviledges to that of the specified users, returns false on failure"""
     if 'user' not in config:
         warn("No user specified. Continuing as current user.")
-        return True
+        return pwd.getpwuid(os.geteuid())
 
     grpnam = config.get('group', config['user'])
     uid = pwd.getpwnam(config['user'])
     gid = grp.getgrnam(grpnam)
 
-    try:
-        os.setuid(uid.pw_uid)
-        os.setgid(gid.gr_gid)
-        return True
-    except PermissionError:
-        return False
+    os.setuid(uid.pw_uid)
+    os.setgid(gid.gr_gid)
+    return uid
