@@ -6,7 +6,7 @@ class NatTest(unittest.TestCase):
     """ Tests for the NAT module """
     def test_values_in_config(self):
         """ Ensure that a missing config option raises the expected error. """
-        with open("tests/configs/nat_test_1.yml") as config_file:
+        with open("tests/configs/nat_test_1.yml", encoding='utf-8') as config_file:
             config = config_parser.YAMLParser(config_file.name)
             module = Nat(config)
             with self.assertRaises(ValueError) as context:
@@ -15,7 +15,7 @@ class NatTest(unittest.TestCase):
 
     def test_shared_interface_name(self):
         """ Ensure that interfaces sharing the same name raises an error. """
-        with open("tests/configs/nat_test_2.yml") as config_file:
+        with open("tests/configs/nat_test_2.yml", encoding='utf-8') as config_file:
             config = config_parser.YAMLParser(config_file.name)
             module = Nat(config)
             with self.assertRaises(ValueError) as context:
@@ -42,7 +42,7 @@ class NatTest(unittest.TestCase):
         "-A FORWARD -i eth02 -o eth01 -m state --state RELATED,ESTABLISHED -j ACCEPT",
         "COMMIT"
         ]
-        with open("tests/configs/nat_test_3.yml") as config_file:
+        with open("tests/configs/nat_test_3.yml", encoding='utf-8') as config_file:
             config = config_parser.YAMLParser(config_file.name)
             module = Nat(config)
             output = module.generate().split("\n")
