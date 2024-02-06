@@ -32,6 +32,10 @@ class Preseed(Module):
             if isinstance(value, bool):
                 self.config["users"][key] = str(value).lower()
 
+        # Convert SSH keys to a list of filenames
+        ssh_keys = self.config["users"].get("ssh-keys", [])
+        self.config["users"]["ssh_keys_list"] = "\n".join(ssh_keys)        
+
         return template.render(settings=self.config["users"])
     # end generate
 # end class Preseed

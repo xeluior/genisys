@@ -61,7 +61,7 @@ d-i partman/choose_partition select finish
 d-i partman-auto-lvm/guided_size string max
 d-i partman-auto/choose_recipe select atomic
 d-i partman/default_filesystem string ext3
-d-i partman/confirm_wirte_new_label boolean true
+d-i partman/confirm_write_new_label boolean true
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
 d-i grub-installer/only_debian boolean true
@@ -84,13 +84,14 @@ d-i grub-installer/only_debian boolean true
 d-i finish-install/reboot_in_progress note
 d-i pkgsel/include string openssh-server ntp curl nfs-common linux-headers-$(uname -r) build-essential perl dkms
 
-# thanks to 'https://unix.stackexchange.com/questions/719803/how-to-add-a-public-ssh-key-using-debian-preseed-file'
-# for this ssh-key addition lines
-{% if settings['ssh-key'] is defined %}
-d-i preseed/late_command string in-target mkdir -p /root/.ssh; \
-in-target /bin/sh -c "echo '{{ settings['ssh-key'] }}' >> /root/.ssh/authorized_keys"; \
-in-target chown -R root:root /root/.ssh/;
-in-target chmod 644 /root/.ssh/authorized_keys; \
-in-target chmod 700 /root/.ssh/
+# SSH key addition
+{% if settings['ssh-keys'] is defined %}
+d-i preseed/late_command string \
+    in-target mkdir -p /root/.ssh; \
+    {% for ssh_key in settings['ssh-keys'] %}
+    in-target /bin/sh -c "echo '{{ ssh_key }}' >> /root/.ssh/authorized_keys"; \
+    {% endfor %}
+    in-target chown -R root:root /root/.ssh/; \
+    in-target chmod 644 /root/.ssh/authorized_keys; \
+    in-target chmod 700 /root/.ssh/
 {% endif %}
-
