@@ -31,10 +31,19 @@ class Hello(Module):
 
         content.append("#!/bin/bash")
 
+        # Building target IP for curl request
+        prefix = "https://" if "ssl" in self.config else "" #self.config["network"]?
+        server_ip = self.config["network"]["ip"]
+        server_port = self.config["network"]["server"]["port"]
+
+        target_ip = prefix + server_ip + ":" + server_port
+
         # Command to send POST request to Genisys server (Subject to change)
-        curl_command = "curl -X POST -H \"Content-Type: application/json\" -d" + "\"" + json_object + "\"" + self.config["network"]["ip"]
+        curl_command = f"curl -X POST -H 'Content-Type: application/json' -d {json_object} {target_ip}"
+
         content.append(curl_command)
 
+        # Turning array of strings into single block
         formatted_string = "\n".join(content)
         return formatted_string
     #end generate
