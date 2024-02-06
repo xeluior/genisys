@@ -32,7 +32,7 @@ class Hello(Module):
         content.append("#!/bin/bash")
 
         # Building target IP for curl request
-        prefix = "https://" if "ssl" in self.config else "" #self.config["network"]?
+        prefix = "https://" if "ssl" in self.config["network"] else "" #self.config["network"]?
         server_ip = self.config["network"]["ip"]
         server_port = self.config["network"]["server"]["port"]
 
