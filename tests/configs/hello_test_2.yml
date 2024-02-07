@@ -19,3 +19,4 @@ Network:
   ftp:
     directory: "/ftp"
     ftp-port: 20
+  server:

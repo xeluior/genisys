@@ -35,8 +35,8 @@ class Hello(Module):
         # prefix = "https://" if "ssl" in self.config["network"] else ""
 
         server_config = self.config["network"].get("server", {}) or {}
-        
         prefix = "https://" if "ssl" in server_config else ""
+
         server_ip = self.config["network"]["ip"]
         server_port = self.config["network"]["server"]["port"]
 

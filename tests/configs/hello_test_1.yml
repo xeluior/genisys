@@ -19,5 +19,6 @@ Network:
   ftp:
     directory: "/ftp"
     ftp-port: 20
-  ssl:
-    foo: "bar"
+  server: 
+    ssl:
+      foo: "bar"
