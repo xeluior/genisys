@@ -14,11 +14,10 @@ Network:
   gateways: "10.0.0.50"
   dns-servers: "1.1.1.1"
   no-dns: false
-  server:
-    port: 15206
   ftp:
     directory: "/ftp"
     ftp-port: 20
   server: 
+    port: 15206
     ssl:
       foo: "bar"

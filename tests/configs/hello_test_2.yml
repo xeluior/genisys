@@ -19,4 +19,5 @@ Network:
   ftp:
     directory: "/ftp"
     ftp-port: 20
-  server:
+  server: 
+    port: 15206
