@@ -8,7 +8,14 @@ class HelloModuleTest(unittest.TestCase):
         """Test that the ssl option is correctly detected"""
         expected_output_list = [
             "#!/bin/bash",
-            "curl -X POST -H 'Content-Type: application/json' -d {\"message\": \"hello\", \"ip\": \"$(hostname -I)\", \"hostname\": \"$(hostname)\"} https://10.0.0.1:15206"
+            "ip_addr=$(hostname -I)",
+            "hostname=$(hostname)",
+            "echo \"{\" > ip.json",
+            "echo \"    \"message\" : \"hello\",\" >> ip.json",
+            "echo \"    \"ip\" : \"$(hostname -I)\",\" >> ip.json",
+            "echo \"    \"hostname\" : \"$(hostname)\",\" >> ip.json",
+            "echo \"}\" >> ip.json",
+            "curl --json @ip.json https://10.0.0.1:15206"
         ]
 
         with open("tests/configs/hello_test_1.yml", encoding='utf-8') as config_file:
@@ -23,7 +30,14 @@ class HelloModuleTest(unittest.TestCase):
         """Test that the ssl option is correctly detected, opposite of test 1"""
         expected_output_list = [
             "#!/bin/bash",
-            "curl -X POST -H 'Content-Type: application/json' -d {\"message\": \"hello\", \"ip\": \"$(hostname -I)\", \"hostname\": \"$(hostname)\"} 10.0.0.1:15206"
+            "ip_addr=$(hostname -I)",
+            "hostname=$(hostname)",
+            "echo \"{\" > ip.json",
+            "echo \"    \"message\" : \"hello\",\" >> ip.json",
+            "echo \"    \"ip\" : \"$(hostname -I)\",\" >> ip.json",
+            "echo \"    \"hostname\" : \"$(hostname)\",\" >> ip.json",
+            "echo \"}\" >> ip.json",
+            "curl --json @ip.json 10.0.0.1:15206"
         ]
 
         with open("tests/configs/hello_test_2.yml", encoding='utf-8') as config_file:

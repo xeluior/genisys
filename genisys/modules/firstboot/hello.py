@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 from typing_extensions import Self
 
@@ -20,29 +19,32 @@ class Hello(Module):
 
     def generate(self: Self):
         content = []
-        json_body = {
-            'message' : 'hello', 
-            'ip' : '$(hostname -I)',
-            'hostname' : '$(hostname)'
-        }
-
-        #Convert to actual JSON string
-        json_object = json.dumps(json_body)
 
         content.append("#!/bin/bash")
+
+        #Shell Variables
+        content.append("ip_addr=$(hostname -I)")
+        content.append("hostname=$(hostname)")
+
+        #Writing JSON content to file
+        append_string = " >> ip.json"
+
+        content.append("echo \"{\" > ip.json") #single > to overwrite
+        content.append("echo \"    \"message\" : \"hello\",\"" + append_string)
+        content.append("echo \"    \"ip\" : \"$(hostname -I)\",\"" + append_string)
+        content.append("echo \"    \"hostname\" : \"$(hostname)\",\"" + append_string)
+        # Additional JSON content can be added on this line
+        content.append("echo \"}\"" + append_string)
 
         # Building target IP for curl request
         server_config = self.config["network"].get("server", {}) or {}
         prefix = "https://" if "ssl" in server_config else ""
-
         server_ip = self.config["network"]["ip"]
         server_port = self.config["network"]["server"]["port"]
-
         target_ip = prefix + server_ip + ":" + str(server_port)
 
         # Command to send POST request to Genisys server (Subject to change)
-        curl_command = f"curl -X POST -H 'Content-Type: application/json' -d {json_object} {target_ip}"
-
+        curl_command = f"curl --json @ip.json {target_ip}"
         content.append(curl_command)
 
         # Turning array of strings into single block
