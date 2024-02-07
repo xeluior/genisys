@@ -11,9 +11,9 @@ class HelloModuleTest(unittest.TestCase):
             "ip_addr=$(hostname -I)",
             "hostname=$(hostname)",
             "echo \"{\" > ip.json",
-            "echo \"    \"message\" : \"hello\",\" >> ip.json",
-            "echo \"    \"ip\" : \"$(hostname -I)\",\" >> ip.json",
-            "echo \"    \"hostname\" : \"$(hostname)\",\" >> ip.json",
+            "echo \"    \\\"message\\\" : \\\"hello\\\",\" >> ip.json",
+            "echo \"    \\\"ip\\\" : \\\"$ip_addr\\\",\" >> ip.json",
+            "echo \"    \\\"hostname\\\" : \\\"$hostname\\\",\" >> ip.json",
             "echo \"}\" >> ip.json",
             "curl --json @ip.json https://10.0.0.1:15206"
         ]
@@ -33,9 +33,9 @@ class HelloModuleTest(unittest.TestCase):
             "ip_addr=$(hostname -I)",
             "hostname=$(hostname)",
             "echo \"{\" > ip.json",
-            "echo \"    \"message\" : \"hello\",\" >> ip.json",
-            "echo \"    \"ip\" : \"$(hostname -I)\",\" >> ip.json",
-            "echo \"    \"hostname\" : \"$(hostname)\",\" >> ip.json",
+            "echo \"    \\\"message\\\" : \\\"hello\\\",\" >> ip.json",
+            "echo \"    \\\"ip\\\" : \\\"$ip_addr\\\",\" >> ip.json",
+            "echo \"    \\\"hostname\\\" : \\\"$hostname\\\",\" >> ip.json",
             "echo \"}\" >> ip.json",
             "curl --json @ip.json 10.0.0.1:15206"
         ]

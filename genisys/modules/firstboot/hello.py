@@ -30,9 +30,9 @@ class Hello(Module):
         append_string = " >> ip.json"
 
         content.append("echo \"{\" > ip.json") #single > to overwrite
-        content.append("echo \"    \"message\" : \"hello\",\"" + append_string)
-        content.append("echo \"    \"ip\" : \"$(hostname -I)\",\"" + append_string)
-        content.append("echo \"    \"hostname\" : \"$(hostname)\",\"" + append_string)
+        content.append("echo \"    \\\"message\\\" : \\\"hello\\\",\"" + append_string)
+        content.append("echo \"    \\\"ip\\\" : \\\"$ip_addr\\\",\"" + append_string)
+        content.append("echo \"    \\\"hostname\\\" : \\\"$hostname\\\",\"" + append_string)
         # Additional JSON content can be added on this line
         content.append("echo \"}\"" + append_string)
 
