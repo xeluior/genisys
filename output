@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -X POST -H 'Content-Type: application/json' -d {"message": "hello", "ip": "$(hostname -I)", "hostname": "$(hostname)"} 10.0.0.1:8080
