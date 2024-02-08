@@ -88,8 +88,8 @@ d-i pkgsel/include string openssh-server ntp curl nfs-common linux-headers-$(una
 {% if settings['ssh-keys'] is defined %}
 d-i preseed/late_command string \
     in-target mkdir -p /root/.ssh; \
-    {% for ssh_key in settings['ssh-keys'] %}
-    in-target /bin/sh -c "echo '{{ ssh_key }}' >> /root/.ssh/authorized_keys"; \
+    {% for ssh_key_file in settings['ssh-keys'] %}
+    in-target cat /ssh_keys/{{ ssh_key_file }} >> /root/.ssh/authorized_keys; \
     {% endfor %}
     in-target chown -R root:root /root/.ssh/; \
     in-target chmod 644 /root/.ssh/authorized_keys; \
