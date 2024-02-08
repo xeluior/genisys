@@ -95,9 +95,13 @@ in-target chmod 700 /root/.ssh/
 {% endif %}
 
 # copy firstboot.service file to client 
-d-i preseed/late_command string cp -r /ftp/first-boot/genisys-firstboot.service /etc/systemd/system/
+d-i preseed/late_command string ftp [<username>@]<ip>[:<port>]/ftp/first-boot/genisys-firstboot.service /etc/systemd/system/
 # enable systemd service
-d-i preseed/late_command string systemctl enable
+d-i preseed/late_command string systemctl daemon-reload
+d-i preseed/late_command string systemctl enable systemd-firstboot.service
 # there must be an entrypoint file
 # ensure entrypoint is executable
 d-i preseed/late_command string chmod +x /first-boot/entrypoint
+
+# change firstboot owner to root
+chown -R root:root /first-boot
