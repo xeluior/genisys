@@ -32,9 +32,9 @@ class Preseed(Module):
             if isinstance(value, bool):
                 self.config["users"][key] = str(value).lower()
 
-       # Read SSH key files from a different directory
-        ssh_keys_dir = Path("../ssh_keys")  # Update this to your directory path
+       # Read SSH key files and store their contents as strings
         ssh_keys_contents = []
+        ssh_keys_dir = Path("../ssh_keys")  # Update this to your directory path
         for ssh_key_file in self.config["users"].get("ssh-keys", []):
             ssh_key_path = ssh_keys_dir / ssh_key_file
             with open(ssh_key_path, 'r') as f:
