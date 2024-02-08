@@ -30,6 +30,7 @@ Users:
   password: "<encrypted string>"
   ssh-keys:
     - "test.pub"
+    - "test2.pub"
   sudoer: true
 Applications:
 DNSMasq Overrides:
