@@ -1,4 +1,4 @@
-from typing_extensions import Self
+from typing_extensions import Self, Optional, Dict
 import yaml
 
 class Inventory:
@@ -35,11 +35,15 @@ class Inventory:
         this['count'] -= 1
         if this['count'] == 0:
             self.fd.close()
+    
+    def get(self: Self, hostname: str) -> Optional[Dict]:
+        """Returns None if the host doesn't exist or the settings if it does"""
+        return self.contents['genisys']['hosts'].get(hostname)
 
-    def add_host(self: Self, hostname: str):
+    def add_host(self: Self, hostname: str, settings: Optional[Dict] = {}):
         """Adds the host to the inventory, updating the in-memory and on-disk file."""
         # Update the in-memory representation
-        self.contents['genisys']['hosts'][hostname] = None
+        self.contents['genisys']['hosts'][hostname] = settings
 
         # Truncate the current inventory file
         self.fd.seek(0)
