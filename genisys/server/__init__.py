@@ -40,10 +40,14 @@ def run(config: YAMLParser):
     workdir = server_options.get("working-directory", server_user.pw_dir)
     os.chdir(workdir)
 
+    # install additional data for the server to use
+    ansible_cfg = config.get_section("ansible")
+    inventory_path = ansible_cfg.get("inventory", DEFAULT_INVENTORY)
+
     # create a server
     server_address = network.get('ip', '')
     server_port = server_options.get("port", DEFAULT_PORT)
-    httpd = GenisysHTTPServer((server_address, server_port), GenisysHTTPRequestHandler)
+    httpd = GenisysHTTPServer((server_address, server_port), Inventory(inventory_path), config)
 
     # apply TLS if applicable
     if 'ssl' in server_options:
@@ -53,10 +57,6 @@ def run(config: YAMLParser):
         ssl_context.load_cert_chain(**ssl_cert)
         httpd.socket = ssl_context.wrap_socket(httpd.socket)
 
-    # install additional data for the server to use
-    ansible_cfg = config.get_section("ansible")
-    inventory_path = ansible_cfg.get("inventory", DEFAULT_INVENTORY)
-    httpd.inventory = Inventory(inventory_path)
 
     # run until SIGTERM is caught
     def sigterm_handler(*_):
