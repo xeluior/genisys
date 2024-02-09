@@ -1,12 +1,13 @@
 import sys
 import json
 import subprocess
-from typing_extensions import Self, Tuple, cast
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from typing_extensions import Self, Tuple, cast
 from genisys.config_parser import YAMLParser
 from genisys.server.inventory import Inventory
 
 def generate_response(status_code: int, message: str) -> bytes:
+    """Generates a JSON formated HTTP response with the given status and message"""
     statuses = {200: "OK", 400: "Bad Request", 500: "Internal Server Error"}
     response_body = '{"message":"' + message + '"}'
     response = f"HTTP/1.1 {status_code} {statuses[status_code]}\n"
@@ -36,7 +37,8 @@ class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(content_length))
 
             # validate the declared IP and hostname
-            if body['ip'] != self.client_address[0] or server.inventory.get(body['hostname']) != None:
+            if body['ip'] != self.client_address[0] \
+                or server.inventory.get(body['hostname']) is not None:
                 self.wfile.write(generate_response(400, 'Declared IP is not valid.'))
 
             # add the host to the inventory file
@@ -64,4 +66,3 @@ class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
                     'Internal server error. Check logs for details.'
                 )
             )
-

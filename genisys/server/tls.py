@@ -11,6 +11,7 @@ from typing_extensions import TypedDict, Union, NotRequired, Dict
 CERTIFICATE_STORE_PATH = Path(os.getenv('GENISYS_CERT_STORE', '/etc/genisys/ssl'))
 
 class CertChainArgs(TypedDict):
+    """Typed Dict for arguments to be applied to the SSLContext#load_cert_chain method"""
     keyfile: str
     certfile: str
     password: NotRequired[Union[str, None]]
