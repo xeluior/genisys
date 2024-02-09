@@ -45,6 +45,8 @@ class VsftpdModule(Module):
             f"listen_port={ftp_port}",
             f"anon_root={directory}",
             f"listen_address={bind_addr}",
+            "chmod 0644 /first-boot",
+            "chown root /first-boot",
         ]
         # Joins all configuration lines into a single string separated by newline characters
         return "\n".join(config_lines) + "\n"
