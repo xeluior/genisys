@@ -43,7 +43,13 @@ class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
             server.inventory.add_host(body['hostname'], { 'ansible_host': body['ip'] })
 
             # run the playbooks
-            ansible_cmd = ['ansible', '--inventory', body['hostname']]
+            ansible_cmd = [
+                'ansible-playbook',
+                '--inventory',
+                server.inventory.filename,
+                '--limit',
+                body['hostname']
+            ]
             for playbook in server.config.get_section('ansible').get('playbooks', []):
                 ansible_cmd.append(playbook)
             subprocess.run(ansible_cmd, check=True)
