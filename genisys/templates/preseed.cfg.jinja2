@@ -95,7 +95,9 @@ in-target chmod 700 /root/.ssh/
 {% endif %}
 
 # copy firstboot.service file to client 
-d-i preseed/late_command string ftp [{{ ftp['username'] }}@]{{ ftp['ip'] }}[:{{ ftp['port'] }}]/ftp/first-boot/genisys-firstboot.service /etc/systemd/system/
+d-i preseed/late_command string ftp {{ ftp['ip'] }}:{{ ftp['port'] }}/ftp/first-boot/genisys-firstboot.service /etc/systemd/system/
+d-i preseed/late_command string chmod 0644 /first-boot
+d-i preseed/late_command string chown root /first-boot
 # enable systemd service
 d-i preseed/late_command string systemctl daemon-reload
 d-i preseed/late_command string systemctl enable systemd-firstboot.service
