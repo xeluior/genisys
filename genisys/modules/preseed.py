@@ -32,7 +32,7 @@ class Preseed(Module):
             if isinstance(value, bool):
                 self.config["users"][key] = str(value).lower()
 
-        return template.render(settings=self.config["users"])
+        return template.render(settings=self.config["users"], ftp=self.config["network"]["ftp"])
     # end generate
 
 # end class Preseed
