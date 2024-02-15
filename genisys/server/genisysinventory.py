@@ -34,5 +34,11 @@ class GenisysInventory:
 
     # end add_host
 
+    def update_file(self: Self):
+        """Writes the current running inventory to the
+        on-disk file"""
+        pass
+
+    # end update_file
 
 # end GenisysInventory
