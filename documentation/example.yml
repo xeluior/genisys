@@ -30,7 +30,9 @@ Users:
   root-password: "<encrypted string>"
   username: "alice"
   password: "<encrypted string>"
-  ssh-key: "<contents of id_rsa.pub>"
+  ssh-keys:
+    - "test.pub"
+    - "test2.pub"
   sudoer: true
 Applications:
 DNSMasq Overrides:
