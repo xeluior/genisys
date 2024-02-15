@@ -14,6 +14,8 @@ Network:
   gateways: "10.0.0.50"
   dns-servers: "1.1.1.1"
   no-dns: false
+  server:
+    port: 15206
   ftp:
     directory: "/ftp"
     ftp-port: 20
@@ -55,7 +57,9 @@ Users:
   root-password: "<encrypted string>"
   username: "alice"
   password: "<encrypted string>"
-  ssh-key: "<contents of id_rsa.pub>"
+  ssh-keys:
+    - "test.pub"
+    - "test2.pub"
   sudoer: true
 Applications:
   - curl

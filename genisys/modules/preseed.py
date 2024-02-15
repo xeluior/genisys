@@ -3,7 +3,7 @@ from typing_extensions import Self
 import jinja2
 from genisys.modules.base import Module
 from genisys.config_parser import YAMLParser
-
+import sys
 FILENAME = "preseed.cfg"
 
 class Preseed(Module):
@@ -32,6 +32,23 @@ class Preseed(Module):
             if isinstance(value, bool):
                 self.config["users"][key] = str(value).lower()
 
-        return template.render(settings=self.config["users"])
-    # end generate
-# end class Preseed
+       # Read SSH key files and store their contents as strings
+        ssh_keys_contents = []
+        ssh_keys_dir = Path("../ssh_keys")  # Update this to your directory path
+        for ssh_key_file in self.config["users"].get("ssh-keys", []):
+            ssh_key_path = ssh_keys_dir / ssh_key_file
+            with open(ssh_key_path, 'r') as f:
+                ssh_keys_contents.append(f.read())
+
+        # Pass SSH key contents to the template
+        rendered_template = template.render(settings=self.config["users"], ssh_keys_contents=ssh_keys_contents)
+        return rendered_template
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python preseed.py <config_file>")
+        sys.exit(1)
+
+    config = YAMLParser(sys.argv[1])
+    preseed = Preseed(config)
+    print(preseed.generate())

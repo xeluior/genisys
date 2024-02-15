@@ -10,8 +10,9 @@ from genisys.modules.dns import Dnsmasq
 from genisys.modules.ftp import VsftpdModule
 from genisys.modules.os_file_download import OSDownload
 from genisys.modules.syslinux import Syslinux
-from genisys.modules.firstboot import Service
 from genisys.modules.script import Script
+from genisys.modules.firstboot.hello import Hello
+from genisys.modules.firstboot.service import Service
 import genisys.config_parser as cp
 import genisys.server
 
@@ -24,6 +25,7 @@ MODULES = [
     Dnsmasq,
     VsftpdModule,
     Syslinux,
+    Hello, 
     Service,
     Script
 ]
