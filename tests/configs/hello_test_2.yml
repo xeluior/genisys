@@ -19,23 +19,5 @@ Network:
   ftp:
     directory: "/ftp"
     ftp-port: 20
-OS:
-  os: "debian"
-  version-name: bookworm
-  target-architecture: amd64 
-UEFI:
-  uefi: false
-Users:
-  root-login: true
-  root-password: "<encrypted string>"
-  username: "alice"
-  password: "<encrypted string>"
-  ssh-key: "<contents of id_rsa.pub>"
-  sudoer: true
-Applications:
-DNSMasq Overrides:
-  authoritative: false
-Scripts: 
-  script-dir: "/scripts"
-  move-all: true
-  script-list: ["script1.sh"]
+  server: 
+    port: 15206
