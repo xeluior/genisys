@@ -94,8 +94,10 @@ in-target chmod 644 /root/.ssh/authorized_keys; \
 in-target chmod 700 /root/.ssh/
 {% endif %}
 
-# copy firstboot.service file to client 
+# copy firstboot.service file to client
+{% if ftp.get('ip') is defined && ftp.get('port') is defined %}
 d-i preseed/late_command string ftp {{ ftp['ip'] }}:{{ ftp['port'] }}/ftp/first-boot/genisys-firstboot.service /etc/systemd/system/
+{% endif %}
 d-i preseed/late_command string chmod 0644 /first-boot
 d-i preseed/late_command string chown root /first-boot
 # enable systemd service
