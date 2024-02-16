@@ -32,6 +32,12 @@ class Preseed(Module):
             if isinstance(value, bool):
                 self.config["users"][key] = str(value).lower()
 
+
+        return template.render(settings=self.config["users"], ftp=self.config["network"].get("ftp", {}))
+    # end generate
+
+# end class Preseed
+
        # Read SSH key files and store their contents as strings
         ssh_keys_contents = []
         ssh_keys_dir = Path("../ssh_keys")  # Update this to your directory path
@@ -52,3 +58,4 @@ if __name__ == "__main__":
     config = YAMLParser(sys.argv[1])
     preseed = Preseed(config)
     print(preseed.generate())
+
