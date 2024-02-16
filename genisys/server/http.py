@@ -21,7 +21,7 @@ class GenisysHTTPServer(HTTPServer):
     """Subclass to manage shared state between server requests"""
     def __init__(self: Self, bind: Tuple[str, int], inventory: Inventory, config: YAMLParser):
         super().__init__(bind, GenisysHTTPRequestHandler)
-        self.inventory = inventory
+        self.inventory = inventory # NEWINV
         self.config = config
 
 class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
@@ -38,17 +38,17 @@ class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
 
             # validate the declared IP and hostname
             if body['ip'] != self.client_address[0] \
-                or server.inventory.get(body['hostname']) is not None:
+                or server.inventory.get(body['hostname']) is not None: # NEWINV
                 self.wfile.write(generate_response(400, 'Declared IP is not valid.'))
 
             # add the host to the inventory file
-            server.inventory.add_host(body['hostname'], { 'ansible_host': body['ip'] })
+            server.inventory.add_host(body['hostname'], { 'ansible_host': body['ip'] }) # NEWINV
 
             # run the playbooks
             ansible_cmd = [
                 'ansible-playbook',
                 '--inventory',
-                server.inventory.filename,
+                server.inventory.filename, # NEWINV
                 '--limit',
                 body['hostname']
             ]

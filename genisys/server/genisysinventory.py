@@ -1,5 +1,5 @@
-from typing_extensions import Self
 import json
+from typing_extensions import Self
 
 
 class GenisysInventory:
@@ -11,7 +11,13 @@ class GenisysInventory:
         self.filepath = filepath
         self.fd = open(filepath, "r+", encoding="utf-8")
         # Load any host entries from the past
-        self.running_inventory = json.load(self.fd)
+        try:
+            self.running_inventory = json.load(self.fd)
+        except json.decoder.JSONDecodeError:
+            self.running_inventory = {}
+        # Ensure that dictionary structure exists
+        if "genisys" not in self.running_inventory:
+            self.running_inventory["genisys"] = {"hosts": []}
 
     # end __init__
 
@@ -21,24 +27,43 @@ class GenisysInventory:
 
     # end __del__
 
-    def get_host(self: Self):
-        """Searches the running inventory for a specifc host,
+    def get_host(self: Self, host: str):
+        """Searches the running inventory for a specifc hostname,
         if not found returns None"""
-        pass
+        host_list = self.running_inventory["genisys"]["hosts"]
+
+        for element in host_list:
+            if element["hostname"] == host:
+                return element
+
+        return None
 
     # end get_host
 
     def add_host(self: Self, host):
-        """Adds a host to the running inventory"""
-        pass
+        """Adds a host to the running inventory, takes in
+        the JSON body of a request and assumes that the key
+        'hostname' is present and accurate"""
+        if not isinstance(host, dict):
+            host_dict = json.loads(host)
+        else:
+            host_dict = host
+
+        self.running_inventory["genisys"]["hosts"].append(host_dict)
+
+        self.update_file()
 
     # end add_host
 
     def update_file(self: Self):
         """Writes the current running inventory to the
         on-disk file"""
-        pass
+        self.fd.seek(0)
+        json.dump(self.running_inventory, self.fd)
+
+        self.fd.flush()
 
     # end update_file
+
 
 # end GenisysInventory
