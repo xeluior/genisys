@@ -74,9 +74,11 @@ class GenisysInventory:
             # If there are no previous entries in the inventory file
             return "genisys1"
 
-        new_value = int(last_entry["hostname"][6:]) + 1
+        new_value = int(last_entry["hostname"][7:]) + 1
 
         return "genisys" + str(new_value)
+
+    # end get_next_hostname
 
 
 
