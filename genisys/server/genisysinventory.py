@@ -65,5 +65,19 @@ class GenisysInventory:
 
     # end update_file
 
+    def get_next_hostname(self: Self):
+        """Returns the next hostname by checking the inventory's most
+        recent entry and incrementing numeric component at the end"""
+        try:
+            last_entry = self.running_inventory["genisys"]["hosts"][-1]
+        except IndexError:
+            # If there are no previous entries in the inventory file
+            return "genisys1"
+
+        new_value = int(last_entry["hostname"][6:]) + 1
+
+        return "genisys" + str(new_value)
+
+
 
 # end GenisysInventory
