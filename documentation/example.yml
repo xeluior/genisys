@@ -14,9 +14,38 @@ Network:
   gateways: "10.0.0.50"
   dns-servers: "1.1.1.1"
   no-dns: false
+  server:
+    port: 15206
   ftp:
     directory: "/ftp"
     ftp-port: 20
+  server:
+    # the prefered port, server will throw an exception if port is occupied on
+    # the specified ip above. If no IP was specifed, attempts to bind to all interfaces
+    port: 15206
+    # the user and group the server should drop privileges to if ran as root
+    # if absent will run the server as the running user
+    # if not ran as root or the specified user, a warning will be emitted but the server will still run
+    # if group is absent, will attempt to use a group with the same name as user
+    user: genisys
+    group: genisys
+    # the working directory for the server process. Used to canonicalize any paths from the ansible section.
+    # The specified user needs, at minimum, execute (--x) access to the directory. If any of the ansible files
+    # are stored there the user will need read (r--) permissions on those files or read-write (rw-) access for
+    # the inventory file. They will also need write (-w-) access to the working-directory if the inventory file
+    # does not exist. Defaults to the user's home directory
+    working-directory: /srv/genisys
+    # run the server using SSL
+    # either both or neither of cert and key need specified if enabled
+    # if neither are present, genisys generates a self-signed key on first run
+    # the self-signed cert will be created at $GENISYS_CERT_STORE or /etc/genisys/ssl/
+    # if the ssl section is missing, the server will be ran without ssl
+    ssl:
+      cert: /path/to/fullchain.pem
+      key: /path/to/privkey.pem
+      # nessecary if the privkey is encrypted, the first line of the file will be used as the passphrase
+      # when decrytping the key, after stripping any newline
+      password-file: /path/to/key/password
 OS:
   os: "debian"
   version-name: bookworm
@@ -28,8 +57,28 @@ Users:
   root-password: "<encrypted string>"
   username: "alice"
   password: "<encrypted string>"
-  ssh-key: "<contents of id_rsa.pub>"
+  ssh-keys:
+    - "test.pub"
+    - "test2.pub"
   sudoer: true
 Applications:
+  - curl
 DNSMasq Overrides:
   authoritative: false
+Scripts: 
+  script-dir: "/scripts"
+  move-all: true
+  script-list: ["script1.sh"]
+# configure settings for the ansible integration
+ansible:
+  # this specifies which inventory file is updated by the server process
+  # is created if it does not exist. If it does exist, must be writable by the server user.
+  # If the inventory file already exists, it should be defined in YAML format. A 'genisys'
+  # section will be added to the file if it does not already exist.
+  inventory: /var/genisys/inventory
+  # the ssh private key used to run the playbooks. The corresponding public key should be specified
+  # in the Users section above. Must be readable by the server user
+  ssh-key: /etc/genisys/ssh/id_rsa
+  # list of paths to playbooks to run when the server receives a HELLO
+  playbooks:
+    - /etc/genisys/playbooks/firstrun.yaml

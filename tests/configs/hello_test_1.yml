@@ -1,0 +1,23 @@
+---
+Network:
+  interface: "eth0"
+  subnet: "10.0.0.0/24"
+  netmask: "255.255.255.0" 
+  ip: "10.0.0.1"
+  dhcp-ranges: "10.0.0.100-10.0.0.254"
+  dhcp-lease: "12h"
+  no-dhcp: false
+  nat-requests: true
+  nat-interface: "eth1"
+  tftp_directory: "/tftpboot"
+  tftp_port: "69"
+  gateways: "10.0.0.50"
+  dns-servers: "1.1.1.1"
+  no-dns: false
+  ftp:
+    directory: "/ftp"
+    ftp-port: 20
+  server: 
+    port: 15206
+    ssl:
+      foo: "bar"
