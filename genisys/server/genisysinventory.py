@@ -10,11 +10,13 @@ class GenisysInventory:
     def __init__(self: Self, filepath: str):
         self.filepath = filepath
         self.fd = open(filepath, "r+", encoding="utf-8")
+
         # Load any host entries from the past
         try:
             self.running_inventory = json.load(self.fd)
         except json.decoder.JSONDecodeError:
             self.running_inventory = {}
+
         # Ensure that dictionary structure exists
         if "genisys" not in self.running_inventory:
             self.running_inventory["genisys"] = {"hosts": []}
@@ -49,8 +51,9 @@ class GenisysInventory:
         else:
             host_dict = host
 
-        self.running_inventory["genisys"]["hosts"].append(host_dict)
+        host_dict["hostname"] = self.get_next_hostname()
 
+        self.running_inventory["genisys"]["hosts"].append(host_dict)
         self.update_file()
 
     # end add_host
@@ -79,7 +82,6 @@ class GenisysInventory:
         return "genisys" + str(new_value)
 
     # end get_next_hostname
-
 
 
 # end GenisysInventory
