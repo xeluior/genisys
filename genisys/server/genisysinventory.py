@@ -7,6 +7,8 @@ class GenisysInventory:
     file of all of the client machines booted through Genisys, and to store
     metadata associated with each client"""
 
+    HOSTNAME_PREFIX = "genisys"
+
     def __init__(self: Self, filepath: str):
         self.filepath = filepath
         self.fd = open(filepath, "r+", encoding="utf-8")
@@ -75,11 +77,11 @@ class GenisysInventory:
             last_entry = self.running_inventory["genisys"]["hosts"][-1]
         except IndexError:
             # If there are no previous entries in the inventory file
-            return "genisys1"
+            return self.HOSTNAME_PREFIX + "1"
 
         new_value = int(last_entry["hostname"][7:]) + 1
 
-        return "genisys" + str(new_value)
+        return self.HOSTNAME_PREFIX + str(new_value)
 
     # end get_next_hostname
 
