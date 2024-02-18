@@ -1,5 +1,5 @@
 import json
-from typing_extensions import Self
+from typing_extensions import Self, Optional, Dict
 
 
 class GenisysInventory:
@@ -31,7 +31,7 @@ class GenisysInventory:
 
     # end __del__
 
-    def get_host(self: Self, host: str):
+    def get_host(self: Self, host: str) -> Optional[Dict]:
         """Searches the running inventory for a specifc hostname,
         if not found returns None"""
         host_list = self.running_inventory["genisys"]["hosts"]
@@ -70,7 +70,7 @@ class GenisysInventory:
 
     # end update_file
 
-    def get_next_hostname(self: Self):
+    def get_next_hostname(self: Self) -> str:
         """Returns the next hostname by checking the inventory's most
         recent entry and incrementing numeric component at the end"""
         try:
