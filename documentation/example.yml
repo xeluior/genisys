@@ -40,6 +40,7 @@ Network:
     # if neither are present, genisys generates a self-signed key on first run
     # the self-signed cert will be created at $GENISYS_CERT_STORE or /etc/genisys/ssl/
     # if the ssl section is missing, the server will be ran without ssl
+    inventory-file: "/srv/genisys/genisysinventory.json"
     ssl:
       cert: /path/to/fullchain.pem
       key: /path/to/privkey.pem
