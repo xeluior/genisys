@@ -43,22 +43,6 @@ class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
             # Add the host to the GenisysInventory file
             server.inventory.add_host(body)
 
-            #### Legacy Ansible code
-            # add the host to the inventory file
-            # server.inventory.add_host(body['hostname'], { 'ansible_host': body['ip'] }) 
-            # run the playbooks
-            # ansible_cmd = [
-            #     'ansible-playbook',
-            #     '--inventory',
-            #     server.inventory.filename, # NEWINV
-            #     '--limit',
-            #     body['hostname']
-            # ]
-            # for playbook in server.config.get_section('ansible').get('playbooks', []):
-            #     ansible_cmd.append(playbook)
-            # subprocess.run(ansible_cmd, check=True)
-            ###
-
             # send success back to the client
             self.wfile.write(generate_response(200, 'success'))
         except Exception as e:
