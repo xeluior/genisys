@@ -46,8 +46,9 @@ class GenisysInventory:
 
     def add_host(self: Self, host):
         """Adds a host to the running inventory, takes in
-        the JSON body of a request and assumes that the key
-        'hostname' is present and accurate"""
+        the JSON body of a request and adds it to the running
+        and on-disk memory. It also updates the hostname in the
+        inventory for later assignment."""
         if not isinstance(host, dict):
             host_dict = json.loads(host)
         else:
