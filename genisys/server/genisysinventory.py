@@ -11,7 +11,7 @@ class GenisysInventory:
 
     def __init__(self: Self, filepath: str):
         self.filepath = filepath
-        self.fd = open(filepath, "r+", encoding="utf-8")
+        self.fd = open(filepath, "w+", encoding="utf-8")
 
         # Load any host entries from the past
         try:
