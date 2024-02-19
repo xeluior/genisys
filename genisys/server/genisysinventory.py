@@ -1,4 +1,5 @@
 import json
+from os import stat, path
 from typing_extensions import Self, Optional, Dict
 
 
@@ -13,11 +14,16 @@ class GenisysInventory:
         self.filepath = filepath
         self.fd = open(filepath, "r+", encoding="utf-8")
 
-        # Load any host entries from the past
-        try:
-            self.running_inventory = json.load(self.fd)
-        except json.decoder.JSONDecodeError:
+        # Check if json exists
+        if not path.exists(filepath):
+            raise FileNotFoundError
+
+        # Check if file is empty
+        if stat(filepath).st_size == 0:
             self.running_inventory = {}
+        else:
+            # NOTE: If the file is unable to be parsed, an Exception will be raised
+            self.running_inventory = json.load(self.fd)
 
         # Ensure that dictionary structure exists
         if "genisys" not in self.running_inventory:
