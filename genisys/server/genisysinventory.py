@@ -85,10 +85,9 @@ class GenisysInventory:
     def get_next_hostname(self: Self) -> str:
         """Returns the next hostname by checking the inventory's most
         recent entry and incrementing numeric component at the end"""
-        try:
+        if len(self.running_inventory['genisys']) > 1:
             last_entry = self.running_inventory["genisys"]["hosts"][-1]
-        except IndexError:
-            # If there are no previous entries in the inventory file
+        else:
             return self.HOSTNAME_PREFIX + "1"
 
         new_value = int(last_entry["hostname"][7:]) + 1
