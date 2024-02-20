@@ -4,6 +4,7 @@ import jinja2
 from genisys.modules.base import Module
 from genisys.config_parser import YAMLParser
 import sys
+
 FILENAME = "preseed.cfg"
 
 class Preseed(Module):
@@ -25,7 +26,7 @@ class Preseed(Module):
         jinja_env = jinja2.Environment(loader=loader)
         template = jinja_env.get_template("preseed.cfg.jinja2")
 
-        # convert booleans to lowercase to match preseed format
+        # Convert booleans to lowercase to match preseed format
         for key, value in self.config["users"].items():
             if isinstance(value, bool):
                 self.config["users"][key] = str(value).lower()
@@ -45,8 +46,13 @@ class Preseed(Module):
             with open(ssl_cert_path, 'r') as f:
                 ssl_cert_content = f.read()
 
-        # Pass SSL certificate content along with other settings to the template
-        rendered_template = template.render(settings=self.config["users"], ssh_keys_contents=ssh_keys_contents, ssl_cert_content=ssl_cert_content)
+        # Pass settings, FTP configuration, SSH keys, and SSL certificate content to the template
+        rendered_template = template.render(
+            settings=self.config["users"],
+            ftp=self.config["network"].get("ftp", {}),
+            ssh_keys_contents=ssh_keys_contents,
+            ssl_cert_content=ssl_cert_content
+        )
         return rendered_template
 
 if __name__ == "__main__":
