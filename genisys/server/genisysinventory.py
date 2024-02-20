@@ -18,12 +18,17 @@ class GenisysInventory:
         if not path.exists(filepath):
             raise FileNotFoundError
 
-        # Check if file is empty
-        if stat(filepath).st_size == 0:
-            self.running_inventory = {}
-        else:
-            # NOTE: If the file is unable to be parsed, an Exception will be raised
+        try:
+            # Attempt to load existing file
             self.running_inventory = json.load(self.fd)
+        except json.decoder.JSONDecodeError:
+            # If file is empty create empty inventory
+            if stat(filepath).st_size == 0:
+                self.running_inventory = {}
+            else:
+                # If file is not empty but cannot be read
+                error_string = 'Error decoding the GenisysInventory JSON file at ' + filepath
+                raise ValueError(error_string)
 
         # Ensure that dictionary structure exists
         if "genisys" not in self.running_inventory:
