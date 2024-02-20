@@ -14,7 +14,7 @@ class GenisysInventory:
         self.filepath = filepath
         self.fd = open(filepath, "r+", encoding="utf-8")
 
-        # Check if json exists
+        # Check if json file exists
         if not path.exists(filepath):
             raise FileNotFoundError
 
@@ -87,7 +87,7 @@ class GenisysInventory:
     def get_next_hostname(self: Self) -> str:
         """Returns the next hostname by checking the inventory's most
         recent entry and incrementing numeric component at the end"""
-        if len(self.running_inventory['genisys']) > 1:
+        if len(self.running_inventory['genisys']['hosts']) > 0:
             last_entry = self.running_inventory["genisys"]["hosts"][-1]
         else:
             return self.HOSTNAME_PREFIX + "1"
