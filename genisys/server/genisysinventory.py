@@ -1,5 +1,5 @@
 import json
-from os import stat, path
+from os import stat, path, mkdir
 from typing_extensions import Self, Optional, Dict
 
 
@@ -13,10 +13,6 @@ class GenisysInventory:
     def __init__(self: Self, filepath: str):
         self.filepath = filepath
         self.fd = open(filepath, "r+", encoding="utf-8")
-
-        # Check if json file exists
-        if not path.exists(filepath):
-            raise FileNotFoundError
 
         try:
             # Attempt to load existing file
