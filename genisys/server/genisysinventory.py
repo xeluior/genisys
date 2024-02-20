@@ -55,7 +55,7 @@ class GenisysInventory:
 
     # end get_host
 
-    def add_host(self: Self, host):
+    def add_host(self: Self, host) -> str:
         """Adds a host to the running inventory, takes in
         the JSON body of a request and adds it to the running
         and on-disk memory. It also updates the hostname in the
@@ -69,6 +69,8 @@ class GenisysInventory:
 
         self.running_inventory["genisys"]["hosts"].append(host_dict)
         self.update_file()
+
+        return host_dict["hostname"]
 
     # end add_host
 
