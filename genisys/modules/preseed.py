@@ -13,13 +13,11 @@ class Preseed(Module):
         self.config["network"] = config.get_section("Network")
         self.config["users"] = config.get_section("Users")
         self.config["apps"] = config.get_section("Applications")
-    # end __init__
 
     def install_location(self: Self) -> Path:
         """Places the Preseed file in the TFTP root"""
         ftp_dir = Path(self.config["network"]["tftp_directory"])
         return Path(ftp_dir, FILENAME)
-    # end install_location
 
     def generate(self: Self) -> str:
         """Renders the Jinja template with the prespecified configurations"""
@@ -32,13 +30,7 @@ class Preseed(Module):
             if isinstance(value, bool):
                 self.config["users"][key] = str(value).lower()
 
-
-        return template.render(settings=self.config["users"], ftp=self.config["network"].get("ftp", {}))
-    # end generate
-
-# end class Preseed
-
-       # Read SSH key files and store their contents as strings
+        # Read SSH key files and store their contents as strings
         ssh_keys_contents = []
         ssh_keys_dir = Path("../ssh_keys")  # Update this to your directory path
         for ssh_key_file in self.config["users"].get("ssh-keys", []):
@@ -46,8 +38,15 @@ class Preseed(Module):
             with open(ssh_key_path, 'r') as f:
                 ssh_keys_contents.append(f.read())
 
-        # Pass SSH key contents to the template
-        rendered_template = template.render(settings=self.config["users"], ssh_keys_contents=ssh_keys_contents)
+        # New code to read SSL certificate
+        ssl_cert_path = Path("../ssl/cert.pem")  # Update this to your SSL certificate path
+        ssl_cert_content = ""
+        if ssl_cert_path.exists():
+            with open(ssl_cert_path, 'r') as f:
+                ssl_cert_content = f.read()
+
+        # Pass SSL certificate content along with other settings to the template
+        rendered_template = template.render(settings=self.config["users"], ssh_keys_contents=ssh_keys_contents, ssl_cert_content=ssl_cert_content)
         return rendered_template
 
 if __name__ == "__main__":
@@ -58,4 +57,3 @@ if __name__ == "__main__":
     config = YAMLParser(sys.argv[1])
     preseed = Preseed(config)
     print(preseed.generate())
-

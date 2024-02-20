@@ -41,7 +41,7 @@ Network:
     # the self-signed cert will be created at $GENISYS_CERT_STORE or /etc/genisys/ssl/
     # if the ssl section is missing, the server will be ran without ssl
     ssl:
-      cert: /path/to/fullchain.pem
+      cert: tests/cert.pem
       key: /path/to/privkey.pem
       # nessecary if the privkey is encrypted, the first line of the file will be used as the passphrase
       # when decrytping the key, after stripping any newline
@@ -59,7 +59,6 @@ Users:
   password: "<encrypted string>"
   ssh-keys:
     - "test.pub"
-    - "test2.pub"
   sudoer: true
 Applications:
   - curl
