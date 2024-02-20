@@ -6,7 +6,7 @@ from genisys.config_parser import YAMLParser
 import sys
 
 FILENAME = "preseed.cfg"
-
+CERTIFICATE_STORE_PATH = Path("/etc/genisys/ssl")
 class Preseed(Module):
     """Generates a Preseed file to be served over the network to a booting Debian system"""
     def __init__(self: Self, config: YAMLParser):
@@ -31,29 +31,31 @@ class Preseed(Module):
             if isinstance(value, bool):
                 self.config["users"][key] = str(value).lower()
 
-        # Read SSH key files and store their contents as strings
-        ssh_keys_contents = []
-        ssh_keys_dir = Path("../ssh_keys")  # Update this to your directory path
-        for ssh_key_file in self.config["users"].get("ssh-keys", []):
-            ssh_key_path = ssh_keys_dir / ssh_key_file
-            with open(ssh_key_path, 'r') as f:
-                ssh_keys_contents.append(f.read())
+                # Read SSH key files and store their contents as strings
+                ssh_keys_contents = []
+                ssh_keys_dir = Path(self.config["users"].get("ssh-keys-dir", "../ssh_keys"))
+                for ssh_key_file in self.config["users"].get("ssh-keys", []):
+                    ssh_key_path = ssh_keys_dir / ssh_key_file
+                    with open(ssh_key_path, 'r') as f:
+                        ssh_keys_contents.append(f.read())
 
-        # New code to read SSL certificate
-        ssl_cert_path = Path("../ssl/cert.pem")  # Update this to your SSL certificate path
-        ssl_cert_content = ""
-        if ssl_cert_path.exists():
-            with open(ssl_cert_path, 'r') as f:
-                ssl_cert_content = f.read()
+                # Determine SSL certificate path
+                ssl_cert_path = Path(self.config["network"].get("server", {}).get("ssl", {}).get("cert",
+                                                                                                 CERTIFICATE_STORE_PATH / "cert.pem"))
 
-        # Pass settings, FTP configuration, SSH keys, and SSL certificate content to the template
-        rendered_template = template.render(
-            settings=self.config["users"],
-            ftp=self.config["network"].get("ftp", {}),
-            ssh_keys_contents=ssh_keys_contents,
-            ssl_cert_content=ssl_cert_content
-        )
-        return rendered_template
+                ssl_cert_content = ""
+                if ssl_cert_path.exists():
+                    with open(ssl_cert_path, 'r') as f:
+                        ssl_cert_content = f.read()
+
+                # Pass settings, FTP configuration, SSH keys, and SSL certificate content to the template
+                rendered_template = template.render(
+                    settings=self.config["users"],
+                    ftp=self.config["network"].get("ftp", {}),
+                    ssh_keys_contents=ssh_keys_contents,
+                    ssl_cert_content=ssl_cert_content
+                )
+                return rendered_template
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
