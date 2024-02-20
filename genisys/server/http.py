@@ -36,8 +36,7 @@ class GenisysHTTPRequestHandler(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(content_length))
 
             # validate the declared IP and hostname
-            if body['ip'] != self.client_address[0] \
-                or server.inventory.get_host(body['hostname']) is not None:
+            if body['ip'] != self.client_address[0]:
                 self.wfile.write(generate_response(400, 'Declared IP is not valid.'))
 
             # Add the host to the GenisysInventory file
