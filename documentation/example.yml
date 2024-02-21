@@ -41,11 +41,11 @@ Network:
     # the self-signed cert will be created at $GENISYS_CERT_STORE or /etc/genisys/ssl/
     # if the ssl section is missing, the server will be ran without ssl
     ssl:
-      cert: "../genisys/modules/ssl/cert.pem"
-      key: /path/to/privkey.pem
+      cert: "path/to/cert.pem"
+      key: "path/tp/key.pem"
       # nessecary if the privkey is encrypted, the first line of the file will be used as the passphrase
       # when decrytping the key, after stripping any newline
-      password-file: /path/to/key/password
+      password-file: "path/to/pass"
 OS:
   os: "debian"
   version-name: bookworm

@@ -3,6 +3,7 @@ from typing_extensions import Self
 import jinja2
 from genisys.modules.base import Module
 from genisys.config_parser import YAMLParser
+from genisys.server import tls
 import sys
 
 FILENAME = "preseed.cfg"
@@ -40,9 +41,9 @@ class Preseed(Module):
                         ssh_keys_contents.append(f.read())
 
                 # Determine SSL certificate path
-                ssl_cert_path = Path(self.config["network"].get("server", {}).get("ssl", {}).get("cert",
-                                                                                                 CERTIFICATE_STORE_PATH / "cert.pem"))
+                ssl_cert_path = Path(tls.get_keychain(self.config["network"]["server"]["ssl"])["certfile"])
 
+                # Read SSL certificate file and store its contents as a string
                 ssl_cert_content = ""
                 if ssl_cert_path.exists():
                     with open(ssl_cert_path, 'r') as f:
