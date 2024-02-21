@@ -46,6 +46,10 @@ Network:
       # nessecary if the privkey is encrypted, the first line of the file will be used as the passphrase
       # when decrytping the key, after stripping any newline
       password-file: /path/to/key/password
+    # inventory file defines the path to the file that contains the inventory file managed by genisys
+    # which contains arbitrary information about the clients booted through genisys which is sent to
+    # the server via the firstboot script
+    inventory-file: "/srv/genisys/genisysinventory.json"
 OS:
   os: "debian"
   version-name: bookworm

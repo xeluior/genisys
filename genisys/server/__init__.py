@@ -8,7 +8,7 @@ from warnings import warn
 from signal import signal, SIGTERM
 from typing_extensions import Dict, TypedDict, cast
 from genisys.config_parser import YAMLParser
-from genisys.server.inventory import Inventory
+from genisys.server.genisysinventory import GenisysInventory
 from genisys.server.http import GenisysHTTPServer, GenisysHTTPRequestHandler
 import genisys.server.tls
 
@@ -41,13 +41,13 @@ def run(config: YAMLParser):
     os.chdir(workdir)
 
     # install additional data for the server to use
-    ansible_cfg = config.get_section("ansible")
-    inventory_path = ansible_cfg.get("inventory", DEFAULT_INVENTORY)
+    network_cfg = config.get_section("Network")
+    inventory_path = network_cfg["server"]["inventory-file"]
 
     # create a server
     server_address = network.get('ip', '')
     server_port = server_options.get("port", DEFAULT_PORT)
-    httpd = GenisysHTTPServer((server_address, server_port), Inventory(inventory_path), config)
+    httpd = GenisysHTTPServer((server_address, server_port), GenisysInventory(inventory_path), config)
 
     # apply TLS if applicable
     if 'ssl' in server_options:
