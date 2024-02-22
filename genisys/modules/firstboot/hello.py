@@ -20,32 +20,31 @@ class Hello(Module):
     def generate(self: Self):
         content = []
 
+        # set the shebang, bash for extra features over posix
         content.append("#!/bin/bash")
 
-        #Shell Variables
-        content.append("ip_addr=$(hostname -I)")
-        content.append("hostname=$(hostname)")
+        # ensure some programs are installed
+        # this should be taken care of by the preseed, but just in case
+        content.append("apt update && apt install iproute2 gawk coreutils curl jq")
 
-        #Writing JSON content to file
-        append_string = " >> ip.json"
+        # thanks chat gpt for this command
+        content.append('ip_addr="$(ip -o -4 show scope global | awk \'{print $4}\' | cut -d/ -f1 | head -n1)')
 
-        content.append("echo \"{\" > ip.json") #single > to overwrite
-        content.append("echo \"    \\\"message\\\" : \\\"hello\\\",\"" + append_string)
-        content.append("echo \"    \\\"ip\\\" : \\\"$ip_addr\\\",\"" + append_string)
-        content.append("echo \"    \\\"hostname\\\" : \\\"$hostname\\\",\"" + append_string)
-        # Additional JSON content can be added on this line
-        content.append("echo \"}\"" + append_string)
+        # use jq to avoid trying to wrangle quotes (theres still some wrangling)
+        content.append('jq --null-input --arg ip "${ip_addr}" \'{message: "hello", ip: $ip}\' > ip.json')
 
         # Building target IP for curl request
-        server_config = self.config["network"].get("server", {}) or {}
-        prefix = "https://" if "ssl" in server_config else ""
+        server_config = self.config["network"].get("server") or {}
+        prefix = "https://" if "ssl" in server_config else "http://"
         server_ip = self.config["network"]["ip"]
         server_port = self.config["network"]["server"]["port"]
         target_ip = prefix + server_ip + ":" + str(server_port)
 
         # Command to send POST request to Genisys server (Subject to change)
-        curl_command = f"curl --json @ip.json {target_ip}"
-        content.append(curl_command)
+        content.append(f"hostname=\"$(curl --json @ip.json {target_ip} | jq -r '.hostname')\"")
+
+        # set the machine's hostname with the response iff the response included one
+        content.append('[ "$hostname" != "null" ] && hostnamectl set-hostname "$hostname"')
 
         # Turning array of strings into single block
         formatted_string = "\n".join(content)

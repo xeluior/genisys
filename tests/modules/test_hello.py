@@ -7,15 +7,12 @@ class HelloModuleTest(unittest.TestCase):
     def test_ssl_config_values_present(self):
         """Test that the ssl option is correctly detected"""
         expected_output_list = [
-            "#!/bin/bash",
-            "ip_addr=$(hostname -I)",
-            "hostname=$(hostname)",
-            "echo \"{\" > ip.json",
-            "echo \"    \\\"message\\\" : \\\"hello\\\",\" >> ip.json",
-            "echo \"    \\\"ip\\\" : \\\"$ip_addr\\\",\" >> ip.json",
-            "echo \"    \\\"hostname\\\" : \\\"$hostname\\\",\" >> ip.json",
-            "echo \"}\" >> ip.json",
-            "curl --json @ip.json https://10.0.0.1:15206"
+            '#!/bin/bash',
+            'apt update && apt install iproute2 gawk coreutils curl jq',
+            'ip_addr="$(ip -o -4 show scope global | awk \'{print $4}\' | cut -d/ -f1 | head -n1)',
+            'jq --null-input --arg ip "${ip_addr}" \'{message: "hello", ip: $ip}\' > ip.json',
+            'hostname="$(curl --json @ip.json https://10.0.0.1:15206 | jq -r \'.hostname\')"',
+            '[ "$hostname" != "null" ] && hostnamectl set-hostname "$hostname"'
         ]
 
         with open("tests/configs/hello_test_1.yml", encoding='utf-8') as config_file:
@@ -29,15 +26,12 @@ class HelloModuleTest(unittest.TestCase):
     def test_ssl_config_values_not_present(self):
         """Test that the ssl option is correctly detected, opposite of test 1"""
         expected_output_list = [
-            "#!/bin/bash",
-            "ip_addr=$(hostname -I)",
-            "hostname=$(hostname)",
-            "echo \"{\" > ip.json",
-            "echo \"    \\\"message\\\" : \\\"hello\\\",\" >> ip.json",
-            "echo \"    \\\"ip\\\" : \\\"$ip_addr\\\",\" >> ip.json",
-            "echo \"    \\\"hostname\\\" : \\\"$hostname\\\",\" >> ip.json",
-            "echo \"}\" >> ip.json",
-            "curl --json @ip.json 10.0.0.1:15206"
+            '#!/bin/bash',
+            'apt update && apt install iproute2 gawk coreutils curl jq',
+            'ip_addr="$(ip -o -4 show scope global | awk \'{print $4}\' | cut -d/ -f1 | head -n1)',
+            'jq --null-input --arg ip "${ip_addr}" \'{message: "hello", ip: $ip}\' > ip.json',
+            'hostname="$(curl --json @ip.json http://10.0.0.1:15206 | jq -r \'.hostname\')"',
+            '[ "$hostname" != "null" ] && hostnamectl set-hostname "$hostname"'
         ]
 
         with open("tests/configs/hello_test_2.yml", encoding='utf-8') as config_file:
