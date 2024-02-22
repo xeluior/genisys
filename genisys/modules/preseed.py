@@ -33,11 +33,13 @@ class Preseed(Module):
 
                 # Read SSH key files and store their contents as strings
                 ssh_keys_contents = []
-                ssh_keys_dir = Path(self.config["users"].get("ssh-keys-dir", "../ssh_keys"))
-                for ssh_key_file in self.config["users"].get("ssh-keys", []):
-                    ssh_key_path = ssh_keys_dir / ssh_key_file
-                    with open(ssh_key_path, 'r') as f:
-                        ssh_keys_contents.append(f.read())
+                for ssh_key_path_str in self.config["users"].get("ssh-keys", []):
+                    ssh_key_path = Path(ssh_key_path_str)  # Directly use the provided absolute path
+                    try:
+                        with open(ssh_key_path, 'r') as f:
+                            ssh_keys_contents.append(f.read())
+                    except FileNotFoundError:
+                        print(f"Warning: SSH key file {ssh_key_path} not found.")
 
                 # Determine SSL certificate path
                 ssl_cert_path = Path(tls.get_keychain(self.config["network"]["server"]["ssl"])["certfile"])
