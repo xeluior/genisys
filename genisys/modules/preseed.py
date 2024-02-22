@@ -7,7 +7,6 @@ from genisys.server import tls
 import sys
 
 FILENAME = "preseed.cfg"
-CERTIFICATE_STORE_PATH = Path("/etc/genisys/ssl")
 class Preseed(Module):
     """Generates a Preseed file to be served over the network to a booting Debian system"""
     def __init__(self: Self, config: YAMLParser):
