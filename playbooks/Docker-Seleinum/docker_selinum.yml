@@ -1,0 +1,37 @@
+---
+- name: Install Docker, Pull and Start Selenium Container Based on Architecture
+  hosts: all
+  become: true
+  vars_files:
+    - vault.yml
+  vars:
+    selenium_image_arm: seleniarm/hub:latest
+    selenium_image_x86: selenium/hub:latest
+
+  tasks:
+    - name: Gather the facts
+      ansible.builtin.setup:
+
+    - name: Set Docker and Selenium image variables
+      set_fact:
+        docker_install_cmd: "{{ 'apt-get install docker.io -y' if ansible_architecture == 'aarch64' else 'apt-get install docker-ce -y' }}"
+        selenium_image: "{{ selenium_image_arm if ansible_architecture == 'aarch64' else selenium_image_x86 }}"
+
+    - name: Install Docker
+      ansible.builtin.shell: "{{ docker_install_cmd }}"
+      args:
+        warn: false
+
+    - name: Pull Selenium Docker image
+      ansible.builtin.docker_image:
+        name: "{{ selenium_image }}"
+        source: pull
+
+    - name: Start Selenium Container
+      ansible.builtin.docker_container:
+        name: selenium
+        image: "{{ selenium_image }}"
+        state: started
+        published_ports:
+          - "4444:4444"
+        restart_policy: always

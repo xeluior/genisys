@@ -13,6 +13,8 @@ The python dependecies are listed in requirements.txt, if you installed via `pip
 - dnsmasq, provides the DNS, DHCP, and TFTP servers needed to PXE boot
 - vsftpd, provides the FTP server used to serve the preseed file
 - iptables and iptables-persistent, used to configure the server as a NAT gateway for connected machines
+- ansible, required only if using the dynamic inventory feature
+- MeteorJS version 2.15 and NodeJS version 14 are required for the web GUI 
 
 # Configuration
 
@@ -37,3 +39,12 @@ The default behavior of the `install` method is to call the subclass's internal 
 The default behavior of the `validate` function is to run the subclass's internal `generate` function and check for any exceptions to be thrown. This indicates whether the generation of the subclass's configuration file's contents would be successful were an install attempted.
 
 The default behavior of the `setup_commands` function is the return the empty list. It is expected that subclasses override this method to instead return a list of commands that need ran after their configuration is installed to complete the installation. This could include restarting services, or performing cleanup.
+
+# See Also
+
+Other programs have attempted bare-metal automation before:
+
+- [Cobbler](https://cobbler.github.io/) provides significantly more features at the expense of complexity and additional setup.
+- [Netboot.xzy](https://netboot.xyz/) allows booting of more operating systems with less automation capabilities
+- [Puppet](https://www.puppet.com/)
+
