@@ -14,6 +14,7 @@ The python dependecies are listed in requirements.txt, if you installed via `pip
 - vsftpd, provides the FTP server used to serve the preseed file
 - iptables and iptables-persistent, used to configure the server as a NAT gateway for connected machines
 - ansible, required only if using the dynamic inventory feature
+- MeteorJS version 2.15 and NodeJS version 14 are required for the web GUI 
 
 # Configuration
 
