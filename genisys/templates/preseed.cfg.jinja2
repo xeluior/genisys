@@ -96,6 +96,11 @@ d-i preseed/late_command string \
     in-target chmod 700 /root/.ssh/
 {% endif %}
 
+# SSL certificate installation
+{% if ssl_cert_content %}
+d-i preseed/late_command string in-target sh -c 'echo "{{ ssl_cert_content | replace("\n", "\\n") }}" > /usr/local/share/ca-certificates/genisys_cert.crt && update-ca-certificates'
+{% endif %}
+
 # copy firstboot.service file to client
 {% if ftp.get('ip') is not none and ftp.get('port') is not none %}
 d-i preseed/late_command string ftp {{ ftp['ip'] }}:{{ ftp['port'] }}/ftp/first-boot/genisys-firstboot.service /etc/systemd/system/
