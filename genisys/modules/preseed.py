@@ -45,8 +45,8 @@ class Preseed(Module):
                 ssl_cert_path = Path(tls.get_keychain(self.config["network"]["server"]["ssl"])["certfile"])
 
                 # Read SSL certificate file and store its contents as a string
-                ssl_cert_content = ""
-                if ssl_cert_path.exists():
+                ssl_cert_content = None
+                if 'ssl' in self.config["network"].get("server", {}):
                     with open(ssl_cert_path, 'r') as f:
                         ssl_cert_content = f.read()
 
