@@ -41,12 +41,13 @@ class Preseed(Module):
                     except FileNotFoundError:
                         print(f"Warning: SSH key file {ssh_key_path} not found.")
 
-                # Determine SSL certificate path
-                ssl_cert_path = Path(tls.get_keychain(self.config["network"]["server"]["ssl"])["certfile"])
-
-                # Read SSL certificate file and store its contents as a string
+                # Initialize SSL certificate content as None
                 ssl_cert_content = None
-                if 'ssl' in self.config["network"].get("server", {}):
+                # Check if 'server' and 'ssl' keys are present in the configuration
+                if 'server' in self.config["network"] and 'ssl' in self.config["network"]["server"]:
+                    # Determine SSL certificate path
+                    ssl_cert_path = Path(tls.get_keychain(self.config["network"]["server"]["ssl"])["certfile"])
+                    # Read SSL certificate file and store its contents as a string
                     with open(ssl_cert_path, 'r') as f:
                         ssl_cert_content = f.read()
 
