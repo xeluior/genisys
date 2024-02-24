@@ -30,7 +30,7 @@ class Dnsmasq(base.Module):
                 if 'dhcp-ranges' in self.config['network'] \
                     and 'dhcp-lease' in self.config['network']:
                     config_writer+=(f'dhcp-boot={self.config["network"]["tftp_directory"]}/pxelinux.0\n')
-                    config_writer+=(f'dhcp-range={self.config['network']['dhcp-ranges']},{self.config['network']['dhcp-lease']}\n')
+                    config_writer+=(f"dhcp-range={self.config['network']['dhcp-ranges']},{self.config['network']['dhcp-lease']}\n")
         config_writer+="enable-tftp\n"
         if 'tftp_directory' in self.config['network']:
             config_writer+=("tftp-root=" + self.config['network']['tftp_directory'] + "\n")
