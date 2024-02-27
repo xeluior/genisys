@@ -48,6 +48,12 @@ CLIENT_VMNAME="${CLIENT_VM_PREFIX:-genisys-client}-${TEST_ID}"
 INTNET_NAME="${INTNET_PREFIX:-genisys-intnet}-${TEST_ID}"
 PREINSTALLED_UBUNTU_TEMPLATE="https://genisys-testing-vbox.s3.us-east-2.amazonaws.com/genisys-test-template.vdi"
 
+# verify the SSH key is available
+if [ ! -r "${HOST_SSH_KEY}" ]; then
+  echo "You do not appear to be in the genisys repo. Please run this script from the git root."
+  exit 1
+fi
+
 # create the host VM
 mkdir -p "${TEST_FOLDER}"
 curl -o "${HOST_VDI}" "${PREINSTALLED_UBUNTU_TEMPLATE}"
