@@ -33,7 +33,9 @@ class Script(Module):
         if the move-all option is set to false into the correct FTP directory. 
         """
         #Location of scripts in genisys directory
-        script_source_dir = self.config["scripts"]["script-dir"]
+        script_source_dir = self.config.get("scripts", {}).get("script-dir")
+        if not script_source_dir:
+            return
         source = Path(chroot, script_source_dir)
 
         #Location of FTP directory on genisys host
