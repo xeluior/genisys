@@ -11,17 +11,41 @@
 #     - curl
 #     - vboxmanage
 #     - coreutils
+# Usage
+#   Parts of the script can be configured using environment variables or
+#   using a .env file with SETTING=VALUE per line. The TEST_ID is set always to
+#   the Epoch Seccond the test was started on. Available settings are:
+#     - TMPDIR (/tmp): directory to use for caching the template VDI
+#     - TEST_FOLDER_PREFIX (genisys-test): concatenated with the TEST_ID to
+#       determine the folder for storing test artifacts
+#     - HOST_VM_PREFIX (genisys-host): concatenated with the TEST_ID to
+#       determine the name for the host VM in VirtualBox
+#     - SSH_PORT (TEST_ID % 64511 + 1024): the port to forward to the host VM
+#       for SSH connections
+#     - CLIENT_VM_PREFIX (genisys-client): concatenated with the TEST_ID to
+#       determine the name for the client VM in VirtualBox
+#     - INTNET_PREFIX (genisys-intnet): concatenated with the TEST_ID to
+#       determine the name of the internal network VirtualBox uses for
+#       communication between the host and the client
+#     - HOST_RAM (4096): Memory (in MB) allocated to the host VM
+#     - HOST_CPU (2): Count of CPUs allocated to the host VM
 
 set -ex
 
+source .env
+
 TEST_ID="$EPOCHSECONDS"
-VBOX_GROUP="/genisys-tests/${TEST_ID}"
-TEST_FOLDER="${PWD}/genisys-test-${TEST_ID}"
-HOST_VMNAME="genisys-host-${TEST_ID}"
+TMPDIR="${TMPDIR:-/tmp}"
+TEMPLATE_VDI_CACHE_FILE="${TMPDIR}/genisys-host-template.vdi"
+TEST_FOLDER="${PWD}/${TEST_FOLDER_PREFIX:-genisys-test}-${TEST_ID}"
+HOST_VMNAME="${HOST_VM_PREFIX:-genisys-host}-${TEST_ID}"
+HOST_UNAME="adam"
 HOST_VDI="${TEST_FOLDER}/genisys-host.vdi"
-HOST_SSH_PORT=$(( ${TEST_ID} % 64511 + 1024 ))
-CLIENT_VMNAME="genisys-client-${TEST_ID}"
-INTNET_NAME="genisys-intnet-${TEST_ID}"
+HOST_SSH_CONF_FILE="${TEST_FOLDER}/genisys-host.ssh_config"
+HOST_SSH_PORT=${SSH_PORT:-$(( ${TEST_ID} % 64511 + 1024 ))}
+HOST_SSH_KEY="${PWD}/tests/ssh/id_rsa"
+CLIENT_VMNAME="${CLIENT_VM_PREFIX:-genisys-client}-${TEST_ID}"
+INTNET_NAME="${INTNET_PREFIX:-genisys-intnet}-${TEST_ID}"
 PREINSTALLED_UBUNTU_TEMPLATE="https://genisys-testing-vbox.s3.us-east-2.amazonaws.com/genisys-test-template.vdi"
 
 # create the host VM
