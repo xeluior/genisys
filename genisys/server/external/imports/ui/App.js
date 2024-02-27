@@ -4,6 +4,9 @@ import './App.html';
 
 Template.mainContainer.helpers({
   tasks() {
-    return TasksCollection.find({}).fetch();
+    Meteor.subscribe("tasks")
+    let result = TasksCollection.find({})
+    
+    return result
   },
 });
