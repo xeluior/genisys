@@ -11,12 +11,13 @@
 #     - curl
 #     - vboxmanage
 #     - coreutils
+#     - poetry (version 1.8+)
 # Usage
 #   Parts of the script can be configured using environment variables or
 #   using a .env file with SETTING=VALUE per line. The TEST_ID is set always to
 #   the Epoch Seccond the test was started on. Available settings are:
 #     - TMPDIR (/tmp): directory to use for caching the template VDI
-#     - TEST_FOLDER_PREFIX (genisys-test): concatenated with the TEST_ID to
+#     - TEST_FOLDER_PREFIX ($PWD/genisys-test): concatenated with the TEST_ID to
 #       determine the folder for storing test artifacts
 #     - HOST_VM_PREFIX (genisys-host): concatenated with the TEST_ID to
 #       determine the name for the host VM in VirtualBox
@@ -37,7 +38,8 @@ source .env
 TEST_ID="$EPOCHSECONDS"
 TMPDIR="${TMPDIR:-/tmp}"
 TEMPLATE_VDI_CACHE_FILE="${TMPDIR}/genisys-host-template.vdi"
-TEST_FOLDER="${PWD}/${TEST_FOLDER_PREFIX:-genisys-test}-${TEST_ID}"
+TEST_FOLDER="${TEST_FOLDER_PREFIX:-"${PWD}/genisys-test"}-${TEST_ID}"
+BUILD_OUTPUT="${TEST_FOLDER}/dist"
 HOST_VMNAME="${HOST_VM_PREFIX:-genisys-host}-${TEST_ID}"
 HOST_UNAME="adam"
 HOST_VDI="${TEST_FOLDER}/genisys-host.vdi"
@@ -54,13 +56,18 @@ if [ ! -r "${HOST_SSH_KEY}" ]; then
   exit 1
 fi
 
+# build the package
+mkdir -p "${TEST_FOLDER}"
+poetry build \
+  --format=wheel \
+  --output="${BUILD_OUTPUT}"
+
 # cache the template VDI download
 if [ ! -r "${TEMPLATE_VDI_CACHE_FILE}" ]; then
   curl -o "${TEMPLATE_VDI_CACHE_FILE}" "${PREINSTALLED_UBUNTU_TEMPLATE}"
 fi
 
 # create the host VM
-mkdir -p "${TEST_FOLDER}"
 cp "${TEMPLATE_VDI_CACHE_FILE}" "${HOST_VDI}"
 vboxmanage createvm \
   --name="${HOST_VMNAME}" \
@@ -85,6 +92,12 @@ vboxmanage storageattach "${HOST_VMNAME}" \
   --type="hdd" \
   --medium="${HOST_VDI}" \
   --setuuid=""
+vboxmanage sharedfolder add "${HOST_VMNAME}" \
+  --name="app" \
+  --hostpath="${BUILD_OUTPUT}" \
+  --readonly \
+  --automount \
+  --auto-mount-point="/app"
 vboxmanage startvm "${HOST_VMNAME}" \
   --type="headless"
 
@@ -106,7 +119,6 @@ host-ssh() {
 }
 
 # wait for SSH to be available
-set +x
 printf "Connecting"
 while ! host-ssh echo "Connected" 2>/dev/null; do 
   printf "."
