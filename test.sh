@@ -54,9 +54,14 @@ if [ ! -r "${HOST_SSH_KEY}" ]; then
   exit 1
 fi
 
+# cache the template VDI download
+if [ ! -r "${TEMPLATE_VDI_CACHE_FILE}" ]; then
+  curl -o "${TEMPLATE_VDI_CACHE_FILE}" "${PREINSTALLED_UBUNTU_TEMPLATE}"
+fi
+
 # create the host VM
 mkdir -p "${TEST_FOLDER}"
-curl -o "${HOST_VDI}" "${PREINSTALLED_UBUNTU_TEMPLATE}"
+cp "${TEMPLATE_VDI_CACHE_FILE}" "${HOST_VDI}"
 vboxmanage createvm \
   --name="${HOST_VMNAME}" \
   --basefolder="${TEST_FOLDER}" \
