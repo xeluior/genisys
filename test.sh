@@ -69,6 +69,9 @@ vboxmanage createvm \
   --ostype="Ubuntu_64" \
   --register
 vboxmanage modifyvm "${HOST_VMNAME}" \
+  --memory=${HOST_RAM:-4096} \
+  --cpus=${HOST_CPU:-2}
+vboxmanage modifyvm "${HOST_VMNAME}" \
   --nat-pf1="guestssh,tcp,localhost,${HOST_SSH_PORT},localhost,22"
 vboxmanage modifyvm "${HOST_VMNAME}" \
   --nic2="intnet" \
