@@ -85,4 +85,30 @@ vboxmanage storageattach "${HOST_VMNAME}" \
   --type="hdd" \
   --medium="${HOST_VDI}" \
   --setuuid=""
+vboxmanage startvm "${HOST_VMNAME}" \
+  --type="headless"
+
+# configure ssh for the guest
+# simplifies connecting to host and port
+# ignores condition for accepting host fingerprint
+cat <<SSH >"${HOST_SSH_CONF_FILE}"
+Host ${HOST_VMNAME}
+  User ${HOST_UNAME}
+  Port ${HOST_SSH_PORT}
+  IdentityFile ${HOST_SSH_KEY}
+  HostName localhost
+  ConnectTimeout 3
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+SSH
+host-ssh() {
+  ssh -F "${HOST_SSH_CONF_FILE}" "${HOST_VMNAME}" $@
+}
+
+# wait for SSH to be available
+set +x
+printf "Connecting"
+while ! host-ssh echo "Connected" 2>/dev/null; do 
+  printf "."
+done
 
