@@ -1,21 +1,29 @@
 <body>
-    {{> mainContainer }}
+    <h1>Clients</h1>
+    {{> dynamicTable}}
 </body>
-
-<template name="mainContainer">
-    <div class="container">
-        <header>
-            <h1>Todo List</h1>
-        </header>
-
-        <ul>
-            {{#each tasks}}
-                {{> task}}
-            {{/each}}
-        </ul>
-    </div>
-</template>
 
 <template name="task">
     <li>{{text}}</li>
 </template>
+
+<template name="dynamicTable">
+    <table>
+      <thead>
+        <tr>
+          {{#each tableHeaders}}
+            <th>{{this}}</th>
+          {{/each}}
+        </tr>
+      </thead>
+      <tbody>
+        {{#each tableRows}}
+          <tr>
+            {{#each this}}
+              <td>{{this}}</td>
+            {{/each}}
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </template>

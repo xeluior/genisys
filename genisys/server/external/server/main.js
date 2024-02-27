@@ -1,22 +1,41 @@
 import { Meteor } from 'meteor/meteor';
-import { TasksCollection } from '/imports/api/TasksCollection';
+import { ClientsCollection } from '/imports/api/ClientsCollection';
 
-const insertTask = taskText => TasksCollection.insert({ text: taskText });
+const insertClient = client => ClientsCollection.insert(client);
 
 Meteor.publish("tasks", () => {
-  return TasksCollection.find()
+  return ClientsCollection.find()
 })
 
 Meteor.startup(() => {
-  if (TasksCollection.find().count() === 0) {
+  if (ClientsCollection.find().count() === 0) {
     [
-      'First Task',
-      'Second Task',
-      'Third Task',
-      'Fourth Task',
-      'Fifth Task',
-      'Sixth Task',
-      'Seventh Task'
+      [
+        {
+          "hostname": "genisys1",
+          "ip": "127.0.0.1",
+          "key": "val",
+          "key2": "val2"
+        },
+        {
+          "hostname": "genisys2",
+          "ip": "127.0.0.1",
+          "key": "val",
+          "key2": "val2"
+        },
+        {
+          "hostname": "genisys3",
+          "ip": "127.0.0.1",
+          "key": "val",
+          "key2": "val2"
+        },
+        {
+          "hostname": "genisys4",
+          "ip": "127.0.0.1",
+          "key": "val",
+          "key2": "val2"
+        }
+      ]
     ].forEach(insertTask)
   }
 });
