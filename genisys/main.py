@@ -15,6 +15,7 @@ from genisys.modules.firstboot.hello import Hello
 from genisys.modules.firstboot.service import Service
 import genisys.config_parser as cp
 import genisys.server
+import genisys.make_password
 
 MODULES = [
     OSDownload,
