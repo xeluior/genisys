@@ -55,6 +55,7 @@ if [ ! -r "${HOST_SSH_KEY}" ]; then
   echo "You do not appear to be in the genisys repo. Please run this script from the git root."
   exit 1
 fi
+chmod 0600 "${HOST_SSH_KEY}"
 
 # build the package
 mkdir -p "${TEST_FOLDER}"
