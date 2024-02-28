@@ -36,6 +36,6 @@ Meteor.startup(() => {
           "key2": "val2"
         }
       ]
-    ].forEach(insertTask)
+    ].forEach(insertClient)
   }
 });
