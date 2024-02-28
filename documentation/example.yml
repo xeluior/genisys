@@ -47,8 +47,6 @@ OS:
   os: "debian"
   version-name: bookworm
   target-architecture: amd64 
-UEFI:
-  uefi: false
 Users:
   root-login: true
   root-password: "<encrypted string>"
