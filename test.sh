@@ -125,3 +125,29 @@ while ! host-ssh echo "Connected" 2>/dev/null; do
   printf "."
 done
 
+# install the package
+host-ssh sudo pip install /app/genisys-0.1.0-py3-none-any.whl
+
+# setup the genisys sub-components
+host-ssh sudo genisys install
+
+# setup the client VM
+vboxmanage createvm \
+  --name="${CLIENT_VMNAME}" \
+  --basefolder="${TEST_FOLDER}" \
+  --default \
+  --ostype=Debian_64 \
+  --register
+vboxmanage modifyvm "${CLIENT_VMNAME}" \
+  --nic1="intnet" \
+  --cable-connected1=on \
+  --intnet1="${INTNET_NAME}" \
+  --mac-address1=auto
+vboxmanage modifyvm "${CLIENT_VMNAME}" \
+  --recording=on \
+  --recording-screens=all \
+  --recording-file="${TEST_FOLDER}/client.mp4" \
+  --recording-video-fps=10
+vboxmanage startvm "${CLIENT_VMNAME}" \
+  --type='headless'
+
