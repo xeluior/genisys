@@ -1,0 +1,39 @@
+---
+Network:
+  interface: enp0s8
+  subnet: 192.168.1.0/24
+  ip: 192.168.1.1
+  dhcp-ranges: 192.168.1.100,192.168.1.200
+  dhcp-lease: 12h
+  no-dhcp: false
+  nat-requests: true
+  nat-interface: enp0s3
+  tftp_directory: /var/tftp
+  tftp_port: 69
+  dns-servers: 10.0.2.3
+  no-dns: false
+  ftp:
+    directory: /var/ftp
+    ftp-port: 21
+  server:
+    port: 15206
+    user: genisys
+    group: genisys
+    working-directory: /srv/genisys
+    ssl:
+OS:
+  os: debian
+  version-name: bookworm
+  target-architecture: amd64 
+UEFI:
+  uefi: false
+Users:
+  root-login: true
+  root-password: $y$j9T$k9pvIgLcX46WAFwiGuhBx0$r4v90dAT1d0msSAtLP1e.LZ7qNpyYQ4OYa9VCvZeLcD # "password"
+  username: alice
+  password: $y$j9T$k9pvIgLcX46WAFwiGuhBx0$r4v90dAT1d0msSAtLP1e.LZ7qNpyYQ4OYa9VCvZeLcD
+  ssh-keys:
+    - /app/ssh/id_rs.pub
+  sudoer: true
+Applications:
+  - curl
