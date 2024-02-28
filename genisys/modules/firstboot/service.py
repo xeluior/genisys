@@ -15,6 +15,6 @@ class Service(Module):
         return Path(self.config["path"]) / "first-boot" / self.SERVICE_NAME
 
     def generate(self: Self):
-        template_path = Path(__file__).parent / "templates" / self.SERVICE_NAME
+        template_path = Path(__file__).parent.parent.parent / "templates" / self.SERVICE_NAME
         with template_path.open("r") as fd:
             return fd.read()
