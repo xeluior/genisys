@@ -6,6 +6,9 @@
 #   tool. SSH is used to control the Host VM for setting up the tests then a
 #   recording is taken of the client VM's boot process.
 # Prerequisites:
+#   A single test will spin up 2 VMs with total resource usage of 12GB of RAM
+#   and 4 CPU cores. Resource usage can be adjusted as described in the Usage
+#   section.
 #   Features used in this script rely on Bash 5.0. The following tools must
 #   also be installed and their binaries in a directory on the PATH:
 #     - curl
@@ -28,8 +31,10 @@
 #     - INTNET_PREFIX (genisys-intnet): concatenated with the TEST_ID to
 #       determine the name of the internal network VirtualBox uses for
 #       communication between the host and the client
-#     - HOST_RAM (4096): Memory (in MB) allocated to the host VM
+#     - HOST_RAM (8192): Memory (in MB) allocated to the host VM
 #     - HOST_CPU (2): Count of CPUs allocated to the host VM
+#     - CLIENT_RAM (4096): Memory (in MB) allocated to the client VM
+#     - CLIENT_CPU (2): Count of CPUs allocated to the client VM
 
 set -ex
 
@@ -39,20 +44,21 @@ TEST_ID="$EPOCHSECONDS"
 TMPDIR="${TMPDIR:-/tmp}"
 TEMPLATE_VDI_CACHE_FILE="${TMPDIR}/genisys-host-template.vdi"
 TEST_FOLDER="${TEST_FOLDER_PREFIX:-"${PWD}/genisys-test"}-${TEST_ID}"
-BUILD_OUTPUT="${TEST_FOLDER}/dist"
+SHARED_FOLDER="${TEST_FOLDER}/app"
 HOST_VMNAME="${HOST_VM_PREFIX:-genisys-host}-${TEST_ID}"
-HOST_UNAME="adam"
+HOST_UNAME='adam'
 HOST_VDI="${TEST_FOLDER}/genisys-host.vdi"
 HOST_SSH_CONF_FILE="${TEST_FOLDER}/genisys-host.ssh_config"
 HOST_SSH_PORT=${SSH_PORT:-$(( ${TEST_ID} % 64511 + 1024 ))}
 HOST_SSH_KEY="${PWD}/tests/ssh/id_rsa"
 CLIENT_VMNAME="${CLIENT_VM_PREFIX:-genisys-client}-${TEST_ID}"
+CLIENT_VDI_NAME="${TEST_FOLDER}/${CLIENT_VMNAME}/${CLIENT_VMNAME}.vdi"
 INTNET_NAME="${INTNET_PREFIX:-genisys-intnet}-${TEST_ID}"
-PREINSTALLED_UBUNTU_TEMPLATE="https://genisys-testing-vbox.s3.us-east-2.amazonaws.com/genisys-test-template.vdi"
+PREINSTALLED_UBUNTU_TEMPLATE='https://genisys-testing-vbox.s3.us-east-2.amazonaws.com/genisys-test-template.vdi'
 
 # verify the SSH key is available
 if [ ! -r "${HOST_SSH_KEY}" ]; then
-  echo "You do not appear to be in the genisys repo. Please run this script from the git root."
+  echo 'You do not appear to be in the genisys repo. Please run this script from the git root.'
   exit 1
 fi
 chmod 0600 "${HOST_SSH_KEY}"
@@ -61,7 +67,10 @@ chmod 0600 "${HOST_SSH_KEY}"
 mkdir -p "${TEST_FOLDER}"
 poetry build \
   --format=wheel \
-  --output="${BUILD_OUTPUT}"
+  --output="${SHARED_FOLDER}"
+
+# add additional test files to the shared folder
+cp ./tests/configs/vboxmanage-tests.yaml "${SHARED_FOLDER}/config.yaml"
 
 # cache the template VDI download
 if [ ! -r "${TEMPLATE_VDI_CACHE_FILE}" ]; then
@@ -74,33 +83,33 @@ vboxmanage createvm \
   --name="${HOST_VMNAME}" \
   --basefolder="${TEST_FOLDER}" \
   --default \
-  --ostype="Ubuntu_64" \
+  --ostype='Ubuntu_64' \
   --register
 vboxmanage modifyvm "${HOST_VMNAME}" \
-  --memory=${HOST_RAM:-4096} \
+  --memory=${HOST_RAM:-8192} \
   --cpus=${HOST_CPU:-2}
 vboxmanage modifyvm "${HOST_VMNAME}" \
   --nat-pf1="guestssh,tcp,localhost,${HOST_SSH_PORT},localhost,22"
 vboxmanage modifyvm "${HOST_VMNAME}" \
-  --nic2="intnet" \
-  --cable-connected2="on" \
+  --nic2='intnet' \
+  --cable-connected2=on \
   --intnet2="${INTNET_NAME}" \
   --mac-address2=auto
 vboxmanage storageattach "${HOST_VMNAME}" \
-  --storagectl="IDE" \
+  --storagectl='IDE' \
   --port=0 \
   --device=0 \
-  --type="hdd" \
+  --type='hdd' \
   --medium="${HOST_VDI}" \
-  --setuuid=""
+  --setuuid=''
 vboxmanage sharedfolder add "${HOST_VMNAME}" \
-  --name="app" \
-  --hostpath="${BUILD_OUTPUT}" \
+  --name='app' \
+  --hostpath="${SHARED_FOLDER}" \
   --readonly \
   --automount \
-  --auto-mount-point="/app"
+  --auto-mount-point='/app'
 vboxmanage startvm "${HOST_VMNAME}" \
-  --type="headless"
+  --type='headless'
 
 # configure ssh for the guest
 # simplifies connecting to host and port
@@ -120,16 +129,16 @@ host-ssh() {
 }
 
 # wait for SSH to be available
-printf "Connecting"
-while ! host-ssh echo "Connected" 2>/dev/null; do 
-  printf "."
+printf 'Connecting'
+while ! host-ssh echo 'Connected' 2>/dev/null; do 
+  printf '.'
 done
 
 # install the package
 host-ssh sudo pip install /app/genisys-0.1.0-py3-none-any.whl
 
 # setup the genisys sub-components
-host-ssh sudo genisys install
+host-ssh sudo genisys install --file /app/config.yaml
 
 # setup the client VM
 vboxmanage createvm \
@@ -138,6 +147,23 @@ vboxmanage createvm \
   --default \
   --ostype=Debian_64 \
   --register
+vboxmanage createmedium disk \
+  --filename="${CLIENT_VDI_NAME}" \
+  --size=8096 \
+  --format='VDI'
+vboxmanage storageattach "${CLIENT_VMNAME}" \
+  --storagectl='IDE' \
+  --port=0 \
+  --device=0 \
+  --type='hdd' \
+  --medium="${CLIENT_VDI_NAME}"
+vboxmanage modifyvm "${HOST_VMNAME}" \
+  --memory=${CLIENT_RAM:-4096} \
+  --cpus=${CLIENT_CPU:-2}
+vboxmanage modifyvm "${CLIENT_VMNAME}" \
+  --bios-boot-menu='disabled' \
+  --boot1='disk' \
+  --boot2='net'
 vboxmanage modifyvm "${CLIENT_VMNAME}" \
   --nic1="intnet" \
   --cable-connected1=on \
