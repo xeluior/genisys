@@ -12,9 +12,10 @@
 #   Features used in this script rely on Bash 5.0. The following tools must
 #   also be installed and their binaries in a directory on the PATH:
 #     - curl
-#     - vboxmanage
+#     - vboxmanage (or VBoxManage)
 #     - coreutils
 #     - poetry (version 1.8+)
+#     - ssh
 # Usage
 #   Parts of the script can be configured using environment variables or
 #   using a .env file with SETTING=VALUE per line. The TEST_ID is set always to
@@ -35,10 +36,14 @@
 #     - HOST_CPU (2): Count of CPUs allocated to the host VM
 #     - CLIENT_RAM (4096): Memory (in MB) allocated to the client VM
 #     - CLIENT_CPU (2): Count of CPUs allocated to the client VM
+#     - VBOXMANAGE (vboxmanage or VBoxManage): set the path to the installed
+#       vboxmanage binary
 
 set -ex
 
-source .env
+if [ -r .env ]; then
+  source .env
+fi
 
 TEST_ID="$EPOCHSECONDS"
 TMPDIR="${TMPDIR:-/tmp}"
@@ -55,6 +60,7 @@ CLIENT_VMNAME="${CLIENT_VM_PREFIX:-genisys-client}-${TEST_ID}"
 CLIENT_VDI_NAME="${TEST_FOLDER}/${CLIENT_VMNAME}/${CLIENT_VMNAME}.vdi"
 INTNET_NAME="${INTNET_PREFIX:-genisys-intnet}-${TEST_ID}"
 PREINSTALLED_UBUNTU_TEMPLATE='https://genisys-testing-vbox.s3.us-east-2.amazonaws.com/genisys-test-template.vdi'
+VBOXMANAGE=${VBOXMANAGE:-$(which vboxmanage || which VBoxManage)}
 
 # verify the SSH key is available
 if [ ! -r "${HOST_SSH_KEY}" ]; then
@@ -79,36 +85,36 @@ fi
 
 # create the host VM
 cp "${TEMPLATE_VDI_CACHE_FILE}" "${HOST_VDI}"
-vboxmanage createvm \
+"${VBOXMANAGE}" createvm \
   --name="${HOST_VMNAME}" \
   --basefolder="${TEST_FOLDER}" \
   --default \
   --ostype='Ubuntu_64' \
   --register
-vboxmanage modifyvm "${HOST_VMNAME}" \
+"${VBOXMANAGE}" modifyvm "${HOST_VMNAME}" \
   --memory=${HOST_RAM:-8192} \
   --cpus=${HOST_CPU:-2}
-vboxmanage modifyvm "${HOST_VMNAME}" \
-  --nat-pf1="guestssh,tcp,localhost,${HOST_SSH_PORT},localhost,22"
-vboxmanage modifyvm "${HOST_VMNAME}" \
+#"${VBOXMANAGE}" modifyvm "${HOST_VMNAME}" \
+#  --nat-pf1="guestssh,tcp,localhost,${HOST_SSH_PORT},localhost,22"
+"${VBOXMANAGE}" modifyvm "${HOST_VMNAME}" \
   --nic2='intnet' \
   --cable-connected2=on \
   --intnet2="${INTNET_NAME}" \
   --mac-address2=auto
-vboxmanage storageattach "${HOST_VMNAME}" \
+"${VBOXMANAGE}" storageattach "${HOST_VMNAME}" \
   --storagectl='IDE' \
   --port=0 \
   --device=0 \
   --type='hdd' \
   --medium="${HOST_VDI}" \
   --setuuid=''
-vboxmanage sharedfolder add "${HOST_VMNAME}" \
+"${VBOXMANAGE}" sharedfolder add "${HOST_VMNAME}" \
   --name='app' \
   --hostpath="${SHARED_FOLDER}" \
   --readonly \
   --automount \
   --auto-mount-point='/app'
-vboxmanage startvm "${HOST_VMNAME}" \
+"${VBOXMANAGE}" startvm "${HOST_VMNAME}" \
   --type='headless'
 
 # configure ssh for the guest
@@ -141,39 +147,39 @@ host-ssh sudo pip install /app/genisys-0.1.0-py3-none-any.whl
 host-ssh sudo genisys install --file /app/config.yaml
 
 # setup the client VM
-vboxmanage createvm \
+"${VBOXMANAGE}" createvm \
   --name="${CLIENT_VMNAME}" \
   --basefolder="${TEST_FOLDER}" \
   --default \
-  --ostype=Debian_64 \
+  --ostype='Debian_64' \
   --register
-vboxmanage createmedium disk \
+"${VBOXMANAGE}" createmedium disk \
   --filename="${CLIENT_VDI_NAME}" \
   --size=8096 \
   --format='VDI'
-vboxmanage storageattach "${CLIENT_VMNAME}" \
+"${VBOXMANAGE}" storageattach "${CLIENT_VMNAME}" \
   --storagectl='IDE' \
   --port=0 \
   --device=0 \
   --type='hdd' \
   --medium="${CLIENT_VDI_NAME}"
-vboxmanage modifyvm "${HOST_VMNAME}" \
+"${VBOXMANAGE}" modifyvm "${CLIENT_VMNAME}" \
   --memory=${CLIENT_RAM:-4096} \
   --cpus=${CLIENT_CPU:-2}
-vboxmanage modifyvm "${CLIENT_VMNAME}" \
+"${VBOXMANAGE}" modifyvm "${CLIENT_VMNAME}" \
   --bios-boot-menu='disabled' \
   --boot1='disk' \
   --boot2='net'
-vboxmanage modifyvm "${CLIENT_VMNAME}" \
+"${VBOXMANAGE}" modifyvm "${CLIENT_VMNAME}" \
   --nic1="intnet" \
   --cable-connected1=on \
   --intnet1="${INTNET_NAME}" \
   --mac-address1=auto
-vboxmanage modifyvm "${CLIENT_VMNAME}" \
+"${VBOXMANAGE}" modifyvm "${CLIENT_VMNAME}" \
   --recording=on \
   --recording-screens=all \
   --recording-file="${TEST_FOLDER}/client.mp4" \
   --recording-video-fps=10
-vboxmanage startvm "${CLIENT_VMNAME}" \
+"${VBOXMANAGE}" startvm "${CLIENT_VMNAME}" \
   --type='headless'
 
