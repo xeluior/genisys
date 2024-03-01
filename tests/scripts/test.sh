@@ -17,6 +17,17 @@
 #     - poetry (version 1.8+)
 #     - ssh
 # Usage
+#   ./tests/scripts/test.sh <test name>
+#
+#   The test name is the name of any folder in ./tests/scripts/tests/ which
+#   includes both a "setup.sh" and an "expect.sh". "setup.sh" is ran on the
+#   genisys-host vm after it is online but before configuring the
+#   genisys-client vm. After the script has completed, the client vm is booted.
+#   TODO: when to run "expect.sh"
+#   On the host VM, the built wheel is available at /app/genisys-0.1.0-py3-none-any.whl
+#   Any files put in the data/ subdir of the test directory are also included
+#   in the /app/ dir on the host VM.
+#
 #   Parts of the script can be configured using environment variables or
 #   using a .env file with SETTING=VALUE per line. The TEST_ID is set always to
 #   the Epoch Seccond the test was started on (in Bash 5+) or a random number
@@ -42,11 +53,11 @@
 
 set -ex
 
-if [ -r .env ]; then
-  source .env
-fi
+[ -r .env ] && source .env
 
 TEST_ID="${EPOCHSECONDS:-$RANDOM}"
+TEST_NAME="${1:?'No test specified'}"
+TEST_PATH="./tests/scripts/tests/${TEST_NAME}"
 TMPDIR="${TMPDIR:-/tmp}"
 TEMPLATE_VDI_CACHE_FILE="${TMPDIR}/genisys-host-template.vdi"
 TEST_FOLDER="${TEST_FOLDER_PREFIX:-"${PWD}/genisys-test"}-${TEST_ID}"
@@ -77,7 +88,7 @@ poetry build \
   --output="${SHARED_FOLDER}"
 
 # add additional test files to the shared folder
-cp ./tests/configs/vboxmanage-tests.yaml "${SHARED_FOLDER}/config.yaml"
+cp "${TEST_PATH}/data"/* "${SHARED_FOLDER}"
 
 # cache the template VDI download
 if [ ! -r "${TEMPLATE_VDI_CACHE_FILE}" ]; then
@@ -139,10 +150,7 @@ host-ssh() {
 while ! host-ssh echo 'Connected' 2>/dev/null; do :; done
 
 # install the package
-host-ssh sudo pip install /app/genisys-0.1.0-py3-none-any.whl
-
-# setup the genisys sub-components
-host-ssh sudo genisys install --file /app/config.yaml
+host-ssh sh <"${TEST_PATH}/setup.sh"
 
 # setup the client VM
 "${VBOXMANAGE}" createvm \
