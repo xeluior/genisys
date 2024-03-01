@@ -26,3 +26,11 @@ Template.dynamicTable.helpers({
     return arr
   },
 });
+
+Template.dynamicTable.events({
+  "click .provision-button"(event) {
+    event.preventDefault()
+
+    console.log("Pressed")
+  }
+})
