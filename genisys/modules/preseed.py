@@ -1,5 +1,6 @@
 from pathlib import Path
-from typing_extensions import Self
+from typing_extensions import Optional, Self
+from warnings import warn
 import jinja2
 from genisys.modules.base import Module
 from genisys.config_parser import YAMLParser
@@ -29,17 +30,39 @@ class Preseed(Module):
         jinja_env = jinja2.Environment(loader=loader)
         template = jinja_env.get_template("preseed.cfg.jinja2")
 
+        # Pass settings, FTP configuration, SSH keys, and SSL certificate content to the template
+        rendered_template = template.render(
+            settings=self.config["users"],
+            ftp=self.ftp_uri(),
+            ssh_keys_contents=self.ssh_keys_contents(),
+            ssl_cert_content=self.ssl_cert_content()
+        )
+        return rendered_template
 
-        # Read SSH key files and store their contents as strings
+
+    # private:
+
+    def ftp_uri(self: Self) -> str:
+        """Construct the ftp uri for wget"""
+        proto = 'ftp://'
+        host = self.config['network']['ip']
+        port = self.config['network'].get('ftp', {}).get('ftp-port', 21)
+        path = 'first-boot'
+        return f'{proto}{host}:{port}/{path}'
+
+    def ssh_keys_contents(self: Self) -> str:
+        """Read SSH key files and store their contents as strings"""
         ssh_keys_contents = []
-        for ssh_key_path_str in self.config["users"].get("ssh-keys", []):
-            ssh_key_path = Path(ssh_key_path_str)  # Directly use the provided absolute path
+        for ssh_key_path in self.config["users"].get("ssh-keys", []):
             try:
                 with open(ssh_key_path, 'r') as f:
                     ssh_keys_contents.append(f.read())
             except FileNotFoundError:
-                print(f"Warning: SSH key file {ssh_key_path} not found.")
+                warn(f"SSH key file {ssh_key_path} not found.")
+        return "\\n".join(ssh_keys_contents)
 
+    def ssl_cert_content(self: Self) -> Optional[str]:
+        """Get the SSL public cert key"""
         # Initialize SSL certificate content as None
         ssl_cert_content = None
         # Check if 'server' and 'ssl' keys are present in the configuration
@@ -50,15 +73,7 @@ class Preseed(Module):
             # Read SSL certificate file and store its contents as a string
             with open(ssl_cert_path, 'r') as f:
                 ssl_cert_content = f.read()
-
-        # Pass settings, FTP configuration, SSH keys, and SSL certificate content to the template
-        rendered_template = template.render(
-            settings=self.config["users"],
-            ftp=self.config["network"].get("ftp", {}),
-            ssh_keys_contents=ssh_keys_contents,
-            ssl_cert_content=ssl_cert_content
-        )
-        return rendered_template
+        return ssl_cert_content
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
