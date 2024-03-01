@@ -82,10 +82,9 @@ fi
 chmod 0600 "${HOST_SSH_KEY}"
 
 # build the package
-mkdir -p "${TEST_FOLDER}"
-poetry build \
-  --format=wheel \
-  --output="${SHARED_FOLDER}"
+mkdir -p "${SHARED_FOLDER}"
+poetry build --format=wheel
+mv './dist/genisys-0.1.0-py3-none-any.whl' "${SHARED_FOLDER}"
 
 # add additional test files to the shared folder
 cp "${TEST_PATH}/data"/* "${SHARED_FOLDER}"
