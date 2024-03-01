@@ -94,8 +94,8 @@ cp "${TEMPLATE_VDI_CACHE_FILE}" "${HOST_VDI}"
 "${VBOXMANAGE}" modifyvm "${HOST_VMNAME}" \
   --memory=${HOST_RAM:-8192} \
   --cpus=${HOST_CPU:-2}
-#"${VBOXMANAGE}" modifyvm "${HOST_VMNAME}" \
-#  --nat-pf1="guestssh,tcp,localhost,${HOST_SSH_PORT},localhost,22"
+"${VBOXMANAGE}" modifyvm "${HOST_VMNAME}" \
+  --nat-pf1="guestssh,tcp,localhost,${HOST_SSH_PORT},localhost,22"
 "${VBOXMANAGE}" modifyvm "${HOST_VMNAME}" \
   --nic2='intnet' \
   --cable-connected2=on \
