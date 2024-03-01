@@ -29,8 +29,14 @@ Template.dynamicTable.helpers({
 
 Template.dynamicTable.events({
   "click .provision-button"(event) {
-    event.preventDefault()
+    event.preventDefault();
 
-    console.log("Pressed")
+    // Find the closest row (tr element) to the clicked button
+    const row = $(event.target).closest("tr");
+
+    // Find the IP address in the same row
+    const ipAddress = row.find("td:nth-child(3)").text(); // Assuming IP address is in the 3rd column (index 2)
+
+    console.log("IP Address:", ipAddress);
   }
-})
+});
