@@ -83,6 +83,12 @@ class PreseedTests(unittest.TestCase):
             output = module.generate().split("\n")
             self.assertIn(expected_line, output)
         # end test_sudoer
+    def test_ftp_uri(self):
+        """Verify the output of the Preseed#ftp_uri function"""
+        cfg = config_parser.YAMLParser("tests/configs/preseed_ftp_uri.yaml")
+        preseed = Preseed(cfg)
+        self.assertEqual(preseed.ftp_uri(), 'ftp://10.0.0.1:2021/first-boot')
+
 # end class PreseedTests
 
 if __name__ == "__main__":
