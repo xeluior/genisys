@@ -136,10 +136,7 @@ host-ssh() {
 }
 
 # wait for SSH to be available
-printf 'Connecting'
-while ! host-ssh echo 'Connected' 2>/dev/null; do 
-  printf '.'
-done
+while ! host-ssh echo 'Connected' 2>/dev/null; do :; done
 
 # install the package
 host-ssh sudo pip install /app/genisys-0.1.0-py3-none-any.whl
