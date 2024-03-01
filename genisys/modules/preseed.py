@@ -13,7 +13,10 @@ class Preseed(Module):
         self.config = {}
         self.config["network"] = config.get_section("Network")
         self.config["users"] = config.get_section("Users")
-        self.config["apps"] = config.get_section("Applications")
+        self.config["apps"] = {
+            k: str(v).lower() if isinstance(v, bool) else v 
+            for k,v in config.get_section("Applications")
+        }
 
     def install_location(self: Self) -> Path:
         """Places the Preseed file in the TFTP root"""
@@ -26,10 +29,6 @@ class Preseed(Module):
         jinja_env = jinja2.Environment(loader=loader)
         template = jinja_env.get_template("preseed.cfg.jinja2")
 
-        # Convert booleans to lowercase to match preseed format
-        for key, value in self.config["users"].items():
-            if isinstance(value, bool):
-                self.config["users"][key] = str(value).lower()
 
         # Read SSH key files and store their contents as strings
         ssh_keys_contents = []
