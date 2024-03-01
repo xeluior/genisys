@@ -10,32 +10,30 @@ Meteor.publish("tasks", () => {
 Meteor.startup(() => {
   if (ClientsCollection.find().count() === 0) {
     [
-      [
-        {
-          "hostname": "genisys1",
-          "ip": "127.0.0.1",
-          "key": "val",
-          "key2": "val2"
-        },
-        {
-          "hostname": "genisys2",
-          "ip": "127.0.0.1",
-          "key": "val",
-          "key2": "val2"
-        },
-        {
-          "hostname": "genisys3",
-          "ip": "127.0.0.1",
-          "key": "val",
-          "key2": "val2"
-        },
-        {
-          "hostname": "genisys4",
-          "ip": "127.0.0.1",
-          "key": "val",
-          "key2": "val2"
-        }
-      ]
+      {
+        "hostname": "genisys1",
+        "ip": "127.0.0.1",
+        "key": "val",
+        "key2": "val2"
+      },
+      {
+        "hostname": "genisys2",
+        "ip": "127.0.0.1",
+        "key": "val",
+        "key2": "val2"
+      },
+      {
+        "hostname": "genisys3",
+        "ip": "127.0.0.1",
+        "key": "val",
+        "key2": "val2"
+      },
+      {
+        "hostname": "genisys4",
+        "ip": "127.0.0.1",
+        "key": "val",
+        "key2": "val2"
+      }
     ].forEach(insertClient)
   }
 });
