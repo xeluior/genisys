@@ -1,5 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { ClientsCollection } from '/imports/api/ClientsCollection';
+import yaml from 'js-yaml'
+import fs from 'fs'
+import path from 'path'
 
 const insertClient = client => ClientsCollection.insert(client);
 
@@ -8,6 +11,7 @@ Meteor.publish("tasks", () => {
 })
 
 Meteor.startup(() => {
+  // Inserting dummy data for testing
   if (ClientsCollection.find().count() === 0) {
     [
       {
@@ -36,4 +40,13 @@ Meteor.startup(() => {
       }
     ].forEach(insertClient)
   }
+  // Grabbing config file 
+
+  console.log(path.resolve(process.cwd())) 
+
+  const yamlPath = path.join(__dirname, '..', '..', '..', '..', 'documentation', 'example.yml');
+  const doc = yaml.load(fs.readFileSync(yamlPath, 'utf8'))
+
+  console.log(doc)
+
 });
