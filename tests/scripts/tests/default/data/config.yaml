@@ -1,9 +1,9 @@
 ---
 Network:
   interface: enp0s8
-  subnet: 192.168.1.0/24
-  ip: 192.168.1.1
-  dhcp-ranges: 192.168.1.100,192.168.1.200
+  subnet: 10.0.0.0/24
+  ip: 10.0.0.1
+  dhcp-ranges: 10.0.0.100,10.0.0.200
   dhcp-lease: 12h
   no-dhcp: false
   nat-requests: true
