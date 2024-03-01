@@ -13,11 +13,11 @@ class Preseed(Module):
     def __init__(self: Self, config: YAMLParser):
         self.config = {}
         self.config["network"] = config.get_section("Network")
-        self.config["users"] = config.get_section("Users")
-        self.config["apps"] = {
+        self.config["users"] = {
             k: str(v).lower() if isinstance(v, bool) else v 
-            for k,v in config.get_section("Applications")
+            for k,v in config.get_section("Users").items()
         }
+        self.config["apps"] = config.get_section("Applications")
 
     def install_location(self: Self) -> Path:
         """Places the Preseed file in the TFTP root"""
