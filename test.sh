@@ -9,7 +9,7 @@
 #   A single test will spin up 2 VMs with total resource usage of 12GB of RAM
 #   and 4 CPU cores. Resource usage can be adjusted as described in the Usage
 #   section.
-#   Features used in this script rely on Bash 5.0. The following tools must
+#   TEST_IDs are improved with the use of bash 5.0. The following tools must
 #   also be installed and their binaries in a directory on the PATH:
 #     - curl
 #     - vboxmanage (or VBoxManage)
@@ -19,7 +19,8 @@
 # Usage
 #   Parts of the script can be configured using environment variables or
 #   using a .env file with SETTING=VALUE per line. The TEST_ID is set always to
-#   the Epoch Seccond the test was started on. Available settings are:
+#   the Epoch Seccond the test was started on (in Bash 5+) or a random number
+#   less than 32,767 on lower versions. Available settings are:
 #     - TMPDIR (/tmp): directory to use for caching the template VDI
 #     - TEST_FOLDER_PREFIX ($PWD/genisys-test): concatenated with the TEST_ID to
 #       determine the folder for storing test artifacts
@@ -45,7 +46,7 @@ if [ -r .env ]; then
   source .env
 fi
 
-TEST_ID="$EPOCHSECONDS"
+TEST_ID="${EPOCHSECONDS:-$RANDOM}"
 TMPDIR="${TMPDIR:-/tmp}"
 TEMPLATE_VDI_CACHE_FILE="${TMPDIR}/genisys-host-template.vdi"
 TEST_FOLDER="${TEST_FOLDER_PREFIX:-"${PWD}/genisys-test"}-${TEST_ID}"
