@@ -1,0 +1,3 @@
+Users:
+  ssh-keys:
+    - tests/ssh/id_rsa.pub

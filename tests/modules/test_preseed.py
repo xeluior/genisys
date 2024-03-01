@@ -89,6 +89,12 @@ class PreseedTests(unittest.TestCase):
         preseed = Preseed(cfg)
         self.assertEqual(preseed.ftp_uri(), 'ftp://10.0.0.1:2021/first-boot')
 
+    def test_ssh_key_contents(self):
+        """Ensures the functionality of Preseed#ssh_keys_contents"""
+        cfg = config_parser.YAMLParser('tests/configs/preseed_ssh_key_contents.yaml')
+        preseed = Preseed(cfg)
+        with open('tests/ssh/id_rsa.pub', 'r', encoding='utf-8') as id_rsa:
+            self.assertEqual(preseed.ssh_keys_contents(), id_rsa.read())
 # end class PreseedTests
 
 if __name__ == "__main__":
