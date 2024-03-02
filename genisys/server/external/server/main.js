@@ -1,14 +1,29 @@
 import { Meteor } from 'meteor/meteor';
-import { ClientsCollection } from '/imports/api/ClientsCollection';
-import yaml from 'js-yaml'
-import fs from 'fs'
-import path from 'path'
+import { ClientsCollection } from '../api/clients/clients';
+import { Picker } from 'meteor/communitypackages:picker';
+import '../api/clients/server/publications';
+import '../api/clients/server/methods';
+import bodyParser from 'body-parser';
+
+Picker.middleware(bodyParser.urlencoded({ extended: false }));
+Picker.middleware(bodyParser.json());
 
 const insertClient = client => ClientsCollection.insert(client);
 
-Meteor.publish("tasks", () => {
-  return ClientsCollection.find()
-})
+Picker.route('/api/add-client', async function (params, req, res) {
+  console.log('Someone is adding a new client!', req.body);
+
+ const clientId= ClientsCollection.insert({
+  ...req.body,
+  createdAt: new Date()
+ });
+  res.writeHead(200);
+  res.end(JSON.stringify({
+    clientId: clientId,
+    status: 200,
+    message: 'Added new client'
+  }));
+});
 
 Meteor.startup(() => {
   // Inserting dummy data for testing
@@ -40,13 +55,4 @@ Meteor.startup(() => {
       }
     ].forEach(insertClient)
   }
-  // Grabbing config file 
-
-  console.log(path.resolve(process.cwd())) 
-
-  const yamlPath = path.join(__dirname, '..', '..', '..', '..', 'documentation', 'example.yml');
-  const doc = yaml.load(fs.readFileSync(yamlPath, 'utf8'))
-
-  console.log(doc)
-
 });

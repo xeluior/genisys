@@ -1,31 +1,31 @@
 <body>
-    <h1>Clients</h1>
-    {{> dynamicTable}}
+  <h1>Clients</h1>
+  {{> clientList}}
 </body>
 
-<template name="task">
-    <li>{{text}}</li>
-</template>
-
-<template name="dynamicTable">
-    <table>
+<template name="clientList">
+  <div class="table-responsive">
+    <table class="table">
       <thead>
         <tr>
-          {{#each tableHeaders}}
-            <th>{{this}}</th>
-          {{/each}}
-          <th>Action</th>
+          <th>First Seen</th>
+          <th>ClientID</th>
+          <th>Hostname</th>
+          <th>IP</th>
+          <th>Options</th>
         </tr>
       </thead>
       <tbody>
-        {{#each tableRows}}
-          <tr>
-            {{#each this}}
-              <td>{{this}}</td>
-            {{/each}}
-            <td><button class="provision-button">Provision</button></td>
-          </tr>
+        {{#each client}}
+        <tr>
+          <td>{{moment createdAt}}</td>
+          <td>{{_id}}</td>
+          <td>{{hostname}}</td>
+          <td>{{ip}}</td>
+          <td><button class="provision-button btn btn-primary">Provision</button></td>
+        </tr>
         {{/each}}
       </tbody>
     </table>
-  </template>
+  </div>
+</template>
