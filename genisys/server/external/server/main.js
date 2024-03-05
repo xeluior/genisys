@@ -14,8 +14,20 @@ const postRoutes = Picker.filter(function(req, res){
   return req.method === 'POST';
 })
 
+// Post route for adding clients
 postRoutes.route('/api/add-client', async function (params, req, res) {
   console.log('Someone is adding a new client!', req.body);
+
+  if(!('hostname' in req.body && 'ip' in req.body)) {
+    console.log("Bad request body");
+
+    res.writeHead(400);
+    res.end(JSON.stringify({
+      status: 400,
+      message: 'Missing IP or Hostname in request body'
+    }));
+    return;
+  }
 
  const clientId= ClientsCollection.insert({
   ...req.body,
