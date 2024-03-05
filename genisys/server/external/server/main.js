@@ -10,7 +10,11 @@ Picker.middleware(bodyParser.json());
 
 const insertClient = client => ClientsCollection.insert(client);
 
-Picker.route('/api/add-client', async function (params, req, res) {
+const postRoutes = Picker.filter(function(req, res){
+  return req.method === 'POST';
+})
+
+postRoutes.route('/api/add-client', async function (params, req, res) {
   console.log('Someone is adding a new client!', req.body);
 
  const clientId= ClientsCollection.insert({
