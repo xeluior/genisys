@@ -1,0 +1,4 @@
+Network:
+  ip: 10.0.0.1
+  ftp:
+    ftp-port: 2021
