@@ -87,7 +87,7 @@ poetry build --format=wheel
 mv './dist/genisys-0.1.0-py3-none-any.whl' "${SHARED_FOLDER}"
 
 # add additional test files to the shared folder
-cp "${TEST_PATH}/data"/* "${SHARED_FOLDER}"
+cp -r "${TEST_PATH}/data"/* "${SHARED_FOLDER}"
 
 # cache the template VDI download
 if [ ! -r "${TEMPLATE_VDI_CACHE_FILE}" ]; then
