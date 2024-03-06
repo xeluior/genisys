@@ -46,8 +46,7 @@ class Preseed(Module):
         # Check if 'server' and 'ssl' keys are present in the configuration
         if 'server' in self.config["network"] and 'ssl' in self.config["network"]["server"]:
             # Determine SSL certificate path
-            ssl_config = self.config["network"]["server"]["ssl"] or {}
-            ssl_cert_path = Path(tls.get_keychain(ssl_config)["certfile"])
+            ssl_cert_path = Path(tls.get_keychain(self.config["network"]["server"]["ssl"])["certfile"])
             # Read SSL certificate file and store its contents as a string
             with open(ssl_cert_path, 'r') as f:
                 ssl_cert_content = f.read()
