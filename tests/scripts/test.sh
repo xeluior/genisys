@@ -149,7 +149,7 @@ host-ssh() {
 while ! host-ssh echo 'Connected' 2>/dev/null; do :; done
 
 # install the package
-host-ssh sh <"${TEST_PATH}/setup.sh"
+host-ssh bash <"${TEST_PATH}/setup.sh"
 
 # setup the client VM
 "${VBOXMANAGE}" createvm \
