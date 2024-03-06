@@ -102,8 +102,7 @@ d-i preseed/late_command string in-target sh -c 'echo "{{ ssl_cert_content | rep
 {% endif %}
 
 # copy firstboot.service file to client
-{% if ftp.get('ip') is not none and ftp.get('port') is not none %}
-d-i preseed/late_command string wget -nd -m ftp://{{ ftp['ip'] }}:{{ ftp['port'] }}/first-boot -P /first-boot
+d-i preseed/late_command string wget -nd -m '{{ ftp }}' -P /first-boot
 d-i preseed/late_command string chmod 0644 /first-boot
 d-i preseed/late_command string chown root /first-boot
 # enable systemd service
@@ -112,7 +111,6 @@ d-i preseed/late_command string systemctl enable systemd-firstboot.service
 # there must be an entrypoint file
 # ensure entrypoint is executable
 d-i preseed/late_command string chmod +x /first-boot/entrypoint
-{% endif %}
 
 # change firstboot owner to root
 chown -R root:root /first-boot
