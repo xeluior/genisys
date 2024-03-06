@@ -73,10 +73,10 @@ def drop_priviledges(config: ServerOptions) -> pwd.struct_passwd:
         return pwd.getpwuid(os.geteuid())
 
     grpnam = config.get('group', config['user'])
-    gid = grp.getgrnam(grpnam)
     uid = pwd.getpwnam(config['user'])
+    gid = grp.getgrnam(grpnam)
 
     os.initgroups(uid.pw_name, gid.gr_gid)
-    os.setuid(uid.pw_uid)
     os.setgid(gid.gr_gid)
+    os.setuid(uid.pw_uid)
     return uid

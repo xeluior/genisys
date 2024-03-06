@@ -1,4 +1,7 @@
+import grp
+import os
 from pathlib import Path
+import pwd
 from typing_extensions import Optional, Self
 from warnings import warn
 import jinja2
@@ -68,9 +71,18 @@ class Preseed(Module):
         # Check if 'server' and 'ssl' keys are present in the configuration
         if 'server' in self.config["network"] and 'ssl' in self.config["network"]["server"]:
             # Determine SSL certificate path
-            ssl_cert_path = Path(tls.get_keychain(self.config["network"]["server"]["ssl"])["certfile"])
+            ssl_certs_path = tls.get_keychain(self.config["network"]["server"]["ssl"])
+            # ensure ownership by the server user
+            server = self.config['network']['server']
+            user = server.get('user')
+            group = server.get('group')
+            uid = pwd.getpwnam(user) if user else pwd.getpwuid(os.geteuid())
+            gid = grp.getgrnam(group) if group else grp.getgrgid(os.getgid())
+            for _, path in ssl_certs_path.items():
+                if path is None: continue
+                os.chown(str(path), uid.pw_uid, gid.gr_gid)
             # Read SSL certificate file and store its contents as a string
-            with open(ssl_cert_path, 'r') as f:
+            with open(ssl_certs_path['certfile'], 'r') as f:
                 ssl_cert_content = f.read()
         return ssl_cert_content
 
