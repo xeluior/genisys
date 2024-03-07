@@ -19,7 +19,7 @@ Network:
     port: 15206
     user: genisys
     group: genisys
-    working-directory: /srv/genisys
+    inventory-file: /var/genisys/hosts.json
     ssl:
 OS:
   os: debian
