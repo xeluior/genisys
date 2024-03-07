@@ -36,9 +36,7 @@ class Preseed(Module):
         # Pass settings, FTP configuration, SSH keys, and SSL certificate content to the template
         rendered_template = template.render(
             settings=self.config["users"],
-            ftp=self.ftp_uri(),
-            ssh_keys_contents=self.ssh_keys_contents(),
-            ssl_cert_content=self.ssl_cert_content()
+            late_command=self.late_command()
         )
         return rendered_template
 
@@ -85,6 +83,19 @@ class Preseed(Module):
             with open(ssl_certs_path['certfile'], 'r') as f:
                 ssl_cert_content = f.read()
         return ssl_cert_content
+
+    def late_command(self: Self) -> str:
+        command = ""
+        ssh_keys = self.ssh_keys_contents()
+        ssl_cert = self.ssl_cert_content()
+        ftp = self.ftp_uri()
+
+        if ssh_keys != "":
+            command += f'mkdir -p /root/.ssh && echo "{ssh_keys}" >> /root/.ssh/authorized_keys && chown -R root:root /root/.ssh/ && chmod 644 /root/.ssh/authorized_keys && chmod 700 /root/.ssh/;'
+        if ssl_cert:
+            command += f'echo "{ssl_cert}" > /usr/local/share/ca-certificates/genisys.crt && update-ca-certificates;'
+        command += f'wget -nh -m \'{ftp}\' -P /first-boot && chown -R root:root /first-boot && chmod -R 0755 /first-boot;'
+        return command.replace('\n', '\\n')
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
