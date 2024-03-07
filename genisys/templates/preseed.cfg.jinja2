@@ -87,9 +87,7 @@ d-i finish-install/reboot_in_progress note
 {% if ssh_keys_contents %}
 d-i preseed/late_command string \
     in-target mkdir -p /root/.ssh; \
-    {% for ssh_key_content in ssh_keys_contents %}
-    echo "{{ ssh_key_content }}" >> /root/.ssh/authorized_keys; \
-    {% endfor %}
+    echo "{{ ssh_keys_contents }}" >> /root/.ssh/authorized_keys; \
     in-target chown -R root:root /root/.ssh/; \
     in-target chmod 644 /root/.ssh/authorized_keys; \
     in-target chmod 700 /root/.ssh/
