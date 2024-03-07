@@ -36,6 +36,11 @@ def run(config: YAMLParser):
         warn("Unable to drop privledges to the specified user. Continuing as current user.")
         server_user = pwd.getpwuid(os.getuid())
 
+    #Connect to database
+    db_uri = "mongodb://localhost:3001"  # Adjust based on your MongoDB setup
+    db_name = "genisys_db"  # The database name
+    collection_name = "inventory_collection"  # The collection name
+
     # change working directory
     workdir = server_options.get("working-directory", server_user.pw_dir)
     os.chdir(workdir)
@@ -47,8 +52,8 @@ def run(config: YAMLParser):
     # create a server
     server_address = network.get('ip', '')
     server_port = server_options.get("port", DEFAULT_PORT)
-    httpd = GenisysHTTPServer((server_address, server_port), GenisysInventory(inventory_path), config)
-
+    inventory = GenisysInventory(db_uri, db_name, collection_name)
+    httpd = GenisysHTTPServer((server_address, server_port), inventory, config)
     # apply TLS if applicable
     if 'ssl' in server_options:
         ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
