@@ -20,6 +20,8 @@ def get_keychain(config: Dict[str, str]) -> CertChainArgs:
     """Converts from the configured filenames to the nessecary format to pass to
     SSLContext.load_cert_chain, creating the keypair if nessecary
     """
+    config = config or {}
+
     if ('cert' not in config and 'key' in config) \
         or ('cert' in config and 'key' not in config):
         raise ValueError("Only one of SSL Certificate or Key have been specified")

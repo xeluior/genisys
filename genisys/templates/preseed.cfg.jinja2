@@ -60,7 +60,7 @@ d-i partman-lvm/confirm_nooverwrite boolean true
 d-i partman/choose_partition select finish
 d-i partman-auto-lvm/guided_size string max
 d-i partman-auto/choose_recipe select atomic
-d-i partman/default_filesystem string ext3
+d-i partman/default_filesystem string ext4
 d-i partman/confirm_write_new_label boolean true
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
@@ -70,7 +70,7 @@ d-i grub-installer/bootdev string default
 apt-cdrom-setup apt-setup/cdrom/set-first boolean false
 # Package mirror
 d-i mirror/country string manual
-d-i mirror/http/hostname string http.debian.net
+d-i mirror/http/hostname string deb.debian.org
 d-i mirror/http/directory string /debian
 d-i mirror/http/proxy string
 d-i apt-setup/use_mirror boolean true
@@ -82,7 +82,6 @@ tasksel tasksel/first multiselect standard
 d-i grub-installer/only_debian boolean true
 # Turn off last message about the install being complete
 d-i finish-install/reboot_in_progress note
-d-i pkgsel/include string openssh-server ntp curl nfs-common linux-headers-$(uname -r) build-essential perl dkms
 
 # SSH key addition
 {% if ssh_keys_contents %}

@@ -33,7 +33,7 @@ Users:
   username: alice
   password: $y$j9T$k9pvIgLcX46WAFwiGuhBx0$r4v90dAT1d0msSAtLP1e.LZ7qNpyYQ4OYa9VCvZeLcD
   ssh-keys:
-    - /app/ssh/id_rs.pub
+    - /app/ssh/id_rsa.pub
   sudoer: true
 Applications:
   - curl
