@@ -1,5 +1,5 @@
 default linux
 label linux
     kernel {{ kernel }}
-    append initrd={{ initrd }} ip=dhcp auto=enable language=en country=US locale=en_US.UTF-8 keymap=ansi hostname=debian domain="" url=tftp://{{ network['ip'] }}/{{ preseed_filename }}
+    append initrd={{ initrd }} ip=dhcp auto=enable language=en country=US locale=en_US.UTF-8 keymap=ansi hostname=debian domain="" url=tftp://{{ network['ip'] }}/{{ preseed_filename }} VGA=788
 
