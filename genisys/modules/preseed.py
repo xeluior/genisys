@@ -94,7 +94,7 @@ class Preseed(Module):
             command += f'mkdir -p /root/.ssh && echo "{ssh_keys}" >> /root/.ssh/authorized_keys && chown -R root:root /root/.ssh/ && chmod 644 /root/.ssh/authorized_keys && chmod 700 /root/.ssh/;'
         if ssl_cert:
             command += f'echo "{ssl_cert}" > /usr/local/share/ca-certificates/genisys.crt && update-ca-certificates;'
-        command += f'wget -nh -m \'{ftp}\' -P /first-boot && chown -R root:root /first-boot && chmod -R 0755 /first-boot;'
+        command += f'wget -nH -m {ftp} -P / && chown -R root:root /first-boot && chmod -R 0755 /first-boot;'
         return command.replace('\n', '\\n')
 
 if __name__ == "__main__":
