@@ -26,6 +26,9 @@ ServerOptions = TypedDict("ServerOptions", {
 
 def run(config: YAMLParser):
     """Drops priviledges, creates the server (with SSL, if applicable), then waits for requests"""
+    # Launch meteor server
+    meteor_initialization(config)
+
     # parse config
     network = config.get_section("Network")
     server_options = cast(ServerOptions, network.get("server", {}) or {})
@@ -67,6 +70,10 @@ def run(config: YAMLParser):
     signal(SIGTERM, sigterm_handler)
     httpd.serve_forever()
 
+    # end sigterm_handler
+
+# end run
+
 def drop_priviledges(config: ServerOptions) -> pwd.struct_passwd:
     """Attempts to drop the priviledges to that of the specified users, returns false on failure"""
     if 'user' not in config:
@@ -81,14 +88,17 @@ def drop_priviledges(config: ServerOptions) -> pwd.struct_passwd:
     os.setgid(gid.gr_gid)
     return uid
 
-def meteor_initialization():
+# end drop_privledges
+
+def meteor_initialization(config: YAMLParser):
     '''Runs Meteor as a subprocess of Genisys and 
     initializes necessary environment variables for
     Meteor.'''
-    # Create environment vars meteor will need access to
-    
-
     original_cwd = os.getcwd()
+
+    # Create environment vars meteor will need access to
+    os.environ['CONFIG_FILE'] = original_cwd + '\\' + config.filename
+    # os.environ['MONGO_URI'] = ''
 
     # Change working directory to meteor dir & run meteor
     os.chdir('/genisys/server/external')
