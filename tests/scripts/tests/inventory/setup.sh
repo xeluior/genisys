@@ -1,4 +1,4 @@
-CONFIG_FILE=/app/config.yaml
+CONFIG_FILE=/app/data/config.yaml
 SRV_USR=genisys
 SRV_DIR=/var/$SRV_USR
 HOSTS=$SRV_DIR/hosts.json
