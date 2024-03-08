@@ -4,6 +4,7 @@ import pwd
 import grp
 import os
 import sys
+import subprocess
 from warnings import warn
 from signal import signal, SIGTERM
 from typing_extensions import Dict, TypedDict, cast
@@ -79,3 +80,25 @@ def drop_priviledges(config: ServerOptions) -> pwd.struct_passwd:
     os.setuid(uid.pw_uid)
     os.setgid(gid.gr_gid)
     return uid
+
+def meteor_initialization():
+    '''Runs Meteor as a subprocess of Genisys and 
+    initializes necessary environment variables for
+    Meteor.'''
+    # Create environment vars meteor will need access to
+    
+
+    original_cwd = os.getcwd()
+
+    # Change working directory to meteor dir & run meteor
+    os.chdir('/genisys/server/external')
+    try:
+        subprocess.run('meteor', check=True)
+    except subprocess.CalledProcessError as error:
+        #Currently just printing error, will need to test/research best method for handling
+        print("Meteor server failed to launch with error:", error)
+
+    # Change working dir to original
+    os.chdir(original_cwd)
+
+# end meteor_initialization
