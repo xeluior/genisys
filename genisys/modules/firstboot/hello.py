@@ -25,10 +25,10 @@ class Hello(Module):
 
         # ensure some programs are installed
         # this should be taken care of by the preseed, but just in case
-        content.append("apt update && apt install iproute2 gawk coreutils curl jq")
+        content.append("apt-get update && apt-get install -y iproute2 gawk coreutils curl jq")
 
         # thanks chat gpt for this command
-        content.append('ip_addr="$(ip -o -4 show scope global | awk \'{print $4}\' | cut -d/ -f1 | head -n1)')
+        content.append('ip_addr="$(ip -o -4 address show scope global | awk \'{print $4}\' | cut -d/ -f1 | head -n1)"')
 
         # use jq to avoid trying to wrangle quotes (theres still some wrangling)
         content.append('jq --null-input --arg ip "${ip_addr}" \'{message: "hello", ip: $ip}\' > ip.json')
@@ -36,7 +36,7 @@ class Hello(Module):
         # Building target IP for curl request
         server_config = self.config["network"].get("server") or {}
         prefix = "https://" if "ssl" in server_config else "http://"
-        server_ip = self.config["network"]["ip"]
+        server_ip = 'genisys.internal' # dnsmasq lets us do this
         server_port = self.config["network"]["server"]["port"]
         target_ip = prefix + server_ip + ":" + str(server_port)
 
