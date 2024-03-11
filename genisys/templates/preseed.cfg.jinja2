@@ -19,7 +19,7 @@
 # NOTE: If you netboot/PXE boot Debian, it will ignore the value in hostname,
 # but you must provide a hostname as a boot parameter to prevent the Debian
 # install from prompting for a hostname
-d-i debian-installer/locale string en_US
+d-i debian-installer/locale string en_US.UTF-8
 
 # root account setup
 d-i passwd/root-login boolean {{ settings['root-login'] }}
