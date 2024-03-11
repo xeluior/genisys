@@ -23,3 +23,5 @@ class MakePassword:
         # encrypt raw_password from stdin using ansible vault, stored as secret_password in file specified
         user_password = ""
         subprocess.run(["echo", "-n", raw_password, "ansible-vault", "encrypt_string", "--vault-password-file", filename, "--stdin-name", user_password], check=False)
+    # end make_password
+# end MakePassword
