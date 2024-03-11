@@ -15,6 +15,11 @@ class MakePassword:
         secret_password = pbkdf2_sha256.hash(raw_password)
         self.config["users"]["root-login"] = secret_password
 
+        # store updated configuration back into config file
+        parser = YAMLParser
+        config = parser.as_dict(filename)
+        config["users"]["password"] = secret_password
+
         # encrypt raw_password from stdin using ansible vault, stored as secret_password in file specified
         user_password = ""
         subprocess.run(["echo", "-n", raw_password, "ansible-vault", "encrypt_string", "--vault-password-file", filename, "--stdin-name", user_password], check=False)

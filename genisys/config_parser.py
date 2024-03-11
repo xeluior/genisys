@@ -46,6 +46,14 @@ class YAMLParser:
             print(f"{key}: {dictionary[key]}")
     # end printDict
 
+    def as_dict(self: Self) -> dict:
+        """ Convert YAML to dictionary """
+        whole_config = {}
+        for section in self.get_all_headings():
+            whole_config[section] = self.get_section(section)
+
+        return whole_config
+    # end as_dict
 # end YAMLParser
 
 def main():
