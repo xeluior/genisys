@@ -12,6 +12,7 @@ def get_hash(password: str) -> str:
 
 class PreseedTests(unittest.TestCase):
     """Run tests for the preseed module"""
+
     def test_root_password(self):
         """Ensure the root password is added when root login is enabled"""
         crypted_password = get_hash("password")
@@ -19,8 +20,9 @@ class PreseedTests(unittest.TestCase):
         with tempfile.NamedTemporaryFile() as config_file:
             config_file.write(bytes(yaml.dump({
                 "Network": {
+                    "ip": "10.0.0.1",
                     "tftp_directory": "/tftpboot"
-                    },
+                },
                 "Applications": [],
                 "Users": {
                     "root-login": True,
@@ -46,7 +48,10 @@ class PreseedTests(unittest.TestCase):
                 ]
         with tempfile.NamedTemporaryFile() as fd:
             fd.write(bytes(yaml.dump({
-                "Network": { "tftp_directory": "/tftpboot" },
+                "Network": {
+                    "ip": "10.0.0.1",
+                    "tftp_directory": "/tftpboot"
+                },
                 "Applications": [],
                 "Users": {
                     "username": username,
@@ -69,7 +74,10 @@ class PreseedTests(unittest.TestCase):
         password = get_hash("password")
         with tempfile.NamedTemporaryFile() as fd:
             fd.write(bytes(yaml.dump({
-                "Network": { "tftp_directory": "/tftpboot" },
+                "Network": { 
+                    "ip": "10.0.0.1",
+                    "tftp_directory": "/tftpboot"
+                },
                 "Applications": [],
                 "Users": {
                     "username": username,
@@ -82,7 +90,21 @@ class PreseedTests(unittest.TestCase):
             module = Preseed(config)
             output = module.generate().split("\n")
             self.assertIn(expected_line, output)
-        # end test_sudoer
+        # end with
+    # end test_sudoer
+
+    def test_ftp_uri(self):
+        """Verify the output of the Preseed#ftp_uri function"""
+        cfg = config_parser.YAMLParser("tests/configs/preseed_ftp_uri.yaml")
+        preseed = Preseed(cfg)
+        self.assertEqual(preseed.ftp_uri(), 'ftp://10.0.0.1:2021/first-boot')
+
+    def test_ssh_key_contents(self):
+        """Ensures the functionality of Preseed#ssh_keys_contents"""
+        cfg = config_parser.YAMLParser('tests/configs/preseed_ssh_key_contents.yaml')
+        preseed = Preseed(cfg)
+        with open('tests/ssh/id_rsa.pub', 'r', encoding='utf-8') as id_rsa:
+            self.assertEqual(preseed.ssh_keys_contents(), id_rsa.read())
 # end class PreseedTests
 
 if __name__ == "__main__":
