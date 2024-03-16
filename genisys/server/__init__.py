@@ -94,21 +94,17 @@ def meteor_initialization(config: YAMLParser):
     '''Runs Meteor as a subprocess of Genisys and 
     initializes necessary environment variables for
     Meteor.'''
-    original_cwd = os.getcwd()
-
-    # Create environment vars meteor will need access to
-    os.environ['CONFIG_FILE'] = original_cwd + '\\' + config.filename
-    # os.environ['MONGO_URI'] = ''
-
-    # Change working directory to meteor dir & run meteor
-    os.chdir('/genisys/server/external')
+    # Run MongoDB server
     try:
-        subprocess.run('meteor', check=True)
-    except subprocess.CalledProcessError as error:
-        #Currently just printing error, will need to test/research best method for handling
-        print("Meteor server failed to launch with error:", error)
+        # Start MongoDB server using subprocess
+        data_dir = '/external/mongo'
+        subprocess.run(['mongod', '--dbpath', data_dir])
+        print('MongoDB server started successfully.')
+    except Exception as e:
+        print('Error starting MongoDB server:', e)
 
-    # Change working dir to original
-    os.chdir(original_cwd)
+    # Invoke node with a ROOT_URL, PORT, and MONGO_URL
+
+
 
 # end meteor_initialization
