@@ -12,6 +12,7 @@ from genisys.config_parser import YAMLParser
 from genisys.server.genisysinventory import GenisysInventory
 from genisys.server.http import GenisysHTTPServer, GenisysHTTPRequestHandler
 import genisys.server.tls
+import tarfile 
 
 DEFAULT_PORT = 15206
 DEFAULT_INVENTORY = "/etc/ansible/hosts"
@@ -103,8 +104,14 @@ def meteor_initialization(config: YAMLParser):
     except Exception as e:
         print('Error starting MongoDB server:', e)
 
-    # Invoke node with a ROOT_URL, PORT, and MONGO_URL
+    # Extract tarball Meteor build
+    file = tarfile.open('/external/meteor-dev.tar.gz')
+    file.extractall('./external', filter='fully_trusted')
+    file.close()
 
+    # Invoke node with a ROOT_URL, PORT, and MONGO_URL
+    # Set environment variables
+    subprocess.run(['node', 'main.js'])
 
 
 # end meteor_initialization
