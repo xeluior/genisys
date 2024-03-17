@@ -12,6 +12,7 @@ from genisys.config_parser import YAMLParser
 from genisys.server.genisysinventory import GenisysInventory
 from genisys.server.http import GenisysHTTPServer, GenisysHTTPRequestHandler
 import genisys.server.tls
+import pkg_resources
 import tarfile 
 
 DEFAULT_PORT = 15206
@@ -27,12 +28,12 @@ ServerOptions = TypedDict("ServerOptions", {
 
 def run(config: YAMLParser):
     """Drops priviledges, creates the server (with SSL, if applicable), then waits for requests"""
-    # Launch meteor server
-    meteor_initialization(config)
-
     # parse config
     network = config.get_section("Network")
     server_options = cast(ServerOptions, network.get("server", {}) or {})
+
+    # Launch meteor server
+    meteor_initialization(config, server_options)
 
     # drop priviledges
     try:
@@ -91,27 +92,48 @@ def drop_priviledges(config: ServerOptions) -> pwd.struct_passwd:
 
 # end drop_privledges
 
-def meteor_initialization(config: YAMLParser):
+def meteor_initialization(config: YAMLParser, server_config: ServerOptions):
     '''Runs Meteor as a subprocess of Genisys and 
     initializes necessary environment variables for
     Meteor.'''
+
+    #TODO: Potentially add meteor build command to run on server startup?
+
+    # Create MongoDB /data/db directory
+    mongo_path = '/data/db'
+    os.makedirs(mongo_path, exist_ok=True)
+
     # Run MongoDB server
     try:
         # Start MongoDB server using subprocess
-        data_dir = '/external/mongo'
-        subprocess.run(['mongod', '--dbpath', data_dir])
+        # TODO: Verify these paths, Handle called subprocess.run() exceptions
+        # Popen = run in background, needs testing
+        subprocess.Popen(['mongod', '--dbpath', mongo_path, '--quiet', '--fork', '--syslog'])
         print('MongoDB server started successfully.')
     except Exception as e:
         print('Error starting MongoDB server:', e)
 
+    # Make Meteor directory
+    meteor_dir = os.path.join(server_config.get('working-directory'), 'meteor')
+    os.makedirs(meteor_dir, exist_ok=True)
+
+    # Get path to tar file
+    tar_file_path = pkg_resources.resource_filename('genisys', 'server/external/meteor-dev.tar.gz')
+
     # Extract tarball Meteor build
-    file = tarfile.open('/external/meteor-dev.tar.gz')
-    file.extractall('./external', filter='fully_trusted')
+    file = tarfile.open(tar_file_path)
+    file.extractall(meteor_dir, filter='fully_trusted')
     file.close()
 
     # Invoke node with a ROOT_URL, PORT, and MONGO_URL
     # Set environment variables
-    subprocess.run(['node', 'main.js'])
+    os.environ['ROOT_URL'] = 'http://localhost'
+    os.environ['PORT'] = '3000'
+    os.environ['MONGO_URL'] = 'mongodb://127.0.0.1:27017'
+
+    # npm install and run 
+    subprocess.run(['npm', 'install', '--prefix', os.path.join(meteor_dir,'bundle', 'programs', 'server'), '--unsafe-perm'], check=True)
+    subprocess.run(['node', os.path.join(meteor_dir,'bundle', 'main.js')], check=True)
 
 
 # end meteor_initialization
