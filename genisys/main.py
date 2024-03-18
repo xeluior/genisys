@@ -15,6 +15,7 @@ from genisys.modules.firstboot.hello import Hello
 from genisys.modules.firstboot.service import Service
 import genisys.config_parser as cp
 import genisys.server
+from genisys.make_password import MakePassword
 
 MODULES = [
     OSDownload,
@@ -62,6 +63,7 @@ def run(subcommand, args):
     """Parse command line options and run the relevant helper method"""
     # Config Parser
     yaml_parser = cp.YAMLParser(args.file)
+    mkpass = MakePassword(yaml_parser)
 
     if subcommand == "validate":
         validate(yaml_parser)
@@ -71,6 +73,8 @@ def run(subcommand, args):
         generate_config(yaml_parser, args.root)
     elif subcommand == "server":
         genisys.server.run(yaml_parser)
+    elif subcommand == "password":
+        mkpass.make_password(args.password, args.file)
 
 
 def main():

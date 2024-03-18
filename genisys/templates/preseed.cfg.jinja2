@@ -25,7 +25,7 @@ d-i debian-installer/locale string en_US
 d-i passwd/root-login boolean {{ settings['root-login'] }}
 {% if settings['root-login'] %}
 d-i passwd/root-password-crypted password {{ settings['root-password'] }}
-{% endif %}
+{% endif %}                                                                        
 
 # setup regular user
 {% if settings['username'] is defined %}
