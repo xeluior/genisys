@@ -1,8 +1,0 @@
-Host genisys-host-1710710127
-  User adam
-  Port 8453
-  IdentityFile /c/Users/bobze/Desktop/genisys/tests/ssh/id_rsa
-  HostName localhost
-  ConnectTimeout 3
-  StrictHostKeyChecking no
-  UserKnownHostsFile /dev/null
