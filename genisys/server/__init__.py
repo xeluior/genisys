@@ -95,23 +95,16 @@ def drop_priviledges(config: ServerOptions) -> pwd.struct_passwd:
 def meteor_initialization(config: YAMLParser, server_config: ServerOptions):
     '''Runs Meteor as a subprocess of Genisys and 
     initializes necessary environment variables for
-    Meteor.'''
+    Meteor. This process assumes that the user already
+    has MongoDB installed and running.'''
 
-    #TODO: Potentially add meteor build command to run on server startup?
-
-    # Create MongoDB /data/db directory
-    mongo_path = '/data/db'
-    os.makedirs(mongo_path, exist_ok=True)
-
-    # Run MongoDB server
-    try:
-        # Start MongoDB server using subprocess
-        # TODO: Verify these paths, Handle called subprocess.run() exceptions
-        # Popen = run in background, needs testing
-        subprocess.Popen(['mongod', '--dbpath', mongo_path, '--quiet', '--fork', '--syslog'])
-        print('MongoDB server started successfully.')
-    except Exception as e:
-        print('Error starting MongoDB server:', e)
+    # Set environment variables
+    os.environ['ROOT_URL'] = 'http://localhost'
+    os.environ['PORT'] = '8080'
+    if 'MONGO_URL' not in os.environ:
+        print('MONGO_URL not not found in environment variables, cancelling Meteor server.')
+        return
+    print('Mongo_URL found.')
 
     # Make Meteor directory
     meteor_dir = os.path.join(server_config.get('working-directory'), 'meteor')
@@ -124,12 +117,6 @@ def meteor_initialization(config: YAMLParser, server_config: ServerOptions):
     file = tarfile.open(tar_file_path)
     file.extractall(meteor_dir, filter='fully_trusted')
     file.close()
-
-    # Invoke node with a ROOT_URL, PORT, and MONGO_URL
-    # Set environment variables
-    os.environ['ROOT_URL'] = 'http://localhost'
-    os.environ['PORT'] = '3000'
-    os.environ['MONGO_URL'] = 'mongodb://127.0.0.1:27017'
 
     # npm install and run 
     subprocess.run(['npm', 'install', '--prefix', os.path.join(meteor_dir,'bundle', 'programs', 'server'), '--unsafe-perm'], check=True)

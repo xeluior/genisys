@@ -4,4 +4,5 @@ import '../api/clients/server/publications';
 import '../api/clients/server/methods';
 
 Meteor.startup(() => {
+    console.log("Meteor Started")
 });
