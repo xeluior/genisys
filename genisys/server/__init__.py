@@ -11,6 +11,7 @@ from genisys.config_parser import YAMLParser
 from genisys.server.genisysinventory import GenisysInventory
 from genisys.server.http import GenisysHTTPServer, GenisysHTTPRequestHandler
 import genisys.server.tls
+import dotenv
 
 DEFAULT_PORT = 15206
 DEFAULT_INVENTORY = "/etc/ansible/hosts"
@@ -37,7 +38,7 @@ def run(config: YAMLParser):
         server_user = pwd.getpwuid(os.getuid())
 
     #Connect to database
-    db_uri = "mongodb://localhost:3001"  # Adjust based on your MongoDB setup
+    db_uri = os.getenv("MONGO_URL") # Adjust based on your MongoDB setup
     db_name = "genisys_db"  # The database name
     collection_name = "inventory_collection"  # The collection name
 
@@ -47,7 +48,6 @@ def run(config: YAMLParser):
 
     # install additional data for the server to use
     network_cfg = config.get_section("Network")
-    inventory_path = network_cfg["server"]["inventory-file"]
 
     # create a server
     server_address = network.get('ip', '')
