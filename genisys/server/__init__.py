@@ -33,7 +33,7 @@ def run(config: YAMLParser):
     server_options = cast(ServerOptions, network.get("server", {}) or {})
 
     # Launch meteor server
-    meteor_initialization(config, server_options)
+    meteor_initialization(server_options)
 
     # drop priviledges
     try:
@@ -92,7 +92,7 @@ def drop_priviledges(config: ServerOptions) -> pwd.struct_passwd:
 
 # end drop_privledges
 
-def meteor_initialization(config: YAMLParser, server_config: ServerOptions):
+def meteor_initialization(server_config: ServerOptions):
     '''Runs Meteor as a subprocess of Genisys and 
     initializes necessary environment variables for
     Meteor. This process assumes that the user already
@@ -102,9 +102,14 @@ def meteor_initialization(config: YAMLParser, server_config: ServerOptions):
     os.environ['ROOT_URL'] = 'http://localhost'
     os.environ['PORT'] = '8080'
     if 'MONGO_URL' not in os.environ:
-        print('MONGO_URL not not found in environment variables, cancelling Meteor server.')
+        print('MONGO_URL not found in environment variables, cancelling Meteor server.')
         return
-    print('Mongo_URL found.')
+    print('MONGO_URL found.')
+
+    if 'CONFIG_FILE' not in os.environ:
+        print('CONFIG_FILE not found in environment variables, cancelling Meteor server.')
+        return
+    print('CONFIG_FILE found.')
 
     # Make Meteor directory
     meteor_dir = os.path.join(server_config.get('working-directory'), 'meteor')
