@@ -6,7 +6,7 @@ import '../api/clients/server/methods';
 const yaml = require('js-yaml')
 const fs = require('fs')
 
-const CONFIG_FILE_VAR = process.env.CONFIG_FILE
+const CONFIG_FILE_VAR = process.env.CONFIG_FILE || '/etc/genisys.yaml'
 export const CONFIG_FILE = yaml.load(fs.readFileSync(String(CONFIG_FILE_VAR), 'utf8'))
 
 Meteor.startup(() => {

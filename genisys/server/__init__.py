@@ -107,9 +107,9 @@ def meteor_initialization(server_config: ServerOptions):
     print('MONGO_URL found.')
 
     if 'CONFIG_FILE' not in os.environ:
-        print('CONFIG_FILE not found in environment variables, cancelling Meteor server.')
-        return
-    print('CONFIG_FILE found.')
+        print('CONFIG_FILE not found in environment variables, defaulting to /etc/genisys.yaml.')
+    else:
+        print('CONFIG_FILE env var found.')
 
     # Make Meteor directory
     meteor_dir = os.path.join(server_config.get('working-directory'), 'meteor')
