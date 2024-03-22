@@ -13,7 +13,9 @@ from genisys.server.genisysinventory import GenisysInventory
 from genisys.server.http import GenisysHTTPServer, GenisysHTTPRequestHandler
 import genisys.server.tls
 import pkg_resources
-import tarfile 
+import tarfile
+import dotenv
+
 
 DEFAULT_PORT = 15206
 DEFAULT_INVENTORY = "/etc/ansible/hosts"
@@ -42,19 +44,23 @@ def run(config: YAMLParser):
         warn("Unable to drop privledges to the specified user. Continuing as current user.")
         server_user = pwd.getpwuid(os.getuid())
 
+    #Connect to database
+    db_uri = os.getenv("MONGO_URL") # Adjust based on your MongoDB setup
+    db_name = "genisys_db"  # The database name
+    collection_name = "inventory_collection"  # The collection name
+
     # change working directory
     workdir = server_options.get("working-directory", server_user.pw_dir)
     os.chdir(workdir)
 
     # install additional data for the server to use
     network_cfg = config.get_section("Network")
-    inventory_path = network_cfg["server"]["inventory-file"]
 
     # create a server
     server_address = network.get('ip', '')
     server_port = server_options.get("port", DEFAULT_PORT)
-    httpd = GenisysHTTPServer((server_address, server_port), GenisysInventory(inventory_path), config)
-
+    inventory = GenisysInventory(db_uri, db_name, collection_name)
+    httpd = GenisysHTTPServer((server_address, server_port), inventory, config)
     # apply TLS if applicable
     if 'ssl' in server_options:
         ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)

@@ -1,98 +1,72 @@
 import json
-from os import stat
-from typing_extensions import Self, Optional, Dict
 
+from pymongo import MongoClient
+from typing import Optional, Dict
+import re
 
 class GenisysInventory:
-    """Handles operations relating to the creation of a temporary inventory
-    file of all of the client machines booted through Genisys, and to store
-    metadata associated with each client"""
+    """Handles operations relating to the management of a MongoDB collection
+    of all the client machines booted through Genisys, and to store metadata
+    associated with each client"""
 
     HOSTNAME_PREFIX = "genisys"
 
-    def __init__(self: Self, filepath: str):
-        self.filepath = filepath
-        self.fd = open(filepath, "r+", encoding="utf-8")
+    def __init__(self, db_uri: str, db_name: str, collection_name: str):
+        # Connect to MongoDB without authentication
+        self.client = MongoClient(db_uri)
+        self.db = self.client[db_name]
+        self.collection = self.db[collection_name]
 
-        try:
-            # Attempt to load existing file
-            self.running_inventory = json.load(self.fd)
-        except json.decoder.JSONDecodeError:
-            # If file is empty create empty inventory
-            if stat(filepath).st_size == 0:
-                self.running_inventory = {}
-            else:
-                # If file is not empty but cannot be read
-                error_string = 'Error decoding the GenisysInventory JSON file at ' + filepath
-                raise ValueError(error_string)
+        # Ensure that the collection structure exists
+        if self.collection.count_documents({}) == 0:
+            # Initialize the collection with a basic structure if needed
+            self.collection.insert_one({"genisys": {"hosts": []}})
 
-        # Ensure that dictionary structure exists
-        if "genisys" not in self.running_inventory:
-            self.running_inventory["genisys"] = {"hosts": []}
+    def __del__(self):
+        """Close the MongoDB connection."""
+        self.client.close()
 
-    # end __init__
-
-    def __del__(self: Self):
-        """Close the file handle if this is the last remaining instance."""
-        self.fd.close()
-
-    # end __del__
-
-    def get_host(self: Self, host: str) -> Optional[Dict]:
-        """Searches the running inventory for a specifc hostname,
+    def get_host(self, host: str) -> Optional[Dict]:
+        """Searches the running inventory for a specific hostname,
         if not found returns None"""
-        host_list = self.running_inventory["genisys"]["hosts"]
+        result = self.collection.find_one({"hostname": host})
+        return result
 
-        for element in host_list:
-            if element["hostname"] == host:
-                return element
-
-        return None
-
-    # end get_host
-
-    def add_host(self: Self, host) -> str:
-        """Adds a host to the running inventory, takes in
-        the JSON body of a request and adds it to the running
-        and on-disk memory. It also updates the hostname in the
-        inventory for later assignment."""
+    def add_host(self, host) -> str:
+        """Adds a host to the running inventory and updates the hostname
+        in the inventory for later assignment."""
         if not isinstance(host, dict):
             host_dict = json.loads(host)
         else:
             host_dict = host
 
+        # Assign the next hostname
         host_dict["hostname"] = self.get_next_hostname()
 
-        self.running_inventory["genisys"]["hosts"].append(host_dict)
-        self.update_file()
+        # Insert the new host document directly into the collection
+        self.collection.insert_one(host_dict)
 
         return host_dict["hostname"]
 
-    # end add_host
-
-    def update_file(self: Self):
-        """Writes the current running inventory to the
-        on-disk file"""
-        self.fd.seek(0)
-        json.dump(self.running_inventory, self.fd)
-
-        self.fd.flush()
-
-    # end update_file
-
-    def get_next_hostname(self: Self) -> str:
-        """Returns the next hostname by checking the inventory's most
-        recent entry and incrementing numeric component at the end"""
-        if len(self.running_inventory['genisys']['hosts']) > 0:
-            last_entry = self.running_inventory["genisys"]["hosts"][-1]
+    def get_next_hostname(self):
+        # Attempt to find the highest current hostname number
+        regex_pattern = "^genisys(\d+)$"  # Pattern to extract the numeric part
+        last_host = self.collection.find_one(
+            {"hostname": {"$regex": regex_pattern}},
+            sort=[("hostname", -1)]
+        )
+        if last_host:
+            # Extract the number from the hostname, increment it, and pad with zeros
+            match = re.search(regex_pattern, last_host["hostname"])
+            if match:
+                last_num = int(match.group(1))
+                new_num = last_num + 1
+            else:
+                new_num = 1  # Fallback if regex match fails
         else:
-            return self.HOSTNAME_PREFIX + "1"
+            new_num = 1
 
-        new_value = int(last_entry["hostname"][7:]) + 1
-
-        return self.HOSTNAME_PREFIX + str(new_value)
-
-    # end get_next_hostname
+        # Adjust the zero padding based on your maximum expected number of hosts
+        return f"genisys{str(new_num).zfill(5)}"
 
 
-# end GenisysInventory
