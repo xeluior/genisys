@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import hashes
 from cryptography import x509
 from cryptography.x509.oid import NameOID
-from typing_extensions import TypedDict, Union, NotRequired, Dict
+from typing_extensions import TypedDict, Optional, NotRequired, Dict
 
 CERTIFICATE_STORE_PATH = Path(os.getenv('GENISYS_CERT_STORE', '/etc/genisys/ssl'))
 
@@ -14,7 +14,7 @@ class CertChainArgs(TypedDict):
     """Typed Dict for arguments to be applied to the SSLContext#load_cert_chain method"""
     keyfile: str
     certfile: str
-    password: NotRequired[Union[str, None]]
+    password: NotRequired[Optional[str]]
 
 def get_keychain(config: Dict[str, str]) -> CertChainArgs:
     """Converts from the configured filenames to the nessecary format to pass to

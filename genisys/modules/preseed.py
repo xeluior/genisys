@@ -1,4 +1,7 @@
+import grp
+import os
 from pathlib import Path
+import pwd
 from typing_extensions import Optional, Self
 from warnings import warn
 import jinja2
@@ -33,9 +36,7 @@ class Preseed(Module):
         # Pass settings, FTP configuration, SSH keys, and SSL certificate content to the template
         rendered_template = template.render(
             settings=self.config["users"],
-            ftp=self.ftp_uri(),
-            ssh_keys_contents=self.ssh_keys_contents(),
-            ssl_cert_content=self.ssl_cert_content()
+            late_command=self.late_command()
         )
         return rendered_template
 
@@ -68,11 +69,34 @@ class Preseed(Module):
         # Check if 'server' and 'ssl' keys are present in the configuration
         if 'server' in self.config["network"] and 'ssl' in self.config["network"]["server"]:
             # Determine SSL certificate path
-            ssl_cert_path = Path(tls.get_keychain(self.config["network"]["server"]["ssl"])["certfile"])
+            ssl_certs_path = tls.get_keychain(self.config["network"]["server"]["ssl"])
+            # ensure ownership by the server user
+            server = self.config['network']['server']
+            user = server.get('user')
+            group = server.get('group')
+            uid = pwd.getpwnam(user) if user else pwd.getpwuid(os.geteuid())
+            gid = grp.getgrnam(group) if group else grp.getgrgid(os.getgid())
+            for _, path in ssl_certs_path.items():
+                if path is None: continue
+                os.chown(str(path), uid.pw_uid, gid.gr_gid)
             # Read SSL certificate file and store its contents as a string
-            with open(ssl_cert_path, 'r') as f:
+            with open(ssl_certs_path['certfile'], 'r') as f:
                 ssl_cert_content = f.read()
         return ssl_cert_content
+
+    def late_command(self: Self) -> str:
+        """Generates the late_command for the preseed file"""
+        command = ""
+        ssh_keys = self.ssh_keys_contents()
+        ssl_cert = self.ssl_cert_content()
+        ftp = self.ftp_uri()
+
+        if ssh_keys != "":
+            command += f'mkdir -p /root/.ssh && echo "{ssh_keys}" >> /root/.ssh/authorized_keys && chown -R root:root /root/.ssh/ && chmod 644 /root/.ssh/authorized_keys && chmod 700 /root/.ssh/;'
+        if ssl_cert:
+            command += f'echo "{ssl_cert}" > /usr/local/share/ca-certificates/genisys.crt && update-ca-certificates;'
+        command += f'wget -nH -m {ftp} -P / && chown -R root:root /first-boot && chmod -R 0755 /first-boot && mv /first-boot/genisys-firstboot.service /etc/systemd/system/ && ln -s /etc/systemd/system/genisys-firstboot.service /etc/systemd/system/multi-user.target.wants/genisys-firstboot.service;'
+        return command.replace('\n', '\\n')
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
