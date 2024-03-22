@@ -22,6 +22,6 @@ class KernelParameter(base.Module):
     # end generate
 
     def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
-        return [["sysctl", "-p"]]
+        return [["sysctl", "-p", self.SYSCTL_FILE]]
     # end generate
 # end class KernelParameter

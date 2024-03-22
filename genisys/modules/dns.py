@@ -44,6 +44,9 @@ class Dnsmasq(base.Module):
                 config_writer+="dhcp-authoritative\n"
             else:
                 config_writer+="#dhcp-authoritative\n"
+
+        # allow clients to refer to this server as genisys.internal
+        config_writer+=f"address=/genisys.internal/{self.config['network']['ip']}"
         return config_writer
 
     def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:

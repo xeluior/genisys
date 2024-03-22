@@ -8,7 +8,7 @@ from genisys.server.genisysinventory import GenisysInventory
 def generate_response(status_code: int, message: str) -> bytes:
     """Generates a JSON formated HTTP response with the given status and message"""
     statuses = {200: "OK", 400: "Bad Request", 500: "Internal Server Error"}
-    response_body = '{"new-hostname":"' + message + '"}'
+    response_body = '{"hostname":"' + message + '"}'
     response = f"HTTP/1.1 {status_code} {statuses[status_code]}\n"
     response += f"Content-Length: {len(response_body)}\n"
     response += "Content-Type: application/json\n"

@@ -39,6 +39,7 @@ class Netplan(Module):
             if prefix_len is not None and prefix_len != cidr_pfx_len:
                 raise ValueError("Subnet mask does not match CIDR prefix length")
             subnet_cidr = self.config['subnet']
+            prefix_len = cidr_pfx_len # only matters if prefix_len is None
         else: # subnet is not already in cidr
             # set a default prefix length
             if not prefix_len:

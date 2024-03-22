@@ -11,11 +11,8 @@ Network:
   nat-interface: "eth1"
   tftp_directory: "/tftpboot"
   tftp_port: "69"
-  gateways: "10.0.0.50"
   dns-servers: "1.1.1.1"
   no-dns: false
-  server:
-    port: 15206
   ftp:
     directory: "/ftp"
     ftp-port: 20
@@ -50,8 +47,6 @@ OS:
   os: "debian"
   version-name: bookworm
   target-architecture: amd64 
-UEFI:
-  uefi: false
 Users:
   root-login: true
   root-password: "<encrypted string>"
