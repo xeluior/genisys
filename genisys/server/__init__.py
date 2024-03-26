@@ -34,6 +34,11 @@ def run(config: YAMLParser):
     network = config.get_section("Network")
     server_options = cast(ServerOptions, network.get("server", {}) or {})
 
+    #Connect to database
+    db_uri = os.getenv("MONGO_URL") # Adjust based on your MongoDB setup
+    db_name = "local"  # The database name
+    collection_name = "ClientsCollection"  # The collection name
+
     # Launch meteor server
     meteor_initialization(server_options)
 
@@ -43,11 +48,6 @@ def run(config: YAMLParser):
     except PermissionError:
         warn("Unable to drop privledges to the specified user. Continuing as current user.")
         server_user = pwd.getpwuid(os.getuid())
-
-    #Connect to database
-    db_uri = os.getenv("MONGO_URL") # Adjust based on your MongoDB setup
-    db_name = "genisys_db"  # The database name
-    collection_name = "inventory_collection"  # The collection name
 
     # change working directory
     workdir = server_options.get("working-directory", server_user.pw_dir)
@@ -108,6 +108,7 @@ def meteor_initialization(server_config: ServerOptions):
     # Set environment variables
     os.environ['ROOT_URL'] = 'http://localhost'
     os.environ['PORT'] = '8080'
+
     if 'MONGO_URL' not in os.environ:
         print('MONGO_URL not found in environment variables, cancelling Meteor server.')
         return
@@ -132,7 +133,8 @@ def meteor_initialization(server_config: ServerOptions):
 
     # npm install and run 
     subprocess.run(['npm', 'install', '--prefix', os.path.join(meteor_dir,'bundle', 'programs', 'server'), '--unsafe-perm'], check=True)
-    subprocess.run(['node', os.path.join(meteor_dir,'bundle', 'main.js')], check=True)
+    subprocess.Popen(['node', os.path.join(meteor_dir,'bundle', 'main.js')])
+    print('Done running Meteor initialization.')
 
 
 # end meteor_initialization
