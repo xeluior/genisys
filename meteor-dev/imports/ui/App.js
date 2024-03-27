@@ -18,9 +18,9 @@ Template.clientList.helpers({
       { sort: { createdAt: -1 } }
     )
   },
-  option: function() {
+  option: function () {
     return PlaybooksCollection.find({})
-  }
+  },
 })
 
 Template.clientList.events({
@@ -28,16 +28,24 @@ Template.clientList.events({
     event.preventDefault()
 
     //Talk to will about the meteor way of doing this:
-    const selectedOption = $(event.currentTarget).closest('tr').find('.form-select').val();
+    const selectedOption = $(event.currentTarget)
+      .closest("tr")
+      .find(".form-select")
+      .val()
 
     console.log("Selected Playbook:", selectedOption)
 
-    Meteor.call("Clients.Provision", this._id, selectedOption, function (err, res) {
-      if (err) {
-        return console.error(err)
-      }
+    Meteor.call(
+      "Clients.Provision",
+      this._id,
+      selectedOption,
+      function (err, res) {
+        if (err) {
+          return console.error(err)
+        }
 
-      console.log("Success!", res)
-    })
+        console.log("Success!", res)
+      }
+    )
   },
 })

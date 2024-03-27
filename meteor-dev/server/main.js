@@ -25,13 +25,13 @@ export const CONFIG_FILE = yaml.load(temp_yaml_string)
 Meteor.startup(() => {
   console.log("Meteor Started")
 
-    PlaybooksCollection.dropCollectionAsync()
+  PlaybooksCollection.dropCollectionAsync()
 
-  CONFIG_FILE["ansible"]["playbooks"].forEach(element => {
-    obj = {'playbook' : element}
+  CONFIG_FILE["ansible"]["playbooks"].forEach((element) => {
+    obj = { playbook: element }
     console.log(obj)
     PlaybooksCollection.insert(obj)
-  });
+  })
 
   //   ClientsCollection.insert({ hostname: "genisys_Test", ip: "10.0.0.1" })
 })
