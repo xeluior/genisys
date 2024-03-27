@@ -1,9 +1,11 @@
 import { Template } from "meteor/templating"
 import "./App.html"
 import { ClientsCollection } from "../../api/clients/clients"
+import { PlaybooksCollection } from "../../api/clients/playbooks.js"
 
 Template.clientList.onCreated(function () {
   Meteor.subscribe("Clients")
+  Meteor.subscribe("Playbooks")
 })
 
 Template.clientList.helpers({
@@ -16,6 +18,9 @@ Template.clientList.helpers({
       { sort: { createdAt: -1 } }
     )
   },
+  option: function() {
+    return PlaybooksCollection.find({})
+  }
 })
 
 Template.clientList.events({

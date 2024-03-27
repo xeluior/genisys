@@ -22,7 +22,13 @@
           <td>{{_id}}</td>
           <td>{{hostname}}</td>
           <td>{{ip}}</td>
-          <td><button class="provision-button btn btn-primary">Provision</button></td>
+          <td><button class="provision-button btn btn-primary">Provision</button>
+          <select class="form-select" aria-label="select">
+            <option selected>None</option>
+            {{#each option}}
+            <option> {{playbook}}</option>
+            {{/each}}
+          </select></td>
         </tr>
         {{/each}}
       </tbody>
