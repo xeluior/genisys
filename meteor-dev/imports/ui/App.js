@@ -27,9 +27,12 @@ Template.clientList.events({
   "click .provision-button": function (event) {
     event.preventDefault()
 
-    console.log("Hostname:", this.hostname)
+    //Talk to will about the meteor way of doing this:
+    const selectedOption = $(event.currentTarget).closest('tr').find('.form-select').val();
 
-    Meteor.call("Clients.Provision", this._id, function (err, res) {
+    console.log("Selected Playbook:", selectedOption)
+
+    Meteor.call("Clients.Provision", this._id, selectedOption, function (err, res) {
       if (err) {
         return console.error(err)
       }

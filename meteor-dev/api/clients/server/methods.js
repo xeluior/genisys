@@ -4,8 +4,10 @@ import { ClientsCollection } from "../clients"
 import fs from "fs"
 
 Meteor.methods({
-  "Clients.Provision": function (clientId) {
+  "Clients.Provision": function (clientId, playbook) {
     check(clientId, String)
+
+    console.log(playbook)
 
     const client = ClientsCollection.findOne({
       _id: clientId,
