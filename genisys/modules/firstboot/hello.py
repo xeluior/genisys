@@ -48,6 +48,7 @@ class Hello(Module):
 
         # ensure root can login thru ssh
         content.append("sed -i 's/^#PermitRootLogin prohibit-password$/PermitRootLogin yes/' /etc/ssh/sshd_config")
+        content.append("systemctl restart sshd.service")
 
         # Turning array of strings into single block
         formatted_string = "\n".join(content)
