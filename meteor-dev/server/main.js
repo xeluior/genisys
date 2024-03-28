@@ -29,7 +29,7 @@ Meteor.startup(() => {
 
   CONFIG_FILE["ansible"]["playbooks"].forEach((element) => {
     obj = { playbook: element }
-    console.log(obj)
+    // console.log(obj)
     PlaybooksCollection.insert(obj)
   })
 
