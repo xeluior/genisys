@@ -25,7 +25,7 @@ class Hello(Module):
 
         # ensure some programs are installed
         # this should be taken care of by the preseed, but just in case
-        content.append("apt-get update && apt-get install -y iproute2 gawk coreutils curl jq")
+        content.append("apt-get update && apt-get install -y sed iproute2 gawk coreutils curl jq openssh-server")
 
         # thanks chat gpt for this command
         content.append('ip_addr="$(ip -o -4 address show scope global | awk \'{print $4}\' | cut -d/ -f1 | head -n1)"')
@@ -45,6 +45,9 @@ class Hello(Module):
 
         # set the machine's hostname with the response iff the response included one
         content.append('[ "$hostname" != "null" ] && hostnamectl set-hostname "$hostname"')
+
+        # ensure root can login thru ssh
+        content.append("sed -i 's/^#PermitRootLogin prohibit-password$/PermitRootLogin yes/' /etc/ssh/sshd_config")
 
         # Turning array of strings into single block
         formatted_string = "\n".join(content)
