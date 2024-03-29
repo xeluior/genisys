@@ -1,6 +1,7 @@
 import { Meteor } from "meteor/meteor"
 import { check } from "meteor/check"
 import { ClientsCollection } from "../clients"
+import { AnsibleCollection } from "../ansible"
 import fs from "fs"
 const { exec } = require('child_process')
 import { Mongo } from 'meteor/mongo';
@@ -16,8 +17,6 @@ Meteor.methods({
     if (!client) {
       throw new Meteor.Error("client-not-found", "That client doesn't exist.")
     }
-
-
 
     // Reading inventory file and adding hostname to inventory file
     fs.readFile('inventory', 'utf8', function (err, fileContent) {
@@ -46,7 +45,17 @@ Meteor.methods({
     });
 
     // Running Ansible command
-    const command = `ansible-playbook -i inventory ${playbook} --limit "${client.hostname}"`
+    let command = `ansible-playbook -i inventory ${playbook} --limit "${client.hostname}"`
+
+    const ansibleObject = AnsibleCollection.findOne({"ssh-key": { $exists: true }})
+
+    // If such an object exists, append its 'ssh-key' to the command
+    if (ansibleObject) {
+        command += ` ${ansibleObject["ssh-key"]}`
+    }
+
+    console.log('Running command: ' + command)
+
     exec(command, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing command: ${error.message}`);

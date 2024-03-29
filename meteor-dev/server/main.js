@@ -1,6 +1,7 @@
 import { Meteor } from "meteor/meteor"
 import { ClientsCollection } from "../api/clients/clients"
 import { PlaybooksCollection } from "../api/clients/playbooks"
+import { AnsibleCollection } from "../api/clients/ansible"
 import "../api/clients/server/publications"
 import "../api/clients/server/methods"
 
@@ -26,11 +27,20 @@ Meteor.startup(() => {
   console.log("Meteor Started")
 
   PlaybooksCollection.dropCollectionAsync()
+  AnsibleCollection.dropCollectionAsync()
 
+  // Load playbooks into Mongo
   CONFIG_FILE["ansible"]["playbooks"].forEach((element) => {
     obj = { playbook: element }
     PlaybooksCollection.insert(obj)
   })
+
+  // Putting ansible SSH key into mongo collection for usage on client
+  if (CONFIG_FILE["ansible"]["ssh-key"])
+  {
+    obj = {"ssh-key": CONFIG_FILE["ansible"]["ssh-key"]}
+    AnsibleCollection.insert(obj)
+  }
 
   //Creating Inventory file
   fs.access("inventory", fs.constants.F_OK, (err) => {
