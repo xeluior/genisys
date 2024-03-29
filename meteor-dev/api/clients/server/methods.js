@@ -45,7 +45,7 @@ Meteor.methods({
     });
 
     // Running Ansible command
-    let command = `ansible-playbook -i inventory ${playbook} --limit "${client.hostname} --ssh-common-args '-o StrictHostKeyChecking=no' --user root"`
+    let command = `ansible-playbook -i inventory ${playbook} --limit "${client.hostname}" --ssh-common-args '-o StrictHostKeyChecking=no' --user root`
 
     const ansibleObject = AnsibleCollection.findOne({"ssh-key": { $exists: true }})
 
