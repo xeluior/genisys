@@ -1,0 +1,56 @@
+.TH GENISYS 1 "March 2024" "Version 1.0" "GENISYS Manual"
+.SH NAME
+genisys \- Config File Management Tool
+.SH SYNOPSIS
+.B genisys
+[\-h] {validate,install,generate,server} ...
+.SH DESCRIPTION
+genisys is a command\-line tool for managing configuration files.
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Display a help message and exit.
+.SH COMMANDS
+.TP
+.B genisys-validate(1)
+Validate the configuration file.
+.TP
+.B genisys-install(1)
+Install the configuration files.
+.TP
+.B genisys-generate(1)
+Generate the configuration files.
+.TP
+.B genisys-server(1)
+Run the server to listen for new clients.
+.SH EXAMPLES
+To validate a configuration file:
+.PP
+.B genisys validate
+.PP
+To install configuration files:
+.PP
+.B genisys install
+.PP
+To generate configuration files:
+.PP
+.B genisys generate
+.PP
+To run the server:
+.PP
+.B genisys server
+.SH SEE ALSO
+.BR genisys-validate (1),
+.BR genisys-install (1),
+.BR genisys-generate (1),
+.BR genisys-server (1)
+.SH AUTHOR
+Written by Rowan Akers, Benny Bergle, Robert Gingras and Henry Green.
+.SH COPYRIGHT
+Copyright (C) 2023-2024 Rowan Akers, Benny Bergle, Robert Gingras and Henry Green.
+.PP
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+.SH BUGS
+Report any bugs to GitHub.
+
