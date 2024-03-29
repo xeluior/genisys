@@ -1,0 +1,10 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: Install nettools
+      become: yes
+      apt:
+        name: net-tools
+        state: present
+
