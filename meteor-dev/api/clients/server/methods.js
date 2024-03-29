@@ -45,13 +45,13 @@ Meteor.methods({
     });
 
     // Running Ansible command
-    let command = `ansible-playbook -i inventory ${playbook} --limit "${client.hostname}"`
+    let command = `ansible-playbook -i inventory ${playbook} --limit "${client.hostname} --ssh-common-args '-o StrictHostKeyChecking=no' --user root"`
 
     const ansibleObject = AnsibleCollection.findOne({"ssh-key": { $exists: true }})
 
-    // If such an object exists, append its 'ssh-key' to the command
+    // If key found, append to command
     if (ansibleObject) {
-        command += ` ${ansibleObject["ssh-key"]}`
+        command += ` --private-key ${ansibleObject["ssh-key"]}`
     }
 
     console.log('Running command: ' + command)
