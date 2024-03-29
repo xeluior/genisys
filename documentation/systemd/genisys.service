@@ -1,0 +1,14 @@
+[Unit]
+Description = Start the Genisys server
+Documentation = man:genisys-server(1)
+Requires = network-online.target
+After = network-online.target
+ConditionFileNotEmpty = /etc/genisys.yaml
+
+[Install]
+WantedBy = multi-user.target
+
+[Service]
+Type = exec
+ExecStart = genisys server
+Environment = CONFIG_FILE=/etc/genisys.yaml MONGO_URL=
