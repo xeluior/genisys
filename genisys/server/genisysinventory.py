@@ -43,6 +43,9 @@ class GenisysInventory:
         # Assign the next hostname
         host_dict["hostname"] = self.get_next_hostname()
 
+        # Set provisioned status to false
+        host_dict["provisioned"] = False
+
         # Insert the new host document directly into the collection
         self.collection.insert_one(host_dict)
 

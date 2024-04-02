@@ -35,17 +35,24 @@ Template.clientList.events({
 
     console.log("Selected Playbook:", selectedOption)
 
-    Meteor.call(
-      "Clients.Provision",
-      this._id,
-      selectedOption,
-      function (err, res) {
+    Meteor.call("Clients.Provision", this._id, selectedOption, function (err, res) {
         if (err) {
           return console.error(err)
         }
 
-        console.log("Success!", res)
+        console.log("Clients.Provision Success!", res)
       }
     )
+  },
+  "click .delete-button": function (event) {
+    event.preventDefault()
+
+    Meteor.call("Clients.RemoveHost", this._id, function (err, res) {
+      if (err) {
+        return console.error(err)
+      }
+
+      console.log("Clients.RemoveHost Success!", res)
+    })
   },
 })

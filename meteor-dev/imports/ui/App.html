@@ -12,7 +12,9 @@
           <th>ClientID</th>
           <th>Hostname</th>
           <th>IP</th>
-          <th>Options</th>
+          <th>Provisioned?</th>
+          <th>Provision Options</th>
+          <th>Delete</th>
         </tr>
       </thead>
       <tbody>
@@ -22,6 +24,7 @@
           <td>{{_id}}</td>
           <td>{{hostname}}</td>
           <td>{{ip}}</td>
+          <td>{{provisioned}}</td>
           <td><button class="provision-button btn btn-primary">Provision</button>
           <select class="form-select" aria-label="select">
             <option selected>None</option>
@@ -29,6 +32,7 @@
             <option value={{playbook}}> {{playbook}}</option>
             {{/each}}
           </select></td>
+          <td><button class="delete-button btn btn-primary">Delete</button></td>
         </tr>
         {{/each}}
       </tbody>

@@ -1,5 +1,4 @@
 import { Meteor } from "meteor/meteor"
-import { ClientsCollection } from "../api/clients/clients"
 import { PlaybooksCollection } from "../api/clients/playbooks"
 import { AnsibleCollection } from "../api/clients/ansible"
 import "../api/clients/server/publications"
