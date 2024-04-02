@@ -50,17 +50,21 @@ Meteor.methods({
     })
 
     // Building Ansible command
-    let command = `ansible-playbook -i inventory ${playbook} --limit "${client.hostname}" --ssh-common-args '-o StrictHostKeyChecking=no' --user root`
+    // let command = `ansible-playbook -i inventory ${playbook} --limit "${client.hostname}" --ssh-common-args '-o StrictHostKeyChecking=no' --user root`
+
+    let command = 'ansible-playbook'
+    let cmd_args = [`-i`, `inventory`, `${playbook}`, `--limit`, `"${client.hostname}"`, `--ssh-common-args`, `'-o StrictHostKeyChecking=no'`, `--user`, `root`]
 
     // If key found, append to command
     const ansibleObject = AnsibleCollection.findOne({
       "ssh-key": { $exists: true },
     })
     if (ansibleObject) {
-      command += ` --private-key ${ansibleObject["ssh-key"]}`
+      // command += ` --private-key ${ansibleObject["ssh-key"]}`
+      cmd_args.push(`--private-key`, `${ansibleObject["ssh-key"]}`)
     }
 
-    const commandResult = spawn(command)
+    const commandResult = spawn(command, cmd_args).on('error', function(err) {throw err})
 
     commandResult.stdout.on("data", function (data) {
       console.log("stdout", data)
@@ -75,7 +79,14 @@ Meteor.methods({
     })
 
     commandResult.on("close", (code) => {
-      console.log(`ansible-playbook returned with code ${code}`)
+      if(code !== 0)
+      {
+        return {
+          status: 400,
+          message: `${client.hostname} failed provisioning with exit code ${code}`,
+        }
+      }
+      console.log(`ansible-playbook returned exit code ${code}`)
     })
 
     // Update client's provisioned status
