@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: 'meteor-dev/.node-version'
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version-file: '.python-version'
+        cache: 'poetry'
+
+    - name: Setup Meteor
+      run: npm install -g meteor
+
+    - name: Build Genisys
+      run: ./build.sh
+
+    - name: Upload sdist
+      uses: actions/upload-artifact@v4
+      with:
+        name: genisys-0.2.0.tar.gz
+        path: dist/genisys-0.2.0.tar.gz
+
+    - name: Upload wheel
+      uses: actions/upload-artifact@v4
+      with:
+        name: genisys-0.2.0-py3-none-any.whl
+        path: dist/genisys-0.2.0-py3-none-any.whl
+
+    - name: Upload Meteor tarball
+      uses: actions/upload-artifact@v4
+      with:
+        name: meteor-dev.tar.gz
+        path: genisys/server/external/meteor-dev.tar.gz
