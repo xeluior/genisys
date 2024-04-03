@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-type meteor &>/dev/null || (printf 'meteor is not installed' && exit 1)
 type poetry &>/dev/null || (printf 'poetry is not installed' && exit 1)
+
+if ! type meteor &>/dev/null; then
+  if [[ -d "${HOME}/.meteor" ]]; then
+    export PATH="${HOME}/.meteor:${PATH}"
+  else
+    printf 'meteor is not installed'
+    exit 1
+  fi
+fi
 
 if type nvm &>/dev/null; then
   nvm use 14
