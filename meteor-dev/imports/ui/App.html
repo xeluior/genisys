@@ -38,4 +38,14 @@
       </tbody>
     </table>
   </div>
+  <h1>Output Logs</h1>
+  <div class="form-outline">
+    <select class="log-form form-select" aria-label="select">
+      <option selected>None</option>
+      {{#each outputLog}}
+      <option value={{log}}> {{log}}</option>
+      {{/each}}
+      </select>
+      <textarea class="form-control" rows="5"></textarea>
+  </div>
 </template>

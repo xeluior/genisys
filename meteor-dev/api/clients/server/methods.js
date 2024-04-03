@@ -2,9 +2,9 @@ import { Meteor } from "meteor/meteor"
 import { check } from "meteor/check"
 import { ClientsCollection } from "../clients"
 import { AnsibleCollection } from "../ansible"
-import fs from "fs"
+import { OutputLogsCollection } from "../outputLogs"
 const { spawn } = require("child_process")
-import { Mongo } from "meteor/mongo"
+import fs from "fs"
 
 Meteor.methods({
   "Clients.Provision": function (clientId, playbook) {
@@ -79,24 +79,36 @@ Meteor.methods({
     // Run the command
     const commandResult = spawn(command, cmd_args)
 
-    // Print the output of the command as ASCII
+    let cmd_result = ""
+    // Print the output of the command as ASCII and log output in MongoDB
     commandResult.stdout.on("data", function (data) {
       function hex2a(hexx) {
         var hex = hexx.toString() //force conversion
-        hex = hex.replace(/\s/g, '')
+        hex = hex.replace(/\s/g, "")
         var str = ""
         for (var i = 0; i < hex.length; i += 2)
           str += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
         return str
       }
 
-      console.log("stdout", hex2a(data))
+      cmd_result += hex2a(data)
     })
 
+    playbookTimestamp = new Date().getTime()
+    logLabel = `${client.hostname}-${playbook}-${playbookTimestamp}`
+
+    // Insert log into mongodb
+    OutputLogsCollection.insert({
+      label: logLabel,
+      text: cmd_result,
+      timestamp: playbookTimestamp,
+    })
+    console.log("Logged:\n", cmd_result, '\nas:', logLabel)
+
     // Return error if cmd_args are invalid/formatted incorrectly
-    // NOTE: This only runs on errors associated with formatting the command, 
-    // if the Ansible command fails because of something like the host being 
-    // unreachable this will not trigger. 
+    // NOTE: This only runs on errors associated with formatting the command,
+    // if the Ansible command fails because of something like the host being
+    // unreachable this will not trigger.
     commandResult.stderr.on("data", function (data) {
       console.error(data)
       return {
