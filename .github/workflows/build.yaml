@@ -16,6 +16,9 @@ jobs:
       with:
         node-version-file: 'meteor-dev/.node-version'
 
+    - name: Install poetry
+      run: pipx install poetry
+
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
