@@ -68,6 +68,9 @@ class Netplan(Module):
     # end generate
 
     def setup_commands(self: Self) -> Union[List[str], List[List[str]]]:
-        return [[ "netplan", "apply" ]]
+        return [
+            [ "chmod", "600", str(self.install_location()) ],
+            [ "netplan", "apply" ]
+        ]
     # end setup_commands
 # end class Interface
