@@ -10,17 +10,22 @@ Meteor.methods({
   "Clients.Provision": function (clientId, playbook) {
     // check(clientId, Mongo.ObjectID)
 
+    // Find client in MongoDB
     const client = ClientsCollection.findOne({
       _id: clientId,
     })
 
+    // Check if client exists
     if (!client) {
       throw new Meteor.Error("client-not-found", "That client doesn't exist.")
     }
 
-    if (playbook.localeCompare('None') === 0)
-    {
-      throw new Meteor.Error("invalid-playbook", "Please select a playbook to run.")
+    // Check if playbook as been selected
+    if (playbook.localeCompare("None") === 0) {
+      throw new Meteor.Error(
+        "invalid-playbook",
+        "Please select a playbook to run."
+      )
     }
 
     // Reading inventory file and adding hostname to inventory file
@@ -50,42 +55,57 @@ Meteor.methods({
     })
 
     // Building Ansible command
-    // let command = `ansible-playbook -i inventory ${playbook} --limit "${client.hostname}" --ssh-common-args '-o StrictHostKeyChecking=no' --user root`
+    let command = "ansible-playbook"
+    let cmd_args = [
+      `-i`,
+      `inventory`,
+      `${playbook}`,
+      `--limit`,
+      `${client.hostname}`,
+      `--ssh-common-args`,
+      `'-o StrictHostKeyChecking=no'`,
+      `--user`,
+      `root`,
+    ]
 
-    let command = 'ansible-playbook'
-    let cmd_args = [`-i`, `inventory`, `${playbook}`, `--limit`, `"${client.hostname}"`, `--ssh-common-args`, `'-o StrictHostKeyChecking=no'`, `--user`, `root`]
-
-    // If key found, append to command
+    // If SSH key found, append to command
     const ansibleObject = AnsibleCollection.findOne({
       "ssh-key": { $exists: true },
     })
     if (ansibleObject) {
-      // command += ` --private-key ${ansibleObject["ssh-key"]}`
       cmd_args.push(`--private-key`, `${ansibleObject["ssh-key"]}`)
     }
 
-    const commandResult = spawn(command, cmd_args).on('error', function(err) {throw err})
+    // Run the command
+    const commandResult = spawn(command, cmd_args)
 
+    // Print the output of the command as ASCII
     commandResult.stdout.on("data", function (data) {
-      console.log("stdout", data)
+      function hex2a(hexx) {
+        var hex = hexx.toString() //force conversion
+        hex = hex.replace(/\s/g, '')
+        var str = ""
+        for (var i = 0; i < hex.length; i += 2)
+          str += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
+        return str
+      }
+
+      console.log("stdout", hex2a(data))
     })
 
+    // Return error if cmd_args are invalid/formatted incorrectly
+    // NOTE: This only runs on errors associated with formatting the command, 
+    // if the Ansible command fails because of something like the host being 
+    // unreachable this will not trigger. 
     commandResult.stderr.on("data", function (data) {
       console.error(data)
       return {
         status: 400,
-        message: `${client.hostname} failed provisioning`,
+        message: `${client.hostname} failed provisioning, potential formatting issue with SSH key, playbook, or client hostname`,
       }
     })
 
     commandResult.on("close", (code) => {
-      if(code !== 0)
-      {
-        return {
-          status: 400,
-          message: `${client.hostname} failed provisioning with exit code ${code}`,
-        }
-      }
       console.log(`ansible-playbook returned exit code ${code}`)
     })
 
@@ -107,7 +127,7 @@ Meteor.methods({
     }
   },
   "Clients.RemoveHost": function (clientId) {
-    ClientsCollection.remove({_id: clientId})
+    ClientsCollection.remove({ _id: clientId })
   },
-  "RefreshConfig": function () {},
+  RefreshConfig: function () {},
 })
