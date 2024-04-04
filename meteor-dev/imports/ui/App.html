@@ -12,7 +12,6 @@
           <th>ClientID</th>
           <th>Hostname</th>
           <th>IP</th>
-          <th>Provisioned?</th>
           <th>Provision Options</th>
           <th>Delete</th>
         </tr>
@@ -24,7 +23,6 @@
           <td>{{_id}}</td>
           <td>{{hostname}}</td>
           <td>{{ip}}</td>
-          <td>{{provisioned}}</td>
           <td><button class="provision-button btn btn-primary">Provision</button>
           <select class="form-select" aria-label="select">
             <option selected>None</option>
@@ -43,9 +41,9 @@
     <select class="log-form form-select" aria-label="select">
       <option selected>None</option>
       {{#each outputLog}}
-      <option value={{log}}> {{log}}</option>
+      <option value={{label}}> {{label}}</option>
       {{/each}}
       </select>
-      <textarea class="form-control" rows="5"></textarea>
+      <textarea class="form-control" rows="10"> {{logText}} </textarea>
   </div>
 </template>

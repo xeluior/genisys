@@ -1,9 +1,13 @@
 import { Template } from "meteor/templating"
+import { ReactiveVar } from 'meteor/reactive-var'
 import "./App.html"
 import { ClientsCollection } from "../../api/clients/clients"
 import { PlaybooksCollection } from "../../api/clients/playbooks.js"
 import { OutputLogsCollection } from "../../api/clients/outputLogs.js"
 import { AnsibleCollection } from "../../api/clients/ansible.js"
+
+// Var that holds the currently selected log to display in the Output Log section
+var currentLogReactive = new ReactiveVar("")
 
 Template.clientList.onCreated(function () {
   Meteor.subscribe("Clients")
@@ -19,9 +23,12 @@ Template.clientList.helpers({
   option: function () {
     return PlaybooksCollection.find({})
   },
-  logs: function () {
-    return OutputLogsCollection.find({})
+  outputLog: function () {
+    return OutputLogsCollection.find({}, { sort: { timestamp: -1 } })
   },
+  logText: function () {
+    return currentLogReactive.get()
+  }
 })
 
 Template.clientList.events({
@@ -59,7 +66,13 @@ Template.clientList.events({
   "change .log-form": function (event) {
 
     let selectedValue = $(event.currentTarget).val()
-    console.log(selectedValue)
-    // Meteor.call("Logs.GetSelected", this.log)
+    // console.log(selectedValue)
+    Meteor.call("Logs.GetSelected", selectedValue, function(err, res) {
+      if (err) {
+        return console.error(err)
+      }
+
+      currentLogReactive.set(res)
+    })
   }
 })

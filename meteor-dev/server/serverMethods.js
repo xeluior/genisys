@@ -28,7 +28,7 @@ export const InitializeCollections = function() {
       PlaybooksCollection.insert(obj)
     })
   
-    // Putting ansible SSH key into mongo collection for usage on client
+    // Putting ansible SSH key location into mongo collection for usage on client
     if (CONFIG_FILE["ansible"]["ssh-key"])
     {
       obj = {"ssh-key": CONFIG_FILE["ansible"]["ssh-key"]}

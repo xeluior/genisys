@@ -82,28 +82,16 @@ Meteor.methods({
     let cmd_result = ""
     // Print the output of the command as ASCII and log output in MongoDB
     commandResult.stdout.on("data", function (data) {
-      function hex2a(hexx) {
-        var hex = hexx.toString() //force conversion
-        hex = hex.replace(/\s/g, "")
-        var str = ""
-        for (var i = 0; i < hex.length; i += 2)
-          str += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
-        return str
-      }
-
-      cmd_result += hex2a(data)
+      function hexBufferToString(buffer) {
+        const hexString = buffer.toString('hex');
+        const hexPairs = hexString.match(/.{1,2}/g);
+        const asciiString = hexPairs.map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
+        return asciiString;
+    }
+      res = hexBufferToString(data)
+      
+      cmd_result += res
     })
-
-    playbookTimestamp = new Date().getTime()
-    logLabel = `${client.hostname}-${playbook}-${playbookTimestamp}`
-
-    // Insert log into mongodb
-    OutputLogsCollection.insert({
-      label: logLabel,
-      text: cmd_result,
-      timestamp: playbookTimestamp,
-    })
-    console.log("Logged:\n", cmd_result, '\nas:', logLabel)
 
     // Return error if cmd_args are invalid/formatted incorrectly
     // NOTE: This only runs on errors associated with formatting the command,
@@ -113,26 +101,25 @@ Meteor.methods({
       console.error(data)
       return {
         status: 400,
-        message: `${client.hostname} failed provisioning, potential formatting issue with SSH key, playbook, or client hostname`,
+        message: `${client.hostname} failed provisioning due to command error, potential formatting issue with SSH key, playbook, or client hostname`,
       }
     })
 
-    commandResult.on("close", (code) => {
+    commandResult.on("close", Meteor.bindEnvironment((code) => {
       console.log(`ansible-playbook returned exit code ${code}`)
-    })
 
-    // Update client's provisioned status
-    ClientsCollection.update(
-      {
-        _id: clientId,
-      },
-      {
-        $set: {
-          provisioned: true,
-          provisionedAt: new Date(),
-        },
-      }
-    )
+      playbookTimestamp = new Date().getTime()
+      logLabel = `${client.hostname}-${playbook}-${playbookTimestamp}`
+  
+      // Insert log into mongodb
+      OutputLogsCollection.insert({
+        label: logLabel,
+        text: cmd_result,
+        timestamp: playbookTimestamp,
+      })
+      console.log("Logged:\n", cmd_result, '\nas:', logLabel)
+    }))
+
     return {
       status: 200,
       message: `${client.hostname} successfully provisioned`,
@@ -141,5 +128,10 @@ Meteor.methods({
   "Clients.RemoveHost": function (clientId) {
     ClientsCollection.remove({ _id: clientId })
   },
-  RefreshConfig: function () {},
+  "Logs.GetSelected": function (logLabel) {
+    const log = OutputLogsCollection.findOne({label: logLabel})
+
+    return log.text
+  },
+  "RefreshConfig": function () {},
 })
