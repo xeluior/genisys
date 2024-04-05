@@ -83,13 +83,15 @@ Meteor.methods({
     // Print the output of the command as ASCII and log output in MongoDB
     commandResult.stdout.on("data", function (data) {
       function hexBufferToString(buffer) {
-        const hexString = buffer.toString('hex');
-        const hexPairs = hexString.match(/.{1,2}/g);
-        const asciiString = hexPairs.map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
-        return asciiString;
-    }
+        const hexString = buffer.toString("hex")
+        const hexPairs = hexString.match(/.{1,2}/g)
+        const asciiString = hexPairs
+          .map((hex) => String.fromCharCode(parseInt(hex, 16)))
+          .join("")
+        return asciiString
+      }
       res = hexBufferToString(data)
-      
+
       cmd_result += res
     })
 
@@ -105,20 +107,30 @@ Meteor.methods({
       }
     })
 
-    commandResult.on("close", Meteor.bindEnvironment((code) => {
-      console.log(`ansible-playbook returned exit code ${code}`)
+    commandResult.on(
+      "close",
+      Meteor.bindEnvironment((code) => {
+        console.log(`ansible-playbook returned exit code ${code}`)
 
-      playbookTimestamp = new Date().getTime()
-      logLabel = `${client.hostname}-${playbook}-${playbookTimestamp}`
-  
-      // Insert log into mongodb
-      OutputLogsCollection.insert({
-        label: logLabel,
-        text: cmd_result,
-        timestamp: playbookTimestamp,
+        playbookTimestamp = new Date().getTime()
+        logLabel = `${client.hostname}-${playbook}-${playbookTimestamp}`
+
+        // Insert log into mongodb
+        OutputLogsCollection.insert({
+          label: logLabel,
+          text: cmd_result,
+          timestamp: playbookTimestamp,
+        })
+        console.log("Logged:\n", cmd_result, "\nas:", logLabel)
+
+        if (code !== 0) {
+          return {
+            status: 400,
+            message: `Ansible returned exit code ${code} while provisioning ${client.hostname}. Please see output log ${logLabel} on web UI for details.`,
+          }
+        }
       })
-      console.log("Logged:\n", cmd_result, '\nas:', logLabel)
-    }))
+    )
 
     return {
       status: 200,
@@ -129,9 +141,13 @@ Meteor.methods({
     ClientsCollection.remove({ _id: clientId })
   },
   "Logs.GetSelected": function (logLabel) {
-    const log = OutputLogsCollection.findOne({label: logLabel})
+    const log = OutputLogsCollection.findOne({ label: logLabel })
+
+    if (!log) {
+      return ""
+    }
 
     return log.text
   },
-  "RefreshConfig": function () {},
+  RefreshConfig: function () {},
 })
