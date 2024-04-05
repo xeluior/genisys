@@ -5,9 +5,7 @@ const fs = require("fs")
 const yaml = require("js-yaml")
 
 const CONFIG_FILE_VAR = process.env.CONFIG_FILE || "/etc/genisys.yaml"
-export const CONFIG_FILE = yaml.load(
-  fs.readFileSync(String(CONFIG_FILE_VAR), "utf8")
-)
+
 
 // const temp_yaml_string = `---
 // ansible:
@@ -21,6 +19,8 @@ export const CONFIG_FILE = yaml.load(
 
 export const InitializeCollections = function () {
   console.log("Initializing Playbook Collection")
+  const CONFIG_FILE = yaml.load(fs.readFileSync(String(CONFIG_FILE_VAR), "utf8"))
+
   PlaybooksCollection.dropCollectionAsync()
   AnsibleCollection.dropCollectionAsync()
 
@@ -42,8 +42,9 @@ export const CreateInventoryFile = function () {
     if (err) {
       console.log(`inventory does not exist, creating now`)
       fs.writeFileSync("inventory", "[all_hosts]\n")
-    } else {
-      console.log(`inventory exists`)
-    }
+      return
+    } 
+    console.log(`inventory exists`)
+    
   })
 }
