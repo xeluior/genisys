@@ -5,6 +5,9 @@ import { AnsibleCollection } from "../ansible"
 import { OutputLogsCollection } from "../outputLogs"
 const { spawn } = require("child_process")
 import fs from "fs"
+const yaml = require("js-yaml")
+import { CONFIG_FILE_VAR } from "../../../server/serverMethods"
+import { PlaybooksCollection } from "../playbooks"
 
 Meteor.methods({
   "Clients.Provision": function (clientId, playbook) {
@@ -138,7 +141,16 @@ Meteor.methods({
     }
   },
   "Clients.RemoveHost": function (clientId) {
-    ClientsCollection.remove({ _id: clientId })
+    toDelete = ClientsCollection.findOne({ _id: clientId })
+
+    if (!toDelete) {
+      throw new Meteor.Error("client-not-found", "That client doesn't exist.")
+    }
+    ClientsCollection.remove(toDelete)
+    return {
+      status: 200,
+      message: 'Client successfully deleted.'
+    }
   },
   "Logs.GetSelected": function (logLabel) {
     const log = OutputLogsCollection.findOne({ label: logLabel })
@@ -149,5 +161,23 @@ Meteor.methods({
 
     return log.text
   },
-  RefreshConfig: function () {},
+  "RefreshConfig": async function () {
+    console.log("Loading Playbook Collection")
+    const CONFIG_FILE = yaml.load(fs.readFileSync(String(CONFIG_FILE_VAR), "utf8"))
+  
+    PlaybooksCollection.dropCollectionAsync()
+    AnsibleCollection.dropCollectionAsync()
+  
+    // Load playbooks into Mongo
+    CONFIG_FILE["ansible"]["playbooks"].forEach((element) => {
+      obj = { playbook: element }
+      PlaybooksCollection.insert(obj)
+    })
+  
+    // Putting ansible SSH key location into mongo collection for usage on client
+    if (CONFIG_FILE["ansible"]["ssh-key"]) {
+      obj = { "ssh-key": CONFIG_FILE["ansible"]["ssh-key"] }
+      AnsibleCollection.insert(obj)
+    }
+  },
 })

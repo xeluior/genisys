@@ -4,7 +4,7 @@ import { AnsibleCollection } from "../api/clients/ansible"
 const fs = require("fs")
 const yaml = require("js-yaml")
 
-const CONFIG_FILE_VAR = process.env.CONFIG_FILE || "/etc/genisys.yaml"
+export const CONFIG_FILE_VAR = process.env.CONFIG_FILE || "/etc/genisys.yaml"
 
 
 // const temp_yaml_string = `---
@@ -17,7 +17,7 @@ const CONFIG_FILE_VAR = process.env.CONFIG_FILE || "/etc/genisys.yaml"
 
 // export const CONFIG_FILE = yaml.load(temp_yaml_string)
 
-export const InitializeCollections = function () {
+export const InitializeCollections = async function () {
   console.log("Initializing Playbook Collection")
   const CONFIG_FILE = yaml.load(fs.readFileSync(String(CONFIG_FILE_VAR), "utf8"))
 
@@ -38,13 +38,17 @@ export const InitializeCollections = function () {
 }
 
 export const CreateInventoryFile = function () {
-  fs.access("inventory", fs.constants.F_OK, (err) => {
+  inv = 'inventory'
+
+  fs.access(inv, fs.constants.F_OK, (err) => {
     if (err) {
-      console.log(`inventory does not exist, creating now`)
-      fs.writeFileSync("inventory", "[all_hosts]\n")
+      console.log(`${inv} does not exist, creating now`)
+      fs.writeFileSync(inv, "[all_hosts]\n")
       return
     } 
-    console.log(`inventory exists`)
+    console.log(`inventory \"${inv}\" exists`)
     
   })
+
+  return inv
 }
