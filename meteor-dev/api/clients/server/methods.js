@@ -11,7 +11,7 @@ import { PlaybooksCollection } from "../playbooks"
 
 Meteor.methods({
   "Clients.Provision": function (clientId, playbook) {
-    // check(clientId, Mongo.ObjectID)
+    check(clientId, Mongo.ObjectID)
 
     // Find client in MongoDB
     const client = ClientsCollection.findOne({

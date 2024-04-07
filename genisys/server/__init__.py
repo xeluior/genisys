@@ -126,8 +126,6 @@ def meteor_initialization(server_config: ServerOptions):
     os.makedirs(meteor_dir, exist_ok=True)
 
     # Get path to tar file
-    # tar_file_path = pkg_resources.resource_filename('genisys', 'server/external/meteor-dev.tar.gz')
-    # tar_file_path = importlib.resources.path('genisys', 'server/external/meteor-dev.tar.gz')
     package_location = importlib.util.find_spec('genisys').origin
     tar_file_path = Path(package_location[:package_location.rfind('/')], 'server/external/meteor-dev.tar.gz')
 
