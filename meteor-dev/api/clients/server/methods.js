@@ -126,19 +126,19 @@ Meteor.methods({
         })
         console.log("Logged:\n", cmd_result, "\nas:", logLabel)
 
-        if (code !== 0) {
+        if (code != 0) {
           return {
             status: 400,
             message: `Ansible returned exit code ${code} while provisioning ${client.hostname}. Please see output log ${logLabel} on web UI for details.`,
           }
         }
+
+        return {
+          status: 100,
+          message: `Command exexuted on ${client.hostname}, see output logs to view Ansible details.`,
+        }
       })
     )
-
-    return {
-      status: 200,
-      message: `${client.hostname} successfully provisioned`,
-    }
   },
   "Clients.RemoveHost": function (clientId) {
     toDelete = ClientsCollection.findOne({ _id: clientId })
@@ -171,13 +171,13 @@ Meteor.methods({
     // Load playbooks into Mongo
     CONFIG_FILE["ansible"]["playbooks"].forEach((element) => {
       obj = { playbook: element }
-      PlaybooksCollection.insert(obj)
+      PlaybooksCollection.insertAsync(obj)
     })
   
     // Putting ansible SSH key location into mongo collection for usage on client
     if (CONFIG_FILE["ansible"]["ssh-key"]) {
       obj = { "ssh-key": CONFIG_FILE["ansible"]["ssh-key"] }
-      AnsibleCollection.insert(obj)
+      AnsibleCollection.insertAsync(obj)
     }
   },
 })
