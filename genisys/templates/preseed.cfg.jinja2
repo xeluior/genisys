@@ -78,6 +78,7 @@ d-i apt-setup/use_mirror boolean true
 popularity-contest popularity-contest/participate boolean false
 # Package selection
 tasksel tasksel/first multiselect standard
+d-i pkgsel/include string sudo
 # Automatically install grub to the MBR
 d-i grub-installer/only_debian boolean true
 # Turn off last message about the install being complete

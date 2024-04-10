@@ -12,7 +12,8 @@
           <th>ClientID</th>
           <th>Hostname</th>
           <th>IP</th>
-          <th>Options</th>
+          <th>Provision Options</th>
+          <th>Delete</th>
         </tr>
       </thead>
       <tbody>
@@ -22,10 +23,27 @@
           <td>{{_id}}</td>
           <td>{{hostname}}</td>
           <td>{{ip}}</td>
-          <td><button class="provision-button btn btn-primary">Provision</button></td>
+          <td><button class="provision-button btn btn-primary">Provision</button>
+          <select class="form-select" aria-label="select">
+            <option selected>None</option>
+            {{#each option}}
+            <option value={{playbook}}> {{playbook}}</option>
+            {{/each}}
+          </select></td>
+          <td><button class="delete-button btn btn-primary">Delete</button></td>
         </tr>
         {{/each}}
       </tbody>
     </table>
+  </div>
+  <h1>Output Logs</h1>
+  <div class="form-outline">
+    <select class="log-form form-select" aria-label="select">
+      <option selected>None</option>
+      {{#each outputLog}}
+      <option value={{label}}> {{label}}</option>
+      {{/each}}
+      </select>
+      <textarea class="form-control" rows="10"> {{logText}} </textarea>
   </div>
 </template>
