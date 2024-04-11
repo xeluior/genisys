@@ -74,7 +74,7 @@ def run(subcommand, args):
     elif subcommand == "server":
         genisys.server.run(yaml_parser)
     elif subcommand == "password":
-        mkpass.make_password(args.password, yaml_parser)
+        mkpass.make_password(args.password, args.file)
 
 
 def main():
