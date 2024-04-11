@@ -32,7 +32,7 @@ jobs:
                 cache: poetry
 
             - name: Run Genisys Install
-              run: poetry install
+              run: genisys install
 
             - name: Run Genisys Server
               run: poetry server -f ${{ env.CONFIG_FILE }}
