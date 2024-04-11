@@ -1,6 +1,6 @@
 ---
 name: Test that 'genisys server' can start without error
-on: [push, pull_request]
+on: [push]
 env:
     CONFIG_FILE: tests/scripts/tests/default/data/config.yaml
     MONGO_URL: mongodb://127.0.0.1:27017/local
