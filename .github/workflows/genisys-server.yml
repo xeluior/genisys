@@ -1,0 +1,38 @@
+---
+name: Test that 'genisys server' can start without error
+on: [push, pull_request]
+env:
+    CONFIG_FILE: tests/scripts/tests/default/data/config.yaml
+    MONGO_URL: mongodb://127.0.0.1:27017/local
+
+jobs:
+    Test-Genisys-Server:
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout Repo Code
+              uses: actions/checkout@v4
+
+            - name: Setup MongoDB
+              uses: supercharge/mongodb-github-action@1.10.0
+              with:
+                mongodb-version: latest
+                mongodb-port: 27017
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                node-version: 14
+
+            - name: Install Poetry
+              run: pipx install poetry
+
+            - name: Setup Python
+              uses: actions/setup-python@v5 #look into specifying multiple versions 
+              with:
+                cache: poetry
+
+            - name: Run Genisys Install
+              run: poetry install
+
+            - name: Run Genisys Server
+              run: poetry server -f ${{ env.CONFIG_FILE }}
