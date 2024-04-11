@@ -19,7 +19,7 @@ class MakePassword:
         # store updated configuration back into config file
         parser = YAMLParser(filename)
         config = parser.as_dict()
-        config["Users"]["root-login"] = secret_password
+        config["Users"]["root-password"] = secret_password
 
         with open(filename, 'w', encoding='utf-8') as file:
             yaml.dump(config, file)
