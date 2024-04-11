@@ -20,7 +20,7 @@ class MakePassword:
         config = parser.as_dict()
         config["Users"]["root-login"] = secret_password
 
-        with open(filename, encoding='utf-8') as file:
+        with open(filename, 'w', encoding='utf-8') as file:
             yaml.dump(config, file)
 
         # encrypt raw_password from stdin using ansible vault, stored as secret_password in file specified
