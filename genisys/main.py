@@ -74,7 +74,7 @@ def run(subcommand, args):
     elif subcommand == "server":
         genisys.server.run(yaml_parser)
     elif subcommand == "password":
-        mkpass.make_password(args.password, args.file)
+        mkpass.make_password(args.password, yaml_parser)
 
 
 def main():
@@ -96,9 +96,12 @@ def main():
     server_parser = subparsers.add_parser(
         "server", help="Run the server to listen for new clients."
     )
+    password_parser = subparsers.add_parser(
+        "password", help="Update the Ansible Vault and your config with a password."
+    )
 
     # Flags for all subparsers
-    for subparser in [validate_parser, install_parser, generate_parser, server_parser]:
+    for subparser in [validate_parser, install_parser, generate_parser, server_parser, password_parser]:
         subparser.add_argument(
             "-f",
             "--file",
@@ -119,6 +122,12 @@ def main():
         type=str,
         default=".",
         help="Specify the root directory for generation.",
+    )
+    password_parser.add_argument(
+        "--password",
+        type=str,
+        required=True,
+        help="The password to hash."
     )
 
     args = parser.parse_args()
