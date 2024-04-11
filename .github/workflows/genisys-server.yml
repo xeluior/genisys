@@ -26,13 +26,13 @@ jobs:
             - name: Install Poetry
               run: pipx install poetry
 
+            - name: Poetry Install
+              run: poetry install
+
             - name: Setup Python
               uses: actions/setup-python@v5 #look into specifying multiple versions 
               with:
                 cache: poetry
-
-            - name: Poetry Install
-              run: poetry install
 
             - name: Run Genisys Install
               run: sudo $(which poetry) run genisys install -f ${{ env.CONFIG_FILE }}
