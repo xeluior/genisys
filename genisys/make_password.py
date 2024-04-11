@@ -1,4 +1,5 @@
 import subprocess
+import io
 from passlib.hash import pbkdf2_sha256
 import yaml
 from genisys.config_parser import YAMLParser
@@ -25,7 +26,11 @@ class MakePassword:
 
         # encrypt raw_password from stdin using ansible vault, stored as secret_password in file specified
         user_password = ""
-        subprocess.run(["echo", "-n", raw_password, "ansible-vault", "encrypt_string", "--vault-password-file", filename, "--stdin-name", user_password], check=False)
+        subprocess.run(
+            ["ansible-vault", "encrypt_string", "--vault-password-file", filename, "--stdin-name", user_password],
+            check=False,
+            stdin=io.TextIOWrapper(raw_password)
+        )
     # end make_password
 # end MakePassword
         
