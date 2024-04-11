@@ -29,7 +29,7 @@ class MakePassword:
         subprocess.run(
             ["ansible-vault", "encrypt_string", "--vault-password-file", filename, "--stdin-name", user_password],
             check=False,
-            stdin=io.StringIO(raw_password)
+            input=raw_password
         )
     # end make_password
 # end MakePassword
