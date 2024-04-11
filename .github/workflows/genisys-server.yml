@@ -35,7 +35,7 @@ jobs:
                 cache: poetry
 
             - name: Run Genisys Install
-              run: sudo poetry run genisys install -f ${{ env.CONFIG_FILE }}
+              run: sudo $(which poetry) run genisys install -f ${{ env.CONFIG_FILE }}
 
             - name: Run Genisys Server
-              run: sudo poetry run genisys server -f ${{ env.CONFIG_FILE }}
+              run: sudo $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }}
