@@ -17,11 +17,6 @@ class GenisysInventory:
         self.db = self.client[db_name]
         self.collection = self.db[collection_name]
 
-        # Ensure that the collection structure exists
-        if self.collection.count_documents({}) == 0:
-            # Initialize the collection with a basic structure if needed
-            self.collection.insert_one({"genisys": {"hosts": []}})
-
     def __del__(self):
         """Close the MongoDB connection."""
         self.client.close()
@@ -68,5 +63,3 @@ class GenisysInventory:
 
         # Adjust the zero padding based on your maximum expected number of hosts
         return f"genisys{str(new_num).zfill(5)}"
-
-
