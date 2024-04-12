@@ -38,7 +38,13 @@ jobs:
               run: sudo $(which poetry) install
 
             - name: Run Genisys Install
-              run: sudo $(which poetry) run genisys install -f ${{ env.CONFIG_FILE }} --root temp_dir
+              run: sudo $(which poetry) run genisys install -f ${{ env.CONFIG_FILE }}
+
+            - name: Server prerequisites
+              run: |
+                export MONGO_URL=${{ env.MONGO_URL }}
+                export CONFIG_FILE=${{ env.CONFIG_FILE }} 
+                mkdir /srv/genisys
 
             - name: Run Genisys Server
               run: sudo $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }} 
