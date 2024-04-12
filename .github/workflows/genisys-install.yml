@@ -2,7 +2,6 @@ name: Test Genisys Install
 
 on:
   workflow_dispatch:
-  push:
 
 jobs:
   test-install:
