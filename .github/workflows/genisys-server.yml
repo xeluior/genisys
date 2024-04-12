@@ -9,6 +9,9 @@ jobs:
     Test-Genisys-Server:
         runs-on: ubuntu-22.04
         steps:
+            - name: Become Root
+              run: su root
+
             - name: Checkout Repo Code
               uses: actions/checkout@v4
 
