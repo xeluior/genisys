@@ -41,4 +41,4 @@ jobs:
       run: sudo $(which poetry) run genisys install --file tests/scripts/tests/default/data/test_config.yaml --root temp_directory
 
     - name: Display Installed Genisys Config
-      run: cat temp_directory/genisys-config.yaml
+      run: ls temp_directory
