@@ -4,7 +4,7 @@ on: [push]
 env:
     CONFIG_FILE: tests/scripts/tests/default/data/genisys-server-test.yaml
     MONGO_URL: mongodb://127.0.0.1:27017/local
-    METEOR_DIR: /home/runner/work/genisys/meteor-dev
+    METEOR_DIR: /home/runner/work/genisys/genisys/meteor-dev
 
 jobs:
     Test-Genisys-Server:
