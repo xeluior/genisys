@@ -48,4 +48,4 @@ jobs:
                 sudo mkdir /srv/genisys
 
             - name: Run Genisys Server
-              run: sudo $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }} 
+              run: sudo -E $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }} 
