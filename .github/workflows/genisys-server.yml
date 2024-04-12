@@ -9,9 +9,6 @@ jobs:
     Test-Genisys-Server:
         runs-on: ubuntu-22.04
         steps:
-            - name: Become Root
-              run: echo password | su root
-
             - name: Checkout Repo Code
               uses: actions/checkout@v4
 
@@ -45,8 +42,8 @@ jobs:
 
             - name: Server prerequisites
               run: |
-                sudo export MONGO_URL=${{ env.MONGO_URL }}
-                sudo export CONFIG_FILE=${{ env.CONFIG_FILE }} 
+                echo MONGO_URL=${{ env.MONGO_URL }} >> $GITHUB_ENV
+                echo CONFIG_FILE=${{ env.CONFIG_FILE }} >> $GITHUB_ENV 
                 sudo mkdir /srv/genisys
 
             - name: Run Genisys Server
