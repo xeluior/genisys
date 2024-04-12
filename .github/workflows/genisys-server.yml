@@ -10,7 +10,7 @@ jobs:
         runs-on: ubuntu-22.04
         steps:
             - name: Become Root
-              run: su root
+              run: echo password | su root
 
             - name: Checkout Repo Code
               uses: actions/checkout@v4
