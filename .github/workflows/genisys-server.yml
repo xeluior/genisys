@@ -4,6 +4,7 @@ on: [push]
 env:
     CONFIG_FILE: tests/scripts/tests/default/data/genisys-server-test.yaml
     MONGO_URL: mongodb://127.0.0.1:27017/local
+    METEOR_DIR: /home/runner/work/genisys/meteor-dev
 
 jobs:
     Test-Genisys-Server:
@@ -44,8 +45,16 @@ jobs:
               run: |
                 echo "MONGO_URL=${{ env.MONGO_URL }}" >> "$GITHUB_ENV"
                 echo "CONFIG_FILE=${{ env.CONFIG_FILE }}" >> "$GITHUB_ENV" 
-                sudo echo "$MONGO_URL"
                 sudo mkdir /srv/genisys
+
+            - name: Install Meteor
+              uses: meteorengineer/setup-meteor@v1
+            
+            - name: Build Meteor
+              run: |
+                cd ${{ env.METEOR_DIR }}
+                meteor build ../genisys/server/external --architecture os.linux.x86_64
+                cd /
 
             - name: Run Genisys Server
               run: sudo -E $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }} 
