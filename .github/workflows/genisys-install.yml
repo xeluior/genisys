@@ -31,7 +31,7 @@ jobs:
           ${{ runner.os }}-poetry-
 
     - name: Install System Dependencies
-      run: sudo apt-get update && sudo apt-get install -y iptables-persistent netfilter-persistent vsftpd dnsmasq netplan
+      run: sudo apt-get update && sudo apt-get install -y iptables-persistent netfilter-persistent vsftpd dnsmasq
 
     - name: Install Dependencies
       run: |
