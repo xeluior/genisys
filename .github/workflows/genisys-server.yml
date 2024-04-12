@@ -44,7 +44,7 @@ jobs:
               run: |
                 export MONGO_URL=${{ env.MONGO_URL }}
                 export CONFIG_FILE=${{ env.CONFIG_FILE }} 
-                mkdir /srv/genisys
+                sudo mkdir /srv/genisys
 
             - name: Run Genisys Server
               run: sudo $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }} 
