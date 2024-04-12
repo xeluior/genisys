@@ -42,8 +42,8 @@ jobs:
 
             - name: Server prerequisites
               run: |
-                export MONGO_URL=${{ env.MONGO_URL }}
-                export CONFIG_FILE=${{ env.CONFIG_FILE }} 
+                sudo export MONGO_URL=${{ env.MONGO_URL }}
+                sudo export CONFIG_FILE=${{ env.CONFIG_FILE }} 
                 sudo mkdir /srv/genisys
 
             - name: Run Genisys Server
