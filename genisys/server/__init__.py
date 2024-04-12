@@ -112,8 +112,7 @@ def meteor_initialization(server_config: ServerOptions):
     os.environ['PORT'] = '8080'
 
     if 'MONGO_URL' not in os.environ:
-        print('MONGO_URL not found in environment variables, cancelling Meteor server.')
-        return
+        raise ValueError('MONGO_URL not found in environment variables, cancelling Meteor server.')
     print('MONGO_URL found.')
 
     if 'CONFIG_FILE' not in os.environ:
