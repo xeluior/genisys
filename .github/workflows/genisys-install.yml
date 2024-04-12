@@ -2,6 +2,7 @@ name: Test Genisys Install
 
 on:
   workflow_dispatch:
+  push:
 
 jobs:
   test-install:
@@ -31,7 +32,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        poetry install
+        sudo poetry install
 
     - name: Test Install Command with Sudo
       run: sudo $(which poetry) run genisys install --file tests/scripts/tests/default/data/config.yaml --root temp_directory
