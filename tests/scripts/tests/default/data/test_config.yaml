@@ -28,10 +28,6 @@ OS:
 UEFI:
   uefi: false
 Users:
-  root-login: true
-  root-password: $y$j9T$k9pvIgLcX46WAFwiGuhBx0$r4v90dAT1d0msSAtLP1e.LZ7qNpyYQ4OYa9VCvZeLcD # "password"
-  username: alice
-  password: $y$j9T$k9pvIgLcX46WAFwiGuhBx0$r4v90dAT1d0msSAtLP1e.LZ7qNpyYQ4OYa9VCvZeLcD
   ssh-keys:
     - tests/scripts/tests/default/data/ssh/id_rsa.pub
   sudoer: true
