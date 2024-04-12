@@ -35,6 +35,12 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y iptables-persistent netfilter-persistent openvswitch-switch dnsmasq vsftpd
 
+    - name: Check Port Usage and Stop Conflicting Services
+      run: |
+        sudo lsof -i :53 || true
+        sudo systemctl stop systemd-resolved
+        sudo systemctl disable systemd-resolved
+
     - name: Configure System and Services
       run: |
         sudo touch /etc/netplan/99-genisys.yaml
