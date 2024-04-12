@@ -35,7 +35,7 @@ jobs:
               run: sudo $(which poetry) install
 
             - name: Run Genisys Install
-              run: sudo $(which poetry) run genisys install -f ${{ env.CONFIG_FILE }}
+              run: sudo $(which poetry) run genisys install -f ${{ env.CONFIG_FILE }} --root temp_dir
 
             - name: Run Genisys Server
-              run: sudo $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }}
+              run: sudo $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }} --root temp_dir
