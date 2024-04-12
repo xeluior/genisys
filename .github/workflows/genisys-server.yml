@@ -44,7 +44,7 @@ jobs:
               run: |
                 echo "MONGO_URL=${{ env.MONGO_URL }}" >> "$GITHUB_ENV"
                 echo "CONFIG_FILE=${{ env.CONFIG_FILE }}" >> "$GITHUB_ENV" 
-                echo "$MONGO_URL"
+                sudo echo "$MONGO_URL"
                 sudo mkdir /srv/genisys
 
             - name: Run Genisys Server
