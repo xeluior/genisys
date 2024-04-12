@@ -3,8 +3,7 @@ name: Test Genisys Install
 on:
   workflow_dispatch:
   push:
-    branches:
-      - test
+
 jobs:
   test-install:
     runs-on: ubuntu-22.04
