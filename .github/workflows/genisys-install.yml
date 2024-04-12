@@ -40,5 +40,5 @@ jobs:
     - name: Test Install Command with Sudo
       run: sudo $(which poetry) run genisys install --file tests/scripts/tests/default/data/test_config.yaml --root temp_directory
 
-    - name: Display Installed File
-      run: cat /etc/netplan/99-genisys.yaml
+    - name: Display Installed Genisys Config
+      run: cat temp_directory/genisys-config.yaml
