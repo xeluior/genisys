@@ -39,6 +39,6 @@ Applications:
   - curl
 ansible:
   inventory: /srv/genisys/inventory
-  ssh-key: /app/data/ssh/id_rsa
+  ssh-key: tests/scripts/tests/default/data/ssh/id_rsa.pub
   playbooks:
     - /app/data/nettools.yaml

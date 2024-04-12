@@ -35,4 +35,4 @@ jobs:
         sudo $(which poetry) install
 
     - name: Test Install Command with Sudo
-      run: sudo $(which poetry) run genisys install --file tests/scripts/tests/default/data/config.yaml --root temp_directory
+      run: sudo $(which poetry) run genisys install --file tests/scripts/tests/default/data/test_config.yaml --root temp_directory
