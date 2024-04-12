@@ -27,10 +27,6 @@ OS:
   target-architecture: amd64 
 UEFI:
   uefi: false
-Users:
-  ssh-keys:
-    - tests/scripts/tests/default/data/ssh/id_rsa.pub
-  sudoer: true
 Applications:
   - curl
 ansible:
