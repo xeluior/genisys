@@ -31,26 +31,7 @@ jobs:
           ${{ runner.os }}-poetry-
 
     - name: Install System Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y iptables-persistent netfilter-persistent openvswitch-switch dnsmasq vsftpd
-
-    - name: Check Port Usage and Stop Conflicting Services
-      run: |
-        sudo lsof -i :53 || true
-        sudo systemctl stop systemd-resolved
-        sudo systemctl disable systemd-resolved
-
-    - name: Configure System and Services
-      run: |
-        sudo touch /etc/netplan/99-genisys.yaml
-        sudo chmod 0644 /etc/netplan/50-cloud-init.yaml
-        sudo chmod 0644 /etc/netplan/99-genisys.yaml
-        echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/99-ip-forwarding-rule.conf
-        sudo sysctl -p /etc/sysctl.d/99-ip-forwarding-rule.conf
-        sudo systemctl start ovsdb-server
-        sudo systemctl restart dnsmasq
-        sudo systemctl restart vsftpd
+      run: sudo apt-get update && sudo apt-get install -y iptables-persistent netfilter-persistent vsftpd dnsmasq
 
     - name: Install Dependencies
       run: |
