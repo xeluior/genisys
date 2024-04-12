@@ -33,7 +33,7 @@ Users:
   username: alice
   password: $y$j9T$k9pvIgLcX46WAFwiGuhBx0$r4v90dAT1d0msSAtLP1e.LZ7qNpyYQ4OYa9VCvZeLcD
   ssh-keys:
-    - /home/runner/work/genisys/tests/scripts/tests/default/data/ssh/id_rsa.pub
+    - /home/runner/work/genisys/genisys/tests/scripts/tests/default/data/ssh/id_rsa.pub
     
   sudoer: true
 Applications:
