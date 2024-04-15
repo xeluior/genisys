@@ -41,20 +41,11 @@ jobs:
             - name: Run Genisys Install
               run: sudo $(which poetry) run genisys install -f ${{ env.CONFIG_FILE }}
 
-            - name: Public IP
-              id: ip
-              uses: haythem/public-ip@v1.3
-
-            - name: Print IP
-              run: |
-                  echo ${{ steps.ip.outputs.ipv4 }}
-                  hostname -I
-
             - name: Server prerequisites
               run: |
                 echo "MONGO_URL=${{ env.MONGO_URL }}" >> "$GITHUB_ENV"
                 echo "CONFIG_FILE=${{ env.CONFIG_FILE }}" >> "$GITHUB_ENV" 
-                echo "RUNNER_IP=${{ steps.ip.outputs.ipv4 }}" >> "$GITHUB_ENV" 
+                echo "RUNNER_IP=$(hostname -I)" >> "$GITHUB_ENV" 
                 echo "GITHUB_RUNNER='true'" >> "$GITHUB_ENV" 
                 sudo mkdir /srv/genisys
 
