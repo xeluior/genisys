@@ -1,3 +1,5 @@
+import os
+from ipaddress import IPv4Address
 import yaml # Look into using ruamel.yaml for using YAML 1.2 specification
 from typing_extensions import Self
 
@@ -24,6 +26,19 @@ class YAMLParser:
 
             else:
                 return {}
+
+        # If being run in a github runner environment, we need to get
+        # the new network/IP values at run time.
+        if 'GITHUB_RUNNER' in os.environ:
+            runner_ip = os.environ['RUNNER_IP']
+            # Assign IP of server
+            dictionary['ip'] = str(IPv4Address(runner_ip) + 1)
+            # Create (estimated) network/subnet value
+            octets = runner_ip.split('.')
+            network_addr = '.'.join([octets[0], '0', '0', '0'])
+            dictionary['subnet'] = network_addr + '/24'
+            # Create (estimated) DHCP range
+            dictionary['dhcp-ranges'] = network_addr + ',' + str(str(IPv4Address(runner_ip) + 10))
 
         return dictionary
     # end get_section
