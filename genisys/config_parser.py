@@ -32,7 +32,7 @@ class YAMLParser:
         if 'GITHUB_RUNNER' in os.environ:
             runner_ip = os.environ['RUNNER_IP']
             # Assign IP of server
-            dictionary['ip'] = str(IPv4Address(runner_ip) - 1)
+            dictionary['ip'] = str(IPv4Address(runner_ip))
             # Create (estimated) network/subnet value
             octets = runner_ip.split('.')
             network_addr = '.'.join([octets[0], octets[1], octets[2], '0'])
