@@ -29,7 +29,7 @@ class YAMLParser:
 
         # If being run in a github runner environment, we need to get
         # the new network/IP values at run time.
-        if 'GITHUB_RUNNER' in os.environ:
+        if 'GITHUB_RUNNER' in os.environ and os.environ['GITHUB_RUNNER'] is True:
             runner_ip = os.environ['RUNNER_IP']
             # Assign IP of server
             dictionary['ip'] = str(IPv4Address(runner_ip))

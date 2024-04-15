@@ -32,6 +32,15 @@ jobs:
               with:
                 cache: poetry
 
+            - name: Install Meteor
+              uses: meteorengineer/setup-meteor@v1
+              
+            - name: Build Meteor
+              run: |
+                cd ${{ env.METEOR_DIR }}
+                meteor build ../genisys/server/external --architecture os.linux.x86_64
+                cd /
+
             - name: Install System Dependencies
               run: sudo apt-get update && sudo apt-get install -y iptables-persistent netfilter-persistent vsftpd dnsmasq
 
@@ -47,17 +56,8 @@ jobs:
                 echo "MONGO_URL=${{ env.MONGO_URL }}" >> "$GITHUB_ENV"
                 echo "CONFIG_FILE=${{ env.CONFIG_FILE }}" >> "$GITHUB_ENV" 
                 echo "RUNNER_IP=$(hostname -i)" >> "$GITHUB_ENV" 
-                echo "GITHUB_RUNNER='true'" >> "$GITHUB_ENV" 
+                echo "GITHUB_RUNNER='True'" >> "$GITHUB_ENV" 
                 sudo mkdir /srv/genisys
-
-            - name: Install Meteor
-              uses: meteorengineer/setup-meteor@v1
-            
-            - name: Build Meteor
-              run: |
-                cd ${{ env.METEOR_DIR }}
-                meteor build ../genisys/server/external --architecture os.linux.x86_64
-                cd /
 
             - name: Run Genisys Server
               run: sudo -E $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }} 

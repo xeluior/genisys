@@ -62,7 +62,6 @@ def run(config: YAMLParser):
     server_address = network.get('ip', '')
     server_port = server_options.get("port", DEFAULT_PORT)
     inventory = GenisysInventory(db_uri, db_name, collection_name)
-    print("Assigning address: ", server_address)
     httpd = GenisysHTTPServer((server_address, server_port), inventory, config)
     # apply TLS if applicable
     if 'ssl' in server_options:
