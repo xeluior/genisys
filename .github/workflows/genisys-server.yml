@@ -37,7 +37,7 @@ jobs:
 
             - name: Server prerequisites
               run: |
-                ifconfig
+                npm -v
                 echo "MONGO_URL=${{ env.MONGO_URL }}" >> "$GITHUB_ENV"
                 echo "CONFIG_FILE=${{ env.CONFIG_FILE }}" >> "$GITHUB_ENV" 
                 echo "RUNNER_IP=$(hostname -i)" >> "$GITHUB_ENV" 
