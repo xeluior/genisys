@@ -35,7 +35,7 @@ class YAMLParser:
             dictionary['ip'] = str(IPv4Address(runner_ip) + 1)
             # Create (estimated) network/subnet value
             octets = runner_ip.split('.')
-            network_addr = '.'.join([octets[0], '0', '0', '0'])
+            network_addr = '.'.join([octets[0], octets[1], octets[2], '0'])
             dictionary['subnet'] = network_addr + '/24'
             # Create (estimated) DHCP range
             dictionary['dhcp-ranges'] = network_addr + ',' + str(str(IPv4Address(runner_ip) + 10))
