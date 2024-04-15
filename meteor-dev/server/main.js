@@ -8,8 +8,6 @@ import fs from "fs"
 Meteor.startup(() => {
   console.log("Meteor Started")
 
-  code that will intentionally cayse this to faile
-
   Meteor.call("RefreshConfig")
   CreateInventoryFile()
 
