@@ -46,7 +46,9 @@ jobs:
               uses: haythem/public-ip@v1.3
 
             - name: Print IP
-              run: echo ${{ steps.ip.outputs.ipv4 }}
+              run: |
+                  echo ${{ steps.ip.outputs.ipv4 }}
+                  echo ipaddr
 
             - name: Server prerequisites
               run: |

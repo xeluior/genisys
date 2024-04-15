@@ -30,15 +30,19 @@ class YAMLParser:
         # If being run in a github runner environment, we need to get
         # the new network/IP values at run time.
         if 'GITHUB_RUNNER' in os.environ:
-            runner_ip = os.environ['RUNNER_IP']
-            # Assign IP of server
-            dictionary['ip'] = str(IPv4Address(runner_ip) + 1)
-            # Create (estimated) network/subnet value
-            octets = runner_ip.split('.')
-            network_addr = '.'.join([octets[0], octets[1], octets[2], '0'])
-            dictionary['subnet'] = network_addr + '/24'
-            # Create (estimated) DHCP range
-            dictionary['dhcp-ranges'] = network_addr + ',' + str(str(IPv4Address(runner_ip) + 10))
+            # runner_ip = os.environ['RUNNER_IP']
+            # # Assign IP of server
+            # dictionary['ip'] = str(IPv4Address(runner_ip) + 1)
+            # # Create (estimated) network/subnet value
+            # octets = runner_ip.split('.')
+            # network_addr = '.'.join([octets[0], octets[1], octets[2], '0'])
+            # dictionary['subnet'] = network_addr + '/24'
+            # # Create (estimated) DHCP range
+            # dictionary['dhcp-ranges'] = network_addr + ',' + str(str(IPv4Address(runner_ip) + 10))
+
+            dictionary['ip'] = '192.0.0.2'
+            dictionary['subnet'] = '192.0.0.0/24'
+            dictionary['dhcp-ranges'] = '192.0.0.0,192.0.0.255'
 
         return dictionary
     # end get_section
