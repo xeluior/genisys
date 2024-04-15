@@ -34,7 +34,16 @@ jobs:
 
             - name: Install Meteor
               uses: meteorengineer/setup-meteor@v1
-              
+
+            - name: Server prerequisites
+              run: |
+                ifconfig
+                echo "MONGO_URL=${{ env.MONGO_URL }}" >> "$GITHUB_ENV"
+                echo "CONFIG_FILE=${{ env.CONFIG_FILE }}" >> "$GITHUB_ENV" 
+                echo "RUNNER_IP=$(hostname -i)" >> "$GITHUB_ENV" 
+                echo "GITHUB_RUNNER='True'" >> "$GITHUB_ENV" 
+                sudo mkdir /srv/genisys
+
             - name: Build Meteor
               run: |
                 cd ${{ env.METEOR_DIR }}
@@ -49,15 +58,6 @@ jobs:
 
             - name: Run Genisys Install
               run: sudo $(which poetry) run genisys install -f ${{ env.CONFIG_FILE }}
-
-            - name: Server prerequisites
-              run: |
-                ifconfig
-                echo "MONGO_URL=${{ env.MONGO_URL }}" >> "$GITHUB_ENV"
-                echo "CONFIG_FILE=${{ env.CONFIG_FILE }}" >> "$GITHUB_ENV" 
-                echo "RUNNER_IP=$(hostname -i)" >> "$GITHUB_ENV" 
-                echo "GITHUB_RUNNER='True'" >> "$GITHUB_ENV" 
-                sudo mkdir /srv/genisys
 
             - name: Run Genisys Server
               run: sudo -E $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }} 
