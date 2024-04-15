@@ -1,5 +1,5 @@
 ---
-name: Test that 'genisys server' can start without error
+name: Test that 'genisys server' can start without error. Does not test any functionality of the server, just that it runs without erroring. 
 on: [push]
 env:
     CONFIG_FILE: /home/runner/work/genisys/genisys/tests/scripts/tests/default/data/genisys-server-test.yaml
