@@ -48,7 +48,7 @@ jobs:
             - name: Print IP
               run: |
                   echo ${{ steps.ip.outputs.ipv4 }}
-                  echo ipaddr
+                  hostname -I
 
             - name: Server prerequisites
               run: |
