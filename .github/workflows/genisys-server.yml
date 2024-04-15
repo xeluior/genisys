@@ -45,7 +45,7 @@ jobs:
               run: |
                 echo "MONGO_URL=${{ env.MONGO_URL }}" >> "$GITHUB_ENV"
                 echo "CONFIG_FILE=${{ env.CONFIG_FILE }}" >> "$GITHUB_ENV" 
-                echo "RUNNER_IP=$(hostname -I)" >> "$GITHUB_ENV" 
+                echo "RUNNER_IP=$(hostname -i)" >> "$GITHUB_ENV" 
                 echo "GITHUB_RUNNER='true'" >> "$GITHUB_ENV" 
                 sudo mkdir /srv/genisys
 
