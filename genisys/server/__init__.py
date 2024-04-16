@@ -131,6 +131,7 @@ def meteor_initialization(server_config: ServerOptions):
     
     #If in github action, run as test then return
     if 'GITHUB_RUNNER' in os.environ and os.environ['GITHUB_RUNNER'] == 'True':
+        print("Running meteor as test.")
         old_cwd = os.getcwd()
         meteor_dev_dir = Path(package_location[:package_location.rfind('/')], 'meteor-dev')
         os.chdir(meteor_dev_dir)

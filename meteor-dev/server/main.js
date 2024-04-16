@@ -13,6 +13,8 @@ Meteor.startup(() => {
   Meteor.call("RefreshConfig")
   CreateInventoryFile()
 
+  Meteor.call("FAKE_METHOD")
+
   fs.watchFile(CONFIG_FILE_VAR, Meteor.bindEnvironment(() => {Meteor.call("RefreshConfig")}))
 
 })
