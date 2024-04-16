@@ -15,6 +15,10 @@ Meteor.startup(() => {
 
   fs.watchFile(CONFIG_FILE_VAR, Meteor.bindEnvironment(() => {Meteor.call("RefreshConfig")}))
 
+
+  //TESTING CODE THAT IS MEANT TO ERROR:
+  Meteor.call("FAKE_METHOD")
+
   if(TESTING_MODE.localeCompare('True') === 0)
   {
     console.log("Server launched in testing mode, exiting now.")

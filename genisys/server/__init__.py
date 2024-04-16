@@ -135,7 +135,7 @@ def meteor_initialization(server_config: ServerOptions):
     file.close()
 
     # npm install and run 
-    subprocess.run(['npm', 'install', '--prefix', os.path.join(meteor_dir,'bundle', 'programs', 'server'), '--unsafe-perm'], check=True)
+    subprocess.run(['npm', 'install', '--prefix', os.path.join(meteor_dir,'bundle', 'programs', 'server'), '--unsafe-perm'], check=True, stderr=subprocess.STDOUT)
     subprocess.Popen(['node', os.path.join(meteor_dir,'bundle', 'main.js')])
     print('Done running Meteor initialization.')
 
