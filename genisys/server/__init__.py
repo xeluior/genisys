@@ -130,7 +130,7 @@ def meteor_initialization(server_config: ServerOptions):
     tar_file_path = Path(package_location[:package_location.rfind('/')], 'server/external/meteor-dev.tar.gz')
     
     #If in github action, run as test then return
-    if 'GITHUB_RUNNER' in os.environ and os.environ['GITHUB_RUNNER'] == 'True':
+    if 'GITHUB_RUNNER' in os.environ:
         print("Running meteor as test.")
         old_cwd = os.getcwd()
         meteor_dev_dir = Path(package_location[:package_location.rfind('/')], 'meteor-dev')
