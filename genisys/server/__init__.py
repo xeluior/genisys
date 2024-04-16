@@ -128,6 +128,16 @@ def meteor_initialization(server_config: ServerOptions):
     # Get path to tar file
     package_location = importlib.util.find_spec('genisys').origin
     tar_file_path = Path(package_location[:package_location.rfind('/')], 'server/external/meteor-dev.tar.gz')
+    
+    #If in github action, run as test then return
+    if 'GITHUB_RUNNER' in os.environ and os.environ['GITHUB_RUNNER'] == 'True':
+        old_cwd = os.getcwd()
+        meteor_dev_dir = Path(package_location[:package_location.rfind('/')], 'meteor-dev')
+        os.chdir(meteor_dev_dir)
+        subprocess.run(['meteor', 'test', '--driver-package', 'meteortesting:mocha', '--once', '--full-app'], check=True)
+        os.chdir(old_cwd)
+        return
+
 
     # Extract tarball Meteor build
     file = tarfile.open(tar_file_path)
