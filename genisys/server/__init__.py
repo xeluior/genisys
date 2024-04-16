@@ -78,7 +78,7 @@ def run(config: YAMLParser):
         del httpd.inventory
         sys.exit(SIGTERM)
     signal(SIGTERM, sigterm_handler)
-    httpd.serve_forever()
+    # httpd.serve_forever()
 
     # end sigterm_handler
 
