@@ -78,7 +78,11 @@ def run(config: YAMLParser):
         del httpd.inventory
         sys.exit(SIGTERM)
     signal(SIGTERM, sigterm_handler)
-    # httpd.serve_forever()
+
+    if 'GITHUB_RUNNER' in os.environ:
+        return
+
+    httpd.serve_forever()
 
     # end sigterm_handler
 
