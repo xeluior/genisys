@@ -60,5 +60,4 @@ jobs:
               run: sudo $(which poetry) run genisys install -f ${{ env.CONFIG_FILE }}
 
             - name: Run Genisys Server
-              continue-on-error: true
               run: sudo -E $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }} 

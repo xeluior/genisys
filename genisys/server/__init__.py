@@ -141,7 +141,7 @@ def meteor_initialization(server_config: ServerOptions):
         os.chdir(meteor_dev_dir) 
         result = ""
         try:
-            result = subprocess.run(['meteor', 'test', '--driver-package', 'meteortesting:mocha', '--once', '--full-app'], check=True, stdout=subprocess.PIPE)
+            result = subprocess.run(['meteor', 'test', '--driver-package', 'meteortesting:mocha', '--once', '--full-app', '--allow-superuser '], check=True, stdout=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
             print(repr(e))
             raise Exception("Error running Meteor test")
