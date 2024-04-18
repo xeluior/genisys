@@ -43,6 +43,7 @@ jobs:
                 echo "RUNNER_IP=$(hostname -i)" >> "$GITHUB_ENV" 
                 echo "GITHUB_RUNNER='True'" >> "$GITHUB_ENV" 
                 sudo mkdir /srv/genisys
+                sudo chmod 7777 /srv/*
 
             - name: Build Meteor
               run: |
