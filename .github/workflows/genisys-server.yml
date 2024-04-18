@@ -48,7 +48,7 @@ jobs:
             - name: Build Meteor
               run: |
                 cd ${{ env.METEOR_DIR }}
-                meteor npm install
+                meteor npm ci 
                 meteor build ../genisys/server/external --architecture os.linux.x86_64
                 cd /
 
