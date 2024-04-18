@@ -139,11 +139,10 @@ def meteor_initialization(server_config: ServerOptions):
         old_cwd = os.getcwd()
         meteor_dev_dir = Path(package_location[:package_location.rfind('genisys/')], 'meteor-dev')
         os.chdir(meteor_dev_dir) 
-        result = ""
         try:
-            result = subprocess.run(['meteor', 'test', '--driver-package', 'meteortesting:mocha', '--once', '--full-app'], check=True, stdout=subprocess.PIPE)
+            subprocess.check_output(['meteor', 'test', '--driver-package', 'meteortesting:mocha', '--once', '--full-app'])
         except subprocess.CalledProcessError as e:
-            print(repr(e))
+            print(e.output)
             raise Exception("Error running Meteor test")
             
         os.chdir(old_cwd)
