@@ -50,12 +50,3 @@ jobs:
     - name: Test Install Command with Sudo and Root Flag
       run: |
         sudo $(which poetry) run genisys install --file tests/scripts/tests/default/data/test_config.yaml --root temp_directory
-
-    - name: Display Installed Genisys Config
-      run: |
-        ls -l temp_directory
-
-    - name: Check Services
-      run: |
-        systemctl status dnsmasq || journalctl -xeu dnsmasq
-        systemctl status ovsdb-server || journalctl -xeu ovsdb-server
