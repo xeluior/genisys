@@ -79,7 +79,9 @@ if [ ! -r "${HOST_SSH_KEY}" ]; then
   echo 'You do not appear to be in the genisys repo. Please run this script from the git root.'
   exit 1
 fi
-chmod 0600 "${HOST_SSH_KEY}"
+chmod 600 "${HOST_SSH_KEY}"
+chmod 644 "${HOST_SSH_KEY}.pub"
+chmod 700 "$(dirname "${HOST_SSH_KEY}")"
 
 # build the package
 mkdir -p "${SHARED_FOLDER}"
@@ -149,7 +151,7 @@ host-ssh() {
 while ! host-ssh echo 'Connected' 2>/dev/null; do :; done
 
 # install the package
-host-ssh /app/setup.sh
+host-ssh <"${SHARED_FOLDER}/setup.sh"
 
 # setup the client VM
 "${VBOXMANAGE}" createvm \
@@ -188,3 +190,4 @@ host-ssh /app/setup.sh
 "${VBOXMANAGE}" startvm "${CLIENT_VMNAME}" \
   --type='headless'
 
+host-ssh <"${SHARED_FOLDER}/expect.sh"
