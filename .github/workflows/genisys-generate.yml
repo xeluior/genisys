@@ -1,4 +1,4 @@
-name: Test Genisys Generate
+name: Test Genisys Install
 
 on:
   workflow_dispatch:
@@ -31,14 +31,22 @@ jobs:
           ${{ runner.os }}-poetry-
 
     - name: Install System Dependencies
-      run: sudo apt-get update && sudo apt-get install -y iptables-persistent netfilter-persistent vsftpd dnsmasq
+      run: sudo apt-get update && sudo apt-get install -y iptables-persistent netfilter-persistent vsftpd dnsmasq openvswitch-switch
+
+    - name: Check and Fix Permissions for Netplan
+      run: |
+        sudo chmod 600 /etc/netplan/50-cloud-init.yaml || echo "Netplan config not found, skipping"
+
+    - name: Ensure Open vSwitch is Running
+      run: |
+        sudo systemctl start ovsdb-server
+        sudo systemctl enable ovsdb-server
+        sudo systemctl status ovsdb-server || sudo journalctl -xeu ovsdb-server
 
     - name: Install Dependencies
       run: |
         sudo $(which poetry) install
 
-    - name: Test Install Command with Sudo
-      run: sudo $(which poetry) run genisys generate --file tests/scripts/tests/default/data/test_config.yaml --root temp_directory
-
-    - name: Display Installed Genisys Config
-      run: ls temp_directory
+    - name: Test Install Command with Sudo and Root Flag
+      run: |
+        sudo $(which poetry) run genisys generate --file tests/scripts/tests/default/data/test_config.yaml --root temp_directory
