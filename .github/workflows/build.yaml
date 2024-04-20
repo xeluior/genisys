@@ -50,3 +50,20 @@ jobs:
       with:
         name: meteor-dev.tar.gz
         path: genisys/server/external/meteor-dev.tar.gz
+  
+  release:
+    runs-on: ubuntu-22.04
+    needs: [ build ]
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+
+    steps:
+    - name: Download Artifacts
+      with: actions/download-artifact@v4
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          genisys-0.2.0-py3-none-any.whl
+          genisys-0.2.0.tar.gz
