@@ -1,0 +1,65 @@
+---
+name: Test that 'genisys server' can start without error. Does not test any functionality of the server, just that it runs without erroring. 
+on: [push]
+env:
+    CONFIG_FILE: /home/runner/work/genisys/genisys/tests/scripts/tests/default/data/genisys-server-test.yaml
+    MONGO_URL: mongodb://127.0.0.1:27017/local
+    METEOR_DIR: /home/runner/work/genisys/genisys/meteor-dev
+
+jobs:
+    Test-Genisys-Server:
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout Repo Code
+              uses: actions/checkout@v4
+
+            - name: Setup MongoDB
+              uses: supercharge/mongodb-github-action@1.10.0
+              with:
+                mongodb-version: latest
+                mongodb-port: 27017
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                node-version: 14
+
+            - name: Install Poetry
+              run: pipx install poetry
+
+            - name: Setup Python
+              uses: actions/setup-python@v5 #look into specifying multiple versions 
+              with:
+                cache: poetry
+
+            - name: Install Meteor
+              uses: meteorengineer/setup-meteor@v1
+
+            - name: Server prerequisites
+              run: |
+                node -v
+                echo "MONGO_URL=${{ env.MONGO_URL }}" >> "$GITHUB_ENV"
+                echo "CONFIG_FILE=${{ env.CONFIG_FILE }}" >> "$GITHUB_ENV" 
+                echo "RUNNER_IP=$(hostname -i)" >> "$GITHUB_ENV" 
+                echo "GITHUB_RUNNER='True'" >> "$GITHUB_ENV" 
+                sudo mkdir /srv/genisys
+                sudo chmod 7777 /srv/*
+
+            - name: Build Meteor
+              run: |
+                cd ${{ env.METEOR_DIR }}
+                meteor npm ci 
+                meteor build ../genisys/server/external --architecture os.linux.x86_64
+                cd /
+
+            - name: Install System Dependencies
+              run: sudo apt-get update && sudo apt-get install -y iptables-persistent netfilter-persistent vsftpd dnsmasq
+
+            - name: Install Genisys
+              run: sudo $(which poetry) install
+
+            - name: Run Genisys Install
+              run: sudo $(which poetry) run genisys install -f ${{ env.CONFIG_FILE }}
+
+            - name: Run Genisys Server
+              run: sudo -E $(which poetry) run genisys server -f ${{ env.CONFIG_FILE }} 

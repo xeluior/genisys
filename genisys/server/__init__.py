@@ -78,6 +78,10 @@ def run(config: YAMLParser):
         del httpd.inventory
         sys.exit(SIGTERM)
     signal(SIGTERM, sigterm_handler)
+
+    if 'GITHUB_RUNNER' in os.environ:
+        return
+
     httpd.serve_forever()
 
     # end sigterm_handler
@@ -127,6 +131,22 @@ def meteor_initialization(server_config: ServerOptions):
     # Get path to tar file
     package_location = importlib.util.find_spec('genisys').origin
     tar_file_path = Path(package_location[:package_location.rfind('/')], 'server/external/meteor-dev.tar.gz')
+    
+    #If in github action, run as test then return
+    if 'GITHUB_RUNNER' in os.environ:
+        print("Running meteor as test.")
+        old_cwd = os.getcwd()
+        meteor_dev_dir = Path(package_location[:package_location.rfind('genisys/')], 'meteor-dev')
+        os.chdir(meteor_dev_dir) 
+        try:
+            subprocess.check_output(['meteor', 'test', '--driver-package', 'meteortesting:mocha', '--once', '--full-app', '--allow-superuser'])
+        except subprocess.CalledProcessError as e:
+            print(e.output)
+            raise Exception("Error running Meteor test")
+            
+        os.chdir(old_cwd)
+        return
+
 
     # Extract tarball Meteor build
     file = tarfile.open(tar_file_path)
@@ -135,7 +155,7 @@ def meteor_initialization(server_config: ServerOptions):
 
     # npm install and run 
     subprocess.run(['npm', 'install', '--prefix', os.path.join(meteor_dir,'bundle', 'programs', 'server'), '--unsafe-perm'], check=True)
-    subprocess.Popen(['node', os.path.join(meteor_dir,'bundle', 'main.js')])
+    subprocess.Popen(['node', os.path.join(meteor_dir,'bundle', 'main.js')], stderr=subprocess.STDOUT)
     print('Done running Meteor initialization.')
 
 

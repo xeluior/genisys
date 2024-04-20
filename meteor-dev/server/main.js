@@ -5,9 +5,11 @@ import { InitializeCollections, CreateInventoryFile } from "./serverMethods"
 import { CONFIG_FILE_VAR } from "./serverMethods"
 import fs from "fs"
 
+const TESTING_MODE = process.env.GITHUB_RUNNER || false
+
 Meteor.startup(() => {
   console.log("Meteor Started")
-
+  
   Meteor.call("RefreshConfig")
   CreateInventoryFile()
 

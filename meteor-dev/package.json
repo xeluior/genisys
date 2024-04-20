@@ -13,7 +13,7 @@
     "fs": "0.0.1-security",
     "jquery": "^3.7.1",
     "js-yaml": "^4.1.0",
-    "meteor-node-stubs": "^1.2.7",
+    "meteor-node-stubs": "^1.2.9",
     "moment-timezone": "^0.5.45",
     "path": "^0.12.7"
   },
